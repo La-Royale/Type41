@@ -20,7 +20,7 @@ static const auto FRAME_DT = 1.0s / FPS;
 
 static void init_openGL() {
 	glewInit();
-	if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available.");
+	if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 }
