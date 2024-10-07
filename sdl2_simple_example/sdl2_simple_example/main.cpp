@@ -24,6 +24,59 @@ static void init_openGL() {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 }
+static void draw_line(float x1, float y1, float z1, float x2, float y2, float z2) {
+	glLineWidth(2.0f);
+	glBegin(GL_LINES);
+	glColor3f(0.0, 0.0, 0.0);
+	glVertex3f(x1, y1, z1);
+	glVertex3f(x2, y2, z2);
+
+	glEnd();
+}
+static void draw_cube(const u8vec4& color, const vec3& center, double size) {
+	//glColor4ub(color.r, color.g, color.b, color.a);
+	
+	double half = size / 2.0;
+	vec3 vertices[8] = {
+		vec3(center.x - half, center.y - half, center.z + half), // Vértice 0
+		vec3(center.x + half, center.y - half, center.z + half), // Vértice 1
+		vec3(center.x + half, center.y + half, center.z + half), // Vértice 2
+		vec3(center.x - half, center.y + half, center.z + half), // Vértice 3
+		vec3(center.x - half, center.y - half, center.z - half), // Vértice 4
+		vec3(center.x + half, center.y - half, center.z - half), // Vértice 5
+		vec3(center.x + half, center.y + half, center.z - half), // Vértice 6
+		vec3(center.x - half, center.y + half, center.z - half)  // Vértice 7
+	};
+
+	glBegin(GL_TRIANGLES);
+	// Frente Blanco
+	glColor3f(1.0f, 0.5f, 0.0f);
+	glVertex3dv(&vertices[0].x); glVertex3dv(&vertices[1].x); glVertex3dv(&vertices[2].x);
+	glVertex3dv(&vertices[2].x); glVertex3dv(&vertices[3].x); glVertex3dv(&vertices[0].x);
+	// Derecha
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glVertex3dv(&vertices[1].x); glVertex3dv(&vertices[5].x); glVertex3dv(&vertices[6].x);
+	glVertex3dv(&vertices[6].x); glVertex3dv(&vertices[2].x); glVertex3dv(&vertices[1].x);
+	// Atrás
+	glColor3f(.0f, 0.0f, 1.0f);
+	glVertex3dv(&vertices[5].x); glVertex3dv(&vertices[4].x); glVertex3dv(&vertices[7].x);
+	glVertex3dv(&vertices[7].x); glVertex3dv(&vertices[6].x); glVertex3dv(&vertices[5].x);
+	// Izquierda Naranja
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glVertex3dv(&vertices[4].x); glVertex3dv(&vertices[0].x); glVertex3dv(&vertices[3].x);
+	glVertex3dv(&vertices[3].x); glVertex3dv(&vertices[7].x); glVertex3dv(&vertices[4].x);
+	// Arriba
+	glColor3f(0.0f, 1.0f, 0.0f);
+	glVertex3dv(&vertices[3].x); glVertex3dv(&vertices[2].x); glVertex3dv(&vertices[6].x);
+	glVertex3dv(&vertices[6].x); glVertex3dv(&vertices[7].x); glVertex3dv(&vertices[3].x);
+	// Abajo
+	glColor3f(1.0f, 1.0f, 0.0f);
+	glVertex3dv(&vertices[4].x); glVertex3dv(&vertices[5].x); glVertex3dv(&vertices[1].x);
+	glVertex3dv(&vertices[1].x); glVertex3dv(&vertices[0].x); glVertex3dv(&vertices[4].x);
+	glEnd();
+
+}
+
 
 static void draw_triangle(const u8vec4& color, const vec3& center, double size) {
 	glColor4ub(color.r, color.g, color.b, color.a);
@@ -34,9 +87,14 @@ static void draw_triangle(const u8vec4& color, const vec3& center, double size) 
 	glEnd();
 }
 
+
 static void display_func() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	draw_triangle(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 0.5);
+	//draw_triangle(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 0.2);
+	draw_cube(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 1.0);
+	glRotatef(0.8f, 1.0f, 1.0f, 0.0f);
+
+
 }
 
 static bool processEvents() {
