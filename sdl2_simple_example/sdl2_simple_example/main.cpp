@@ -7,6 +7,13 @@
 #include "MyWindow.h"
 #include "imgui_impl_sdl2.h"
 
+#include <stdio.h>
+#include <assimp/cimport.h>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+#include <assimp/Importer.hpp>
+
+
 using namespace std;
 
 using hrclock = chrono::high_resolution_clock;
@@ -14,7 +21,7 @@ using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
 using vec3 = glm::dvec3;
 
-static const ivec2 WINDOW_SIZE(512, 512);
+static const ivec2 WINDOW_SIZE(1600, 900);
 static const unsigned int FPS = 60;
 static const auto FRAME_DT = 1.0s / FPS;
 
@@ -87,14 +94,107 @@ static void draw_triangle(const u8vec4& color, const vec3& center, double size) 
 	glEnd();
 }
 
+const aiScene* loadFBX(const std::string& filePath) {
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+		printf("ERROR::ASSIMP::%s\n", importer.GetErrorString());
+		return nullptr;
+	}
+	return scene;
+}
 
-static void display_func() {
+
+void drawMesh(aiMesh* mesh, const aiScene* scene) {
+	std::vector<float> vertices;
+	for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
+		vertices.push_back(mesh->mVertices[i].x);
+		vertices.push_back(mesh->mVertices[i].y);
+		vertices.push_back(mesh->mVertices[i].z);
+
+		if (mesh->HasNormals()) {
+			vertices.push_back(mesh->mNormals[i].x);
+			vertices.push_back(mesh->mNormals[i].y);
+			vertices.push_back(mesh->mNormals[i].z);
+		}
+	}
+	glBegin(GL_TRIANGLES);
+	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+		aiFace face = mesh->mFaces[i];
+		for (unsigned int j = 0; j < face.mNumIndices; j++) {
+			glVertex3fv(&vertices[face.mIndices[j] * 3]);
+		}
+	}
+	glEnd();
+}
+
+
+void processNode(aiNode* node, const aiScene* scene) {
+	for (unsigned int i = 0; i < node->mNumMeshes; i++) {
+		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+		drawMesh(mesh, scene);
+	}
+	for (unsigned int i = 0; i < node->mNumChildren; i++) {
+		processNode(node->mChildren[i], scene);
+	}
+}
+
+
+const char* file = "cube.fbx";
+const struct aiScene* scene = aiImportFile(file, aiProcess_Triangulate);
+
+static void DrawFBX() {
+	if (!scene) {
+		fprintf(stderr, "Error al cargar el archivo: %s\n", aiGetErrorString());
+		return;
+	}
+
+	for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+		aiMesh* mesh = scene->mMeshes[i];
+
+		GLuint VAO, VBO;
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+
+		glBindVertexArray(VAO);
+
+		float multi = 1;
+
+		// Cargar los vértices
+		GLfloat* vertices = new GLfloat[mesh->mNumVertices * 3];
+		for (unsigned int v = 0; v < mesh->mNumVertices; v++) {
+			aiVector3D vertex = mesh->mVertices[v];
+			vertices[v * 3] = vertex.x * multi;
+			vertices[v * 3 + 1] = vertex.z * multi - 0.5;
+			vertices[v * 3 + 2] = vertex.y * multi;
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, mesh->mNumVertices * 3 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+		delete[] vertices;
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		// Dibuja la malla
+		glDrawArrays(GL_TRIANGLES, 0, mesh->mNumVertices);
+
+
+		// Limpiar
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
+
+	}
+}
+
+static void display_func(const aiScene* scene) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//draw_triangle(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 0.2);
-	draw_cube(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 1.0);
+	//draw_cube(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 1.0);
 	glRotatef(0.8f, 1.0f, 1.0f, 0.0f);
-
-
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	DrawFBX();
 }
 
 static bool processEvents() {
@@ -113,17 +213,17 @@ static bool processEvents() {
 
 int main(int argc, char** argv) {
 	MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
-
 	init_openGL();
+
+	const aiScene* scene = loadFBX("cube.fbx");
 
 	while (processEvents()) {
 		const auto t0 = hrclock::now();
-		display_func();
+		display_func(scene);  // Pasa la escena cargada
 		window.swapBuffers();
 		const auto t1 = hrclock::now();
 		const auto dt = t1 - t0;
-		if(dt<FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
+		if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
 	}
-
 	return 0;
 }
