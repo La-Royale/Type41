@@ -21,16 +21,49 @@ using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
 using vec3 = glm::dvec3;
 
-static const ivec2 WINDOW_SIZE(1600, 900);
+static const ivec2 WINDOW_SIZE(500, 500);
 static const unsigned int FPS = 60;
 static const auto FRAME_DT = 1.0s / FPS;
 
+
+GLubyte checkerImage[256][256][4];
+
+int _HEIGHT = 256;
+int _WIDTH = 256;
+GLuint textureID;
+
+vector <GLfloat> uv;
+
+void start() {
+	
+	
+	for (int i = 0; i < _HEIGHT; i++) {
+		for (int j = 0; j < _WIDTH; j++) {
+			int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
+			checkerImage[i][j][0] = (GLubyte)c;
+			checkerImage[i][j][1] = (GLubyte)c;
+			checkerImage[i][j][2] = (GLubyte)c;
+			checkerImage[i][j][3] = (GLubyte)255;
+		}
+	}
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _WIDTH, _HEIGHT, 0,
+	GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
+}
 static void init_openGL() {
 	glewInit();
 	if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 }
+
 static void draw_line(float x1, float y1, float z1, float x2, float y2, float z2) {
 	glLineWidth(2.0f);
 	glBegin(GL_LINES);
@@ -42,6 +75,7 @@ static void draw_line(float x1, float y1, float z1, float x2, float y2, float z2
 }
 static void draw_cube(const u8vec4& color, const vec3& center, double size) {
 	//glColor4ub(color.r, color.g, color.b, color.a);
+	
 	
 	double half = size / 2.0;
 	vec3 vertices[8] = {
@@ -117,12 +151,19 @@ void drawMesh(aiMesh* mesh, const aiScene* scene) {
 			vertices.push_back(mesh->mNormals[i].y);
 			vertices.push_back(mesh->mNormals[i].z);
 		}
+
+		if (mesh->mTextureCoords[0]) { 
+			uv.push_back(mesh->mTextureCoords[0][i].x);
+			uv.push_back(mesh->mTextureCoords[0][i].y);
+		}
 	}
 	glBegin(GL_TRIANGLES);
 	for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 		aiFace face = mesh->mFaces[i];
 		for (unsigned int j = 0; j < face.mNumIndices; j++) {
-			glVertex3fv(&vertices[face.mIndices[j] * 3]);
+			unsigned int vertexIndex = face.mIndices[j];
+			glTexCoord2f(uv[vertexIndex * 2], uv[vertexIndex * 2 + 1]); 
+			glVertex3fv(&vertices[vertexIndex * 3]);
 		}
 	}
 	glEnd();
@@ -140,7 +181,7 @@ void processNode(aiNode* node, const aiScene* scene) {
 }
 
 
-const char* file = "cube.fbx";
+const char* file = "ht.fbx";
 const struct aiScene* scene = aiImportFile(file, aiProcess_Triangulate);
 
 static void DrawFBX() {
@@ -175,6 +216,8 @@ static void DrawFBX() {
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 		glEnableVertexAttribArray(0);
+
+		
 
 		// Dibuja la malla
 		glDrawArrays(GL_TRIANGLES, 0, mesh->mNumVertices);
@@ -216,6 +259,8 @@ int main(int argc, char** argv) {
 	init_openGL();
 
 	const aiScene* scene = loadFBX("cube.fbx");
+
+	start();
 
 	while (processEvents()) {
 		const auto t0 = hrclock::now();
