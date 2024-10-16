@@ -205,6 +205,7 @@ static void DrawFBX() {
 		GLfloat* vertices = new GLfloat[mesh->mNumVertices * 3];
 		for (unsigned int v = 0; v < mesh->mNumVertices; v++) {
 			aiVector3D vertex = mesh->mVertices[v];
+			//mover fbx
 			vertices[v * 3] = vertex.x * multi;
 			vertices[v * 3 + 1] = vertex.z * multi - 0.5;
 			vertices[v * 3 + 2] = vertex.y * multi;
