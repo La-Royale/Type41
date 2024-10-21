@@ -8,6 +8,7 @@
 
 using namespace std;
 
+//Crear Ventana
 MyWindow::MyWindow(const std::string& title, int w, int h) : _width(w), _height(h) {
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
@@ -41,7 +42,7 @@ MyWindow::~MyWindow() {
 }
 
 void MyWindow::swapBuffers() const {
-
+    //Menu Ajustes
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
