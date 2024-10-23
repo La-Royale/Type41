@@ -17,7 +17,7 @@ using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
 using vec3 = glm::dvec3;
 
-static const ivec2 WINDOW_SIZE(900, 900);
+static const ivec2 WINDOW_SIZE(800, 800);
 static const unsigned int FPS = 60;
 static const auto FRAME_DT = 1.0s / FPS;
 
@@ -42,16 +42,22 @@ static void load_model(const string& path) {
 static void draw_node(aiNode* node, const aiScene* scene) {
     for (unsigned int i = 0; i < node->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        
+
         // Apply scaling transformation
         glPushMatrix();
-        float scale = 0.5;
+        float scale = 0.2;
         glScalef(scale, scale, scale); // Scale the model to half its size
 
         glBegin(GL_TRIANGLES);
-        for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
-            glVertex3fv(&mesh->mVertices[j].x);
-            //printf("Vertex: %f %f %f\n", mesh->mVertices[j].x, mesh->mVertices[j].y, mesh->mVertices[j].z);
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            aiFace& face = mesh->mFaces[j];
+            for (unsigned int k = 0; k < face.mNumIndices; k++) {
+                unsigned int index = face.mIndices[k];
+                if (mesh->HasNormals()) {
+                    glNormal3fv(&mesh->mNormals[index].x);
+                }
+                glVertex3fv(&mesh->mVertices[index].x);
+            }
         }
         glEnd();
 
@@ -61,7 +67,6 @@ static void draw_node(aiNode* node, const aiScene* scene) {
         draw_node(node->mChildren[i], scene);
     }
 }
-
 static void draw_model(const aiScene* scene) {
     draw_node(scene->mRootNode, scene);
 }
@@ -93,6 +98,9 @@ int main(int argc, char** argv) {
 
     init_openGL();
     load_model("BakerHouse.fbx");
+	//load_model("cube.fbx");
+    //load_model("masterchief.fbx");
+
 
     while (processEvents()) {
         const auto t0 = hrclock::now();
