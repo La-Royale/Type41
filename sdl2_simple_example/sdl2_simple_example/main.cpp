@@ -18,7 +18,7 @@ using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
 using vec3 = glm::dvec3;
 
-static const ivec2 WINDOW_SIZE(800, 800);
+static const ivec2 WINDOW_SIZE(1600, 900);
 static const unsigned int FPS = 60;
 static const auto FRAME_DT = 1.0s / FPS;
 
@@ -97,7 +97,7 @@ static bool processEvents() {
 int main(int argc, char** argv) {
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
-    //load_model("BakerHouse.fbx");
+    load_model("BakerHouse.fbx");
     WindowEditor editor;
 
     while (processEvents()) {

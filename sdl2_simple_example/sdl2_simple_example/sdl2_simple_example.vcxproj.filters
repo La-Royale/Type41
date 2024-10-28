@@ -37,9 +37,6 @@
     <ClCompile Include="Editor.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="AboutPanel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ConfigPanel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -86,9 +83,6 @@
     </ClInclude>
     <ClInclude Include="Editor.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="AboutPanel.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConfigPanel.h">
       <Filter>Header Files</Filter>

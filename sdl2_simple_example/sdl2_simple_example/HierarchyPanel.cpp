@@ -3,7 +3,7 @@ HierarchyPanel::HierarchyPanel() {}
 HierarchyPanel::~HierarchyPanel() {}
 
 void HierarchyPanel::Render() {
-    ImGui::Begin("Jerarquía");
+    ImGui::Begin("Hierarchy");
     // Lógica de renderizado del log de consola
     ImGui::End();
 }
