@@ -9,6 +9,7 @@
 #include <assimp/postprocess.h>
 #include "MyWindow.h"
 #include "imgui_impl_sdl2.h"
+#include "WindowEditor.h"  // Incluimos el Editor
 
 using namespace std;
 
@@ -34,7 +35,6 @@ static void init_openGL() {
 static void load_model(const string& path) {
     scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        //throw exception("Failed to load model");
         printf("Failed to load model");
     }
 }
@@ -45,8 +45,8 @@ static void draw_node(aiNode* node, const aiScene* scene) {
 
         // Apply scaling transformation
         glPushMatrix();
-        float scale = 0.2;
-        glScalef(scale, scale, scale); // Scale the model to half its size
+        float scale = 0.2f;
+        glScalef(scale, scale, scale);
 
         glBegin(GL_TRIANGLES);
         for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
@@ -67,6 +67,7 @@ static void draw_node(aiNode* node, const aiScene* scene) {
         draw_node(node->mChildren[i], scene);
     }
 }
+
 static void draw_model(const aiScene* scene) {
     draw_node(scene->mRootNode, scene);
 }
@@ -95,16 +96,16 @@ static bool processEvents() {
 
 int main(int argc, char** argv) {
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
-
     init_openGL();
     load_model("BakerHouse.fbx");
-	//load_model("cube.fbx");
-    //load_model("masterchief.fbx");
-
+    WindowEditor editor;
 
     while (processEvents()) {
         const auto t0 = hrclock::now();
         display_func();
+
+        editor.Render(); // Llama a Render en cada fotograma
+
         window.swapBuffers();
         const auto t1 = hrclock::now();
         const auto dt = t1 - t0;
