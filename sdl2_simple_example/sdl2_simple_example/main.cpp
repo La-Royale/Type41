@@ -9,7 +9,7 @@
 #include <assimp/postprocess.h>
 #include "MyWindow.h"
 #include "imgui_impl_sdl2.h"
-#include "WindowEditor.h"  // Incluimos el Editor
+#include "WindowEditor.h"
 
 using namespace std;
 
@@ -97,7 +97,7 @@ static bool processEvents() {
 int main(int argc, char** argv) {
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
-    load_model("BakerHouse.fbx");
+    //load_model("BakerHouse.fbx");
     WindowEditor editor;
 
     while (processEvents()) {
