@@ -127,11 +127,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AboutPanel.cpp" />
+    <ClCompile Include="ConfigPanel.cpp" />
+    <ClCompile Include="ConsolePanel.cpp" />
+    <ClCompile Include="HierarchyPanel.cpp" />
+    <ClCompile Include="InspectorPanel.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="MyWindow.cpp" />
+    <ClCompile Include="WindowEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutPanel.h" />
+    <ClInclude Include="ConfigPanel.h" />
+    <ClInclude Include="ConsolePanel.h" />
+    <ClInclude Include="HierarchyPanel.h" />
+    <ClInclude Include="InspectorPanel.h" />
+    <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MyWindow.h" />
+    <ClInclude Include="WindowEditor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

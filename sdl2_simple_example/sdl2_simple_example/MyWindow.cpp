@@ -42,24 +42,24 @@ MyWindow::~MyWindow() {
 
 void MyWindow::swapBuffers() const {
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
+    //ImGui_ImplOpenGL3_NewFrame();
+    //ImGui_ImplSDL2_NewFrame();
+    //ImGui::NewFrame();
 
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("Menu")) {
-            if (ImGui::MenuItem("Quit")) {
-                SDL_Event quit_event;
-                quit_event.type = SDL_QUIT;
-                SDL_PushEvent(&quit_event);
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
+    //if (ImGui::BeginMainMenuBar()) {
+    //    if (ImGui::BeginMenu("Menu")) {
+    //        if (ImGui::MenuItem("Quit")) {
+    //            SDL_Event quit_event;
+    //            quit_event.type = SDL_QUIT;
+    //            SDL_PushEvent(&quit_event);
+    //        }
+    //        ImGui::EndMenu();
+    //    }
+    //    ImGui::EndMainMenuBar();
+    //}
 
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    //ImGui::Render();
+    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(_window));
