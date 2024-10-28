@@ -3,7 +3,7 @@ ConsolePanel::ConsolePanel() {}
 ConsolePanel::~ConsolePanel() {}
 
 void ConsolePanel::Render() {
-    ImGui::Begin("Consola");
+    ImGui::Begin("Console");
     // Lógica de renderizado del log de consola
     ImGui::End();
 }

@@ -7,11 +7,16 @@
 #include "InspectorPanel.h"
 #include "MainMenu.h"
 
+
+
+
+
+
 class WindowEditor {
 public:
     WindowEditor();
     ~WindowEditor();
-
+    float inspectorHeight = 300.0f; // Altura actual del Inspector
     void Render();
     void HandleEvents();
 

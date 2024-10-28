@@ -11,10 +11,6 @@
 
 ModelLoader modelLoader;
 void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
@@ -62,7 +58,7 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
 
             if (ImGui::BeginMenu("Windows")) {
                 ImGui::MenuItem("Console", NULL, &showConsole);
-                ImGui::MenuItem("Config", NULL, &showConfig);
+                ImGui::MenuItem("Configuration", NULL, &showConfig);
                 ImGui::MenuItem("Hierarchy", NULL, &showHierarchy);
                 ImGui::MenuItem("Inspector", NULL, &showInspector);
                 ImGui::EndMenu();
@@ -72,7 +68,4 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
 
         ImGui::EndMainMenuBar();
     }
-
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

@@ -127,7 +127,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AboutPanel.cpp" />
     <ClCompile Include="ConfigPanel.cpp" />
     <ClCompile Include="ConsolePanel.cpp" />
     <ClCompile Include="HierarchyPanel.cpp" />
@@ -139,7 +138,6 @@
     <ClCompile Include="WindowEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AboutPanel.h" />
     <ClInclude Include="ConfigPanel.h" />
     <ClInclude Include="ConsolePanel.h" />
     <ClInclude Include="HierarchyPanel.h" />

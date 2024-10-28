@@ -3,7 +3,7 @@ ConfigPanel::ConfigPanel() {}
 ConfigPanel::~ConfigPanel() {}
 
 void ConfigPanel::Render() {
-    ImGui::Begin("Configuración");
+    ImGui::Begin("Configuration");
     // Lógica de renderizado del log de consola
     ImGui::End();
 }
