@@ -1,14 +1,18 @@
 #pragma once
-#include "imgui.h"
+#include <vector>
 
 class ConfigPanel {
 public:
     ConfigPanel();
     ~ConfigPanel();
 
-    void Render(); // Renderiza el log de consola
-    void Log(const char* message); // Método para registrar mensajes en consola
+    void Render();
+    void Log(const char* message);
+
+    void UpdateFPS(float fps);
 
 private:
-    // Estructuras necesarias para el log
+    std::vector<float> fpsHistory;
+    int frameCount = 0;
+    static constexpr int maxSamples = 20;
 };
