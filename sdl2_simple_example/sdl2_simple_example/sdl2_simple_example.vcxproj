@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="ConfigPanel.cpp" />
     <ClCompile Include="ConsolePanel.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HierarchyPanel.cpp" />
     <ClCompile Include="InspectorPanel.cpp" />
     <ClCompile Include="main.cpp" />
@@ -140,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="ConfigPanel.h" />
     <ClInclude Include="ConsolePanel.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="HierarchyPanel.h" />
     <ClInclude Include="InspectorPanel.h" />
     <ClInclude Include="MainMenu.h" />
