@@ -5,6 +5,9 @@
 #include <SDL2/SDL_opengl.h>
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
+#include "ConfigPanel.h"
+
+TimeManager timeManager;
 
 WindowEditor::WindowEditor()
     : consolePanel(), configPanel(), hierarchyPanel(), inspectorPanel(), mainMenu(),
@@ -27,6 +30,12 @@ WindowEditor::~WindowEditor() {
 }
 
 void WindowEditor::Render() {
+
+    timeManager.Update();
+    float deltaTime = timeManager.GetDeltaTime();
+    float fps = 1.0f / deltaTime;
+    configPanel->UpdateFPS(fps);
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -40,26 +49,11 @@ void WindowEditor::Render() {
         configPanel->Render();
     }
     if (showHierarchy) {
-        ImGui::SetNextWindowPos(ImVec2(0, 20));
-        ImGui::SetNextWindowSize(ImVec2(200, 580));
-        ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
-        ImGui::End();
+        hierarchyPanel->Render();
     }
 
     if (showInspector) {
-        const float bottomFixedPosition = 900;
-
-        ImGui::SetNextWindowSizeConstraints(ImVec2(1600, 200), ImVec2(1600, 400));
-        ImGui::SetNextWindowSize(ImVec2(1600, inspectorHeight));
-
-        ImVec2 windowPos(0, bottomFixedPosition - inspectorHeight);
-        ImGui::SetNextWindowPos(windowPos);
-
-        ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_None);
-
-        ImGui::SliderFloat(" ", &inspectorHeight, 200, 400);
-
-        ImGui::End();
+        inspectorPanel->Render();
     }
 
     ImGui::Render();

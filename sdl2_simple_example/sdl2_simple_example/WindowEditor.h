@@ -6,17 +6,13 @@
 #include "HierarchyPanel.h"
 #include "InspectorPanel.h"
 #include "MainMenu.h"
-
-
-
-
-
+#include "TimeManager.h"
 
 class WindowEditor {
 public:
     WindowEditor();
     ~WindowEditor();
-    float inspectorHeight = 300.0f; // Altura actual del Inspector
+    float inspectorHeight = 300.0f;
     void Render();
     void HandleEvents();
 
