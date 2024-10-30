@@ -136,6 +136,7 @@
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="MyWindow.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="WindowEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="MyWindow.h" />
+    <ClInclude Include="TimeManager.h" />
     <ClInclude Include="WindowEditor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
