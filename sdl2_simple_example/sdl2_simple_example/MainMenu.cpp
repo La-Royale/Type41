@@ -7,16 +7,16 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include <SDL2/SDL.h>
-#include "ModelLoader.h"
+#include "GameObject.h"
 
-ModelLoader modelLoader;
 void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("Primitive")) {
                 if (ImGui::MenuItem("Cube")) {
-                    modelLoader.createCube(); 
+                    GameObject cubeObject;
+                    cubeObject.createCube(1.0f);
                 }
                 if (ImGui::MenuItem("Sphere")) {
 

@@ -3,7 +3,7 @@
 #include <iostream>
 #include <GL/glew.h>
 
-ModelLoader::ModelLoader() {}
+ModelLoader::ModelLoader() : scene(nullptr) {}
 
 ModelLoader::~ModelLoader() {
     scene = nullptr;
