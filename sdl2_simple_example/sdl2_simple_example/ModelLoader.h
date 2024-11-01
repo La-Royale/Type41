@@ -7,6 +7,12 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+struct Vertex {
+    float x, y, z;    // Posición
+    float nx, ny, nz; // Normales
+    float u, v;       // Coordenadas UV
+};
+
 class ModelLoader {
 public:
     ModelLoader();
@@ -15,18 +21,14 @@ public:
     void createCube(float size);
     void createSphere(float radius, int segments, int rings);
     void drawModel();
+    const aiScene* getScene() const;
 
 private:
     void drawNode(aiNode* node, const aiScene* scene);
     void drawPrimitive();
 
-    const aiScene* scene;
     Assimp::Importer importer;
-
-    struct Vertex {
-        float x, y, z;
-        float nx, ny, nz;
-    };
+    const aiScene* scene;
     std::vector<Vertex> primitiveVertices;
 };
 

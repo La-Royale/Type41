@@ -1,6 +1,5 @@
-#include "GameObject.h"
 #include <GL/glew.h> // Incluye GLEW antes de OpenGL
-#include <GL/gl.h>   // Incluye OpenGL
+#include "GameObject.h"
 
 GameObject::GameObject() : position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f) {}
 
@@ -19,10 +18,10 @@ void GameObject::createSphere(float radius, int segments, int rings) {
 }
 
 void GameObject::draw() {
-    // Aplica la transformación de posición y escala antes de dibujar
     glPushMatrix();
     glTranslatef(position.x, position.y, position.z);
     glScalef(scale.x, scale.y, scale.z);
+    material.use(); // Aplica el material antes de dibujar el modelo
     modelLoader.drawModel();
     glPopMatrix();
 }
@@ -41,4 +40,12 @@ void GameObject::setScale(const glm::vec3& scl) {
 
 glm::vec3 GameObject::getScale() const {
     return scale;
+}
+
+void GameObject::setMaterial(const Material& mat) {
+    material = mat;
+}
+
+Material GameObject::getMaterial() const {
+    return material;
 }

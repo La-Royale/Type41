@@ -134,6 +134,7 @@
     <ClCompile Include="InspectorPanel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="TimeManager.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="HierarchyPanel.h" />
     <ClInclude Include="InspectorPanel.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="TimeManager.h" />
