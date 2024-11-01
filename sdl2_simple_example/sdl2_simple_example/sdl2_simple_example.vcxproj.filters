@@ -13,78 +13,102 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Paneles">
+      <UniqueIdentifier>{1697f3e0-5751-47be-b5bb-5538167ee0a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Paneles">
+      <UniqueIdentifier>{6e42f4ea-6619-4e53-a28f-19fe1ffa984e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects">
+      <UniqueIdentifier>{e8ee995a-b9c7-422f-843d-97d22e57e937}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Basico">
+      <UniqueIdentifier>{29aa1c5a-1190-4ff6-9192-b19af07d002d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameObjects">
+      <UniqueIdentifier>{14eb78f7-e29e-4871-864f-9545072100c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Basico">
+      <UniqueIdentifier>{c59b9ee7-1f98-4b1c-8702-c93344ead204}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MyWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ConfigPanel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Paneles</Filter>
     </ClCompile>
     <ClCompile Include="ConsolePanel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Paneles</Filter>
     </ClCompile>
     <ClCompile Include="HierarchyPanel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Paneles</Filter>
     </ClCompile>
     <ClCompile Include="InspectorPanel.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Paneles</Filter>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="WindowEditor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Paneles</Filter>
     </ClCompile>
     <ClCompile Include="ModelLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TimeManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files\Basico</Filter>
+    </ClCompile>
+    <ClCompile Include="MyWindow.cpp">
+      <Filter>Source Files\Basico</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>Source Files\Basico</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowEditor.cpp">
+      <Filter>Source Files\Basico</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
+      <Filter>Source Files\GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConfigPanel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Paneles</Filter>
     </ClInclude>
     <ClInclude Include="ConsolePanel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Paneles</Filter>
     </ClInclude>
     <ClInclude Include="HierarchyPanel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Paneles</Filter>
     </ClInclude>
     <ClInclude Include="InspectorPanel.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Paneles</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Paneles</Filter>
     </ClInclude>
-    <ClInclude Include="WindowEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelLoader.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MyWindow.h">
+      <Filter>Header Files\Basico</Filter>
     </ClInclude>
     <ClInclude Include="TimeManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Basico</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowEditor.h">
+      <Filter>Header Files\Basico</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
