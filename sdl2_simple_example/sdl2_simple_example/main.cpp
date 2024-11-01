@@ -1,4 +1,6 @@
-#include <GL/glew.h>
+#include <GL/glew.h> // Incluye GLEW antes de OpenGL
+#include <iostream>
+#include <GL/gl.h>
 #include <chrono>
 #include <thread>
 #include <exception>
@@ -9,6 +11,7 @@
 #include "imgui_impl_sdl2.h"
 #include "WindowEditor.h"
 #include "ModelLoader.h"
+#include "Material.h"
 #include "GameObject.h"
 
 using namespace std;
@@ -57,10 +60,14 @@ int main(int argc, char** argv) {
 
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
-    //gameObject1->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
-    //gameObject1->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+    // Crear y aplicar el material con la textura
+    Material material;
+    material.loadTexture("Baker_house.png");
+
+    gameObject1->setMaterial(material);
+
     gameObjects.push_back(std::move(gameObject1));
-    
 
     // auto gameObject2 = std::make_unique<GameObject>();
     // gameObject2->loadModel("masterchief.fbx");
