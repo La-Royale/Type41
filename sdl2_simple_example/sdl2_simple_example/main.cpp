@@ -58,11 +58,13 @@ int main(int argc, char** argv) {
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
     //gameObject1->setPosition(glm::vec3(0.0f, 0.0f, 3.0f));
+    //gameObject1->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
     gameObjects.push_back(std::move(gameObject1));
+    
 
-    auto gameObject2 = std::make_unique<GameObject>();
-    gameObject2->loadModel("masterchief.fbx");
-    gameObjects.push_back(std::move(gameObject2));
+    // auto gameObject2 = std::make_unique<GameObject>();
+    // gameObject2->loadModel("masterchief.fbx");
+    // gameObjects.push_back(std::move(gameObject2));
 
     // Añade más GameObjects según sea necesario
     // auto gameObjectN = std::make_unique<GameObject>();
