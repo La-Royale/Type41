@@ -20,12 +20,15 @@ public:
     glm::vec3 getScale() const;
     void setMaterial(const Material& material);
     Material getMaterial() const;
+    void setRotation(const glm::vec3& rotation);
+    glm::vec3 getRotation() const;
 
 private:
     ModelLoader modelLoader;
     glm::vec3 position; // Añade la variable de posición
     glm::vec3 scale;    // Añade la variable de escala
     Material material;  // Añade la variable de material
+    glm::vec3 rotation; // Añade la variable de rotación
 };
 
 #endif // GAMEOBJECT_H

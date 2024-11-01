@@ -1,7 +1,7 @@
 #include <GL/glew.h> // Incluye GLEW antes de OpenGL
 #include "GameObject.h"
 
-GameObject::GameObject() : position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f) {}
+GameObject::GameObject() : position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f) {}
 
 GameObject::~GameObject() {}
 
@@ -20,6 +20,9 @@ void GameObject::createSphere(float radius, int segments, int rings) {
 void GameObject::draw() {
     glPushMatrix();
     glTranslatef(position.x, position.y, position.z);
+    glRotatef(rotation.x, 1.0f, 0.0f, 0.0f);
+    glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
+    glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
     glScalef(scale.x, scale.y, scale.z);
     material.use(); // Aplica el material antes de dibujar el modelo
     modelLoader.drawModel();
@@ -48,4 +51,12 @@ void GameObject::setMaterial(const Material& mat) {
 
 Material GameObject::getMaterial() const {
     return material;
+}
+
+void GameObject::setRotation(const glm::vec3& rot) {
+    rotation = rot;
+}
+
+glm::vec3 GameObject::getRotation() const {
+    return rotation;
 }
