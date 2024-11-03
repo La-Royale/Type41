@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ConfigPanel.cpp" />
     <ClCompile Include="ConsolePanel.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="WindowEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ConfigPanel.h" />
     <ClInclude Include="ConsolePanel.h" />
     <ClInclude Include="GameObject.h" />
