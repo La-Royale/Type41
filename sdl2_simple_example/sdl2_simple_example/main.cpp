@@ -23,7 +23,7 @@ using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
 using vec3 = glm::dvec3;
 
-static const ivec2 WINDOW_SIZE(1300, 700);
+static const ivec2 WINDOW_SIZE(1600, 900);
 static const unsigned int FPS = 60;
 static const auto FRAME_DT = 1.0s / FPS;
 
