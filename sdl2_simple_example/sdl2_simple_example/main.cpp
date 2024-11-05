@@ -32,11 +32,6 @@ static void init_openGL() {
     if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.5, 0.5, 0.5, 1.0);
-
-    glMatrixMode(GL_PROJECTION);
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WINDOW_SIZE.x) / WINDOW_SIZE.y, 0.1f, 100.0f);
-    glLoadMatrixf(&projection[0][0]);
-    glMatrixMode(GL_MODELVIEW); 
 }
 
 static bool processEvents(Camera& camera, float deltaTime) {
@@ -66,9 +61,12 @@ static bool processEvents(Camera& camera, float deltaTime) {
             if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
                 camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
             }
+            else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+                camera.processMousePan(event.motion.xrel, event.motion.yrel); // Movimiento 2D al pulsar la rueda
+            }
             break;
         case SDL_MOUSEWHEEL:
-            camera.processMouseScroll(event.wheel.y);
+            camera.processMouseScroll(event.wheel.y); // Zoom con la rueda del ratón
             break;
         default:
             ImGui_ImplSDL2_ProcessEvent(&event);
@@ -82,17 +80,16 @@ int main(int argc, char** argv) {
     init_openGL();
 
     std::vector<std::unique_ptr<GameObject>> gameObjects;
-
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
 
     Material material;
     material.loadTexture("Baker_house.png");
     gameObject1->setMaterial(material);
-
     gameObjects.push_back(std::move(gameObject1));
 
     WindowEditor editor;
+
     Camera camera;
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
@@ -104,13 +101,22 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Configuración de la matriz de proyección para el zoom
+        glMatrixMode(GL_PROJECTION);
+        glm::mat4 projection = camera.getProjectionMatrix(static_cast<float>(WINDOW_SIZE.x) / WINDOW_SIZE.y);
+        glLoadMatrixf(&projection[0][0]);
+        glMatrixMode(GL_MODELVIEW);
+
+        // Configuración de la vista de la cámara
         glm::mat4 view = camera.getViewMatrix();
         glLoadMatrixf(&view[0][0]);
 
+        // Dibujar los objetos
         for (auto& gameObject : gameObjects) {
             gameObject->draw();
         }
 
+        // Renderizar el editor
         editor.Render();
 
         window.swapBuffers();

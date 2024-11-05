@@ -9,11 +9,15 @@ class Camera {
 public:
     Camera();
     glm::mat4 getViewMatrix() const;
+    glm::mat4 getProjectionMatrix(float aspectRatio) const;
+
     void processMouseMovement(float xoffset, float yoffset);
     void processMouseScroll(float yoffset);
     void processKeyboard(SDL_Keycode key, float deltaTime);
     void update(float deltaTime);
     void resetFocus(const glm::vec3& targetPosition);
+    void processMousePan(float xoffset, float yoffset);
+
 
     void enableFPSMode(bool enable);
     bool isFPSModeEnabled() const;
