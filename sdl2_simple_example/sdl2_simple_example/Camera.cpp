@@ -1,4 +1,9 @@
 #include "Camera.h"
+#include <glm/gtc/matrix_transform.hpp> 
+
+glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
+    return glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
+}
 
 Camera::Camera()
     : position(glm::vec3(0.0f, 0.0f, 3.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)),
@@ -36,13 +41,21 @@ void Camera::processMouseScroll(float yoffset) {
     zoom -= yoffset;
     if (zoom < 1.0f) zoom = 1.0f;
     if (zoom > 45.0f) zoom = 45.0f;
+
 }
+
+void Camera::processMousePan(float xoffset, float yoffset) {
+    float panSpeed = mouseSensitivity * 0.05f; // Ajusta la velocidad de movimiento en 2D
+    position += right * -xoffset * panSpeed;
+    position += up * yoffset * panSpeed;
+}
+
 
 void Camera::update(float deltaTime) {
     if (fpsMode) {
     }
 }
-
+//Al pulsar la F (centrar en el gameobject seleccionado)
 void Camera::resetFocus(const glm::vec3& targetPosition) {
     position = targetPosition - front * 10.0f;
 }
