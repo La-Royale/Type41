@@ -29,8 +29,7 @@ WindowEditor::~WindowEditor() {
     delete mainMenu;
 }
 
-void WindowEditor::Render() {
-
+void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     timeManager.Update();
     float deltaTime = timeManager.GetDeltaTime();
     float fps = 1.0f / deltaTime;
@@ -49,7 +48,7 @@ void WindowEditor::Render() {
         configPanel->Render();
     }
     if (showHierarchy) {
-        hierarchyPanel->Render();
+        hierarchyPanel->Render(gameObjects);  // Pasamos el vector de GameObjects
     }
 
     if (showInspector) {
@@ -59,6 +58,7 @@ void WindowEditor::Render() {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
+
 
 void WindowEditor::HandleEvents() {
 }

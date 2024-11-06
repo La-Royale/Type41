@@ -13,7 +13,7 @@ public:
     WindowEditor();
     ~WindowEditor();
     float inspectorHeight = 300.0f;
-    void Render();
+    void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void HandleEvents();
 
 private:
