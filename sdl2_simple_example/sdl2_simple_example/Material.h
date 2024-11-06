@@ -14,7 +14,7 @@ public:
     void setDefaultColor(const glm::vec3& color);
 
 private:
-    GLuint textureID;
+    unsigned int textureID;
     bool hasTexture;
     glm::vec3 defaultColor;
 };

@@ -8,20 +8,20 @@
 #include <glm/gtc/matrix_transform.hpp> 
 #include <SDL2/SDL_events.h>
 #include <memory>
+#include <vector>
+
 #include "MyWindow.h"
 #include "imgui_impl_sdl2.h"
 #include "WindowEditor.h"
 #include "ModelLoader.h"
 #include "Material.h"
-#include "GameObject.h"
 #include "Camera.h" 
+#include "GameObject.h"
+#include "HierarchyPanel.h"
 
 using namespace std;
-
 using hrclock = chrono::high_resolution_clock;
-using u8vec4 = glm::u8vec4;
 using ivec2 = glm::ivec2;
-using vec3 = glm::dvec3;
 
 static const ivec2 WINDOW_SIZE(1600, 900);
 static const unsigned int FPS = 60;
@@ -32,6 +32,11 @@ static void init_openGL() {
     if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.5, 0.5, 0.5, 1.0);
+
+    glMatrixMode(GL_PROJECTION);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WINDOW_SIZE.x) / WINDOW_SIZE.y, 0.1f, 100.0f);
+    glLoadMatrixf(&projection[0][0]);
+    glMatrixMode(GL_MODELVIEW);
 }
 
 static bool processEvents(Camera& camera, float deltaTime) {
@@ -56,18 +61,14 @@ static bool processEvents(Camera& camera, float deltaTime) {
             if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(false);
             }
-            break;           
+            break;
         case SDL_MOUSEMOTION:
             if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
                 camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
             }
-            else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
-                camera.processMousePan(event.motion.xrel, event.motion.yrel); // Movimiento 2D al pulsar la rueda
-            }
-            ImGui_ImplSDL2_ProcessEvent(&event);
             break;
         case SDL_MOUSEWHEEL:
-            camera.processMouseScroll(event.wheel.y); // Zoom con la rueda del ratón
+            camera.processMouseScroll(event.wheel.y);
             break;
         default:
             ImGui_ImplSDL2_ProcessEvent(&event);
@@ -80,34 +81,22 @@ int main(int argc, char** argv) {
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
 
-    std::vector<std::unique_ptr<GameObject>> gameObjects;
+    std::vector<std::unique_ptr<GameObject>> gameObjects;  // Lista de objetos del juego
+    HierarchyPanel hierarchyPanel;                         // Panel de jerarquía
+
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
 
     Material material;
     material.loadTexture("Baker_house.png");
     gameObject1->setMaterial(material);
-    gameObjects.push_back(std::move(gameObject1));
 
-    // gameObject1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
-    // gameObject1->setScale(glm::vec3(0.01f, 0.01f, 0.01f));
-    // gameObject1->setRotation(glm::vec3(0.0f, 0.0f, 180.0f));
-
-    // auto gameObject2 = std::make_unique<GameObject>();
-    // gameObject2->loadModel("masterchief.fbx");
-    // gameObjects.push_back(std::move(gameObject2));
-
-    // Añade más GameObjects según sea necesario
-    // auto gameObjectN = std::make_unique<GameObject>();
-    // gameObjectN->loadModel("otro_modelo.fbx");
-    // gameObjects.push_back(std::move(gameObjectN));
+    gameObjects.push_back(std::move(gameObject1));         // Agrega el GameObject a la lista
 
     WindowEditor editor;
-
     Camera camera;
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
-
 
     while (processEvents(camera, deltaTime)) {
         const auto t0 = hrclock::now();
@@ -116,23 +105,19 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Configuración de la matriz de proyección para el zoom
-        glMatrixMode(GL_PROJECTION);
-        glm::mat4 projection = camera.getProjectionMatrix(static_cast<float>(WINDOW_SIZE.x) / WINDOW_SIZE.y);
-        glLoadMatrixf(&projection[0][0]);
-        glMatrixMode(GL_MODELVIEW);
-
-        // Configuración de la vista de la cámara
         glm::mat4 view = camera.getViewMatrix();
         glLoadMatrixf(&view[0][0]);
 
-        // Dibujar los objetos
+        // Dibujamos cada GameObject en la escena
         for (auto& gameObject : gameObjects) {
             gameObject->draw();
         }
 
-        // Renderizar el editor
-        editor.Render();
+        // Renderizamos el panel de jerarquía
+        //hierarchyPanel.Render(gameObjects);
+
+        // Renderizamos la interfaz del editor
+        editor.Render(gameObjects);
 
         window.swapBuffers();
 
