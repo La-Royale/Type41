@@ -88,11 +88,25 @@ int main(int argc, char** argv) {
     gameObject1->setMaterial(material);
     gameObjects.push_back(std::move(gameObject1));
 
+    // gameObject1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    // gameObject1->setScale(glm::vec3(0.01f, 0.01f, 0.01f));
+    // gameObject1->setRotation(glm::vec3(0.0f, 0.0f, 180.0f));
+
+    // auto gameObject2 = std::make_unique<GameObject>();
+    // gameObject2->loadModel("masterchief.fbx");
+    // gameObjects.push_back(std::move(gameObject2));
+
+    // Añade más GameObjects según sea necesario
+    // auto gameObjectN = std::make_unique<GameObject>();
+    // gameObjectN->loadModel("otro_modelo.fbx");
+    // gameObjects.push_back(std::move(gameObjectN));
+
     WindowEditor editor;
 
     Camera camera;
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
+
 
     while (processEvents(camera, deltaTime)) {
         const auto t0 = hrclock::now();
