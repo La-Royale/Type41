@@ -1,20 +1,23 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
-#include <glm/glm.hpp> // Incluye glm para vectores
+#include <glm/glm.hpp>
 #include "ModelLoader.h"
 #include "Material.h"
 #include <string>
+#include <unordered_set>
 
 class GameObject {
 public:
-    GameObject(const std::string& name = "GameObject"); // Constructor con nombre
+    // Constructor con nombre opcional. Si no se proporciona, genera uno único.
+    GameObject(const std::string& name = "");
     ~GameObject();
+
+    const std::string& getName() const;
+    void setName(const std::string& name);
 
     // Métodos para cargar y crear modelos
     bool loadModel(const std::string& path);
-    void createCube(float size);
-    void createSphere(float radius, int segments, int rings);
     void draw();
 
     // Métodos de transformación
@@ -29,17 +32,20 @@ public:
     void setMaterial(const Material& material);
     Material getMaterial() const;
 
-    // Métodos para obtener y establecer el nombre
-    std::string getName() const;
-    void setName(const std::string& name);
-
 private:
-    std::string name;     // Añade la variable de nombre
+    std::string name;     // Nombre del objeto
     ModelLoader modelLoader;
-    glm::vec3 position;   // Variable de posición
-    glm::vec3 scale;      // Variable de escala
-    glm::vec3 rotation;   // Variable de rotación
-    Material material;    // Variable de material
+    glm::vec3 position;   // Posición del objeto
+    glm::vec3 scale;      // Escala del objeto
+    glm::vec3 rotation;   // Rotación del objeto
+    Material material;    // Material del objeto
+
+    static int nextId;    // Contador estático de instancias
+    static std::unordered_set<std::string> generatedNames; // Conjunto de nombres generados
+    int id;               // ID único de cada GameObject
+
+    // Método para asegurar que el nombre es único
+    static std::string generateUniqueName();
 };
 
 #endif // GAMEOBJECT_H

@@ -62,11 +62,11 @@ static bool processEvents(Camera& camera, float deltaTime) {
                 camera.enableFPSMode(false);
             }
             break;
-        case SDL_MOUSEMOTION:
+        /*case SDL_MOUSEMOTION:
             if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
                 camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
             }
-            break;
+            break;*/
         case SDL_MOUSEWHEEL:
             camera.processMouseScroll(event.wheel.y);
             break;
@@ -84,11 +84,12 @@ int main(int argc, char** argv) {
     std::vector<std::unique_ptr<GameObject>> gameObjects;  // Lista de objetos del juego
     HierarchyPanel hierarchyPanel;                         // Panel de jerarquía
 
-    auto gameObject1 = std::make_unique<GameObject>();
+    auto gameObject1 = std::make_unique<GameObject>();  // Esto creará GameObject_1
     gameObject1->loadModel("BakerHouse.fbx");
 
-    auto gameObject2 = std::make_unique<GameObject>();
+    auto gameObject2 = std::make_unique<GameObject>();  // Esto creará GameObject_2
     gameObject2->loadModel("masterchief.fbx");
+
 
     Material material;
     material.loadTexture("Baker_house.png");
@@ -98,6 +99,7 @@ int main(int argc, char** argv) {
 
     gameObjects.push_back(std::move(gameObject1));         // Agrega el GameObject a la lista
     gameObjects.push_back(std::move(gameObject2));
+
     WindowEditor editor;
     Camera camera;
     float deltaTime = 0.0f;
