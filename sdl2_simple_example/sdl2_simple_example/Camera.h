@@ -18,7 +18,6 @@ public:
     void resetFocus(const glm::vec3& targetPosition);
     void processMousePan(float xoffset, float yoffset);
 
-
     void enableFPSMode(bool enable);
     bool isFPSModeEnabled() const;
 
