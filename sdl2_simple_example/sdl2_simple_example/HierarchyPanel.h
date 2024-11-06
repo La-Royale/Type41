@@ -14,5 +14,5 @@ public:
     void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 private:
-    // Estructuras necesarias para el log
+    GameObject* selectedGameObject;
 };
