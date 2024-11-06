@@ -19,41 +19,6 @@ bool ModelLoader::loadModel(const std::string& path) {
     return true;
 }
 
-void ModelLoader::createCube(float size) {
-    primitiveVertices = {
-        {-size, -size, -size, 0, 0, -1, 0, 0}, {size, -size, -size, 0, 0, -1, 1, 0}, {size, size, -size, 0, 0, -1, 1, 1},
-        {-size, -size, -size, 0, 0, -1, 0, 0}, {size, size, -size, 0, 0, -1, 1, 1}, {-size, size, -size, 0, 0, -1, 0, 1},
-        // Añade los otros lados del cubo con sus UVs correspondientes
-    };
-}
-
-void ModelLoader::createSphere(float radius, int segments, int rings) {
-    primitiveVertices.clear();
-    for (int i = 0; i <= rings; i++) {
-        float theta = i * 3.14f / rings;
-        float sinTheta = sin(theta);
-        float cosTheta = cos(theta);
-
-        for (int j = 0; j <= segments; j++) {
-            float phi = j * 2 * 3.14f / segments;
-            float sinPhi = sin(phi);
-            float cosPhi = cos(phi);
-
-            Vertex vertex;
-            vertex.x = radius * sinTheta * cosPhi;
-            vertex.y = radius * cosTheta;
-            vertex.z = radius * sinTheta * sinPhi;
-            vertex.nx = vertex.x;
-            vertex.ny = vertex.y;
-            vertex.nz = vertex.z;
-            vertex.u = (float)j / segments;
-            vertex.v = (float)i / rings;
-
-            primitiveVertices.push_back(vertex);
-        }
-    }
-}
-
 void ModelLoader::drawModel() {
     if (scene) {
         drawNode(scene->mRootNode, scene);

@@ -18,8 +18,6 @@ public:
     ModelLoader();
     ~ModelLoader();
     bool loadModel(const std::string& path);
-    void createCube(float size);
-    void createSphere(float radius, int segments, int rings);
     void drawModel();
     const aiScene* getScene() const;
 
