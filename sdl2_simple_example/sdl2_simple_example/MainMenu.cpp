@@ -9,14 +9,15 @@
 #include <SDL2/SDL.h>
 #include "GameObject.h"
 
+
+
 void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("Primitive")) {
                 if (ImGui::MenuItem("Cube")) {
-                    GameObject cubeObject;
-                    cubeObject.createCube(1.0f);
+
                 }
                 if (ImGui::MenuItem("Sphere")) {
 
