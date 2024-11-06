@@ -57,14 +57,17 @@ static bool processEvents(Camera& camera, float deltaTime) {
                 camera.enableFPSMode(false);
             }
             break;
-        case SDL_MOUSEMOTION:
-            if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
-                camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
-            }
-            else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
-                camera.processMousePan(event.motion.xrel, event.motion.yrel); // Movimiento 2D al pulsar la rueda
-            }
-            break;
+
+        // ES LO QUE DA ERROR AL MOVER LA INTERFAZ , SI SE DESCOMENTA VA LA CAMARA BIEN PERO NO SE MUEVE LA INTERFAZ
+           
+        //case SDL_MOUSEMOTION:
+        //    if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+        //        camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
+        //    }
+        //    else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+        //        camera.processMousePan(event.motion.xrel, event.motion.yrel); // Movimiento 2D al pulsar la rueda
+        //    }
+        //    break;
         case SDL_MOUSEWHEEL:
             camera.processMouseScroll(event.wheel.y); // Zoom con la rueda del ratón
             break;
