@@ -6,25 +6,14 @@ HierarchyPanel::~HierarchyPanel() {}
 void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     ImGui::Begin("Hierarchy");
 
-    // Iterar sobre todos los GameObjects y mostrar sus nombres como elementos seleccionables
+    // Iterar sobre todos los GameObjects en la lista y mostrar su nombre
     for (const auto& gameObject : gameObjects) {
-        // Obtén el nombre del GameObject
         const std::string& name = gameObject->getName();
-
-        // Crear un identificador único que combine el nombre y la dirección de memoria del objeto
-        std::string uniqueID = name + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(gameObject.get()));
-
-        // Verifica si el objeto actual es el seleccionado
         bool isSelected = (gameObject.get() == selectedGameObject);
 
-        // Crea el selectable usando el identificador único
-        if (ImGui::Selectable(uniqueID.c_str(), isSelected)) {
-            selectedGameObject = gameObject.get();  // Actualiza la selección
-        }
-
-        // Si el GameObject está seleccionado, se marcará con un cuadro alrededor del nombre
-        if (isSelected) {
-            ImGui::SetItemDefaultFocus();  // Establece el foco por defecto al seleccionar un elemento
+        // Si se selecciona un GameObject, lo guardamos como seleccionado
+        if (ImGui::Selectable(name.c_str(), isSelected)) {
+            selectedGameObject = gameObject.get();
         }
     }
 
@@ -34,24 +23,25 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
     if (selectedGameObject) {
         ImGui::Begin("Inspector");
 
-        // Mostrar posición con controles interactivos
+        // Mostrar la posición con sliders
         glm::vec3 position = selectedGameObject->getPosition();
-        if (ImGui::DragFloat3("Position", &position.x, 0.1f)) {
+        if (ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f)) {
             selectedGameObject->setPosition(position);
         }
 
-        // Mostrar rotación con controles interactivos
+        // Mostrar rotación con sliders
         glm::vec3 rotation = selectedGameObject->getRotation();
-        if (ImGui::DragFloat3("Rotation", &rotation.x, 0.1f)) {
+        if (ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f)) {
             selectedGameObject->setRotation(rotation);
         }
 
-        // Mostrar escala con controles interactivos
+        // Mostrar escala con sliders
         glm::vec3 scale = selectedGameObject->getScale();
-        if (ImGui::DragFloat3("Scale", &scale.x, 0.1f)) {
+        if (ImGui::SliderFloat3("Scale", &scale.x, 0.1f, 10.0f)) {
             selectedGameObject->setScale(scale);
         }
 
         ImGui::End();
     }
 }
+

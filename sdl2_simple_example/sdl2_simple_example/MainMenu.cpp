@@ -8,8 +8,11 @@
 #include "imgui_impl_opengl3.h"
 #include <SDL2/SDL.h>
 #include "GameObject.h"
+#include <memory>
+#include <vector>
+#include <iostream>
 
-
+std::vector<std::unique_ptr<GameObject>> gameObjects;
 
 void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
     if (ImGui::BeginMainMenuBar()) {
@@ -42,7 +45,7 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
                 }
                 ImGui::EndMenu();
             }
-            
+
             ImGui::Separator();
             if (ImGui::MenuItem("Exit")) {
                 SDL_Event quit_event;

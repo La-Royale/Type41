@@ -1,14 +1,31 @@
-#pragma once
-#include "imgui.h"
+// ConsolePanel.h
+#ifndef CONSOLE_PANEL_H
+#define CONSOLE_PANEL_H
+
+#include <vector>
+#include <string>
+#include "imgui.h"  // Asegúrate de incluir ImGui para los métodos gráficos
+
+// Enum para los diferentes tipos de log
+enum LogType {
+    INFO,
+    WARNING,
+    ERROR
+};
 
 class ConsolePanel {
 public:
-    ConsolePanel();
-    ~ConsolePanel();
+    ConsolePanel();  // Constructor
+    ~ConsolePanel();  // Destructor
 
-    void Render(); // Renderiza el log de consola
-    void Log(const char* message); // Método para registrar mensajes en consola
+    // Método para renderizar el panel
+    void Render();
+
+    // Método para registrar un mensaje en el log
+    void Log(const char* message, LogType type = INFO);
 
 private:
-    // Estructuras necesarias para el log
+    std::vector<std::string> messages;  // Contenedor de mensajes
 };
+
+#endif  // CONSOLE_PANEL_H

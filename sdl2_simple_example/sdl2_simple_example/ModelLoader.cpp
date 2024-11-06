@@ -1,5 +1,6 @@
 #include <GL/glew.h>
 #include "ModelLoader.h"
+#include "ConsolePanel.h"
 #include <cmath>
 #include <iostream>
 
@@ -10,15 +11,23 @@ ModelLoader::~ModelLoader() {
 }
 
 bool ModelLoader::loadModel(const std::string& path) {
+    // Log de intento de carga
+    ConsolePanel console;
+    console.Log(("Attempting to load model from path: " + path).c_str(), INFO);
+
     scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenUVCoords);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::cerr << "Failed to load model: " << path << std::endl;
+        // Log de error
+        console.Log(("Failed to load model: " + path).c_str(), ERROR);
         return false;
     }
+
+    // Log de éxito
+    console.Log(("Model loaded successfully: " + path).c_str(), INFO);
+
     primitiveVertices.clear();
     return true;
 }
-
 void ModelLoader::drawModel() {
     if (scene) {
         drawNode(scene->mRootNode, scene);
