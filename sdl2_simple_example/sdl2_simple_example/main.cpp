@@ -87,12 +87,17 @@ int main(int argc, char** argv) {
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
 
+    auto gameObject2 = std::make_unique<GameObject>();
+    gameObject2->loadModel("masterchief.fbx");
+
     Material material;
     material.loadTexture("Baker_house.png");
     gameObject1->setMaterial(material);
+    gameObject2->setMaterial(material);
+
 
     gameObjects.push_back(std::move(gameObject1));         // Agrega el GameObject a la lista
-
+    gameObjects.push_back(std::move(gameObject2));
     WindowEditor editor;
     Camera camera;
     float deltaTime = 0.0f;
