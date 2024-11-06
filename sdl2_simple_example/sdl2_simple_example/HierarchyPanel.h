@@ -1,4 +1,3 @@
-// HierarchyPanel.h
 #pragma once
 #include <vector>
 #include <memory>
@@ -10,9 +9,9 @@ public:
     HierarchyPanel();
     ~HierarchyPanel();
 
-    // Modifica Render para aceptar la lista de GameObjects
+    // Renderiza la lista de GameObjects y maneja la selección
     void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
 
 private:
-    // Estructuras necesarias para el log
+    GameObject* selectedGameObject;  // Puntero al GameObject actualmente seleccionado
 };

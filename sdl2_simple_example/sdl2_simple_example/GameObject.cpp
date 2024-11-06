@@ -1,7 +1,7 @@
 #include <GL/glew.h> // Incluye GLEW antes de OpenGL
 #include "GameObject.h"
 
-GameObject::GameObject() : position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f) {}
+GameObject::GameObject(const std::string& name) : name(name), position(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), rotation(0.0f, 0.0f, 0.0f) {}
 
 GameObject::~GameObject() {}
 
@@ -59,4 +59,12 @@ void GameObject::setRotation(const glm::vec3& rot) {
 
 glm::vec3 GameObject::getRotation() const {
     return rotation;
+}
+
+std::string GameObject::getName() const {
+    return "GameObject_" + std::to_string(reinterpret_cast<std::uintptr_t>(this));
+}
+
+void GameObject::setName(const std::string& newName) {
+    name = newName;
 }
