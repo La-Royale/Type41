@@ -11,12 +11,20 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
         // Obtén el nombre del GameObject
         const std::string& name = gameObject->getName();
 
+        // Crear un identificador único que combine el nombre y la dirección de memoria del objeto
+        std::string uniqueID = name + "_" + std::to_string(reinterpret_cast<std::uintptr_t>(gameObject.get()));
+
         // Verifica si el objeto actual es el seleccionado
         bool isSelected = (gameObject.get() == selectedGameObject);
 
-        // Crea un elemento seleccionable. Si se selecciona un GameObject, actualiza selectedGameObject
-        if (ImGui::Selectable(name.c_str(), isSelected)) {
+        // Crea el selectable usando el identificador único
+        if (ImGui::Selectable(uniqueID.c_str(), isSelected)) {
             selectedGameObject = gameObject.get();  // Actualiza la selección
+        }
+
+        // Si el GameObject está seleccionado, se marcará con un cuadro alrededor del nombre
+        if (isSelected) {
+            ImGui::SetItemDefaultFocus();  // Establece el foco por defecto al seleccionar un elemento
         }
     }
 
