@@ -43,7 +43,30 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
             selectedGameObject->setScale(scale);
         }
 
+        ImGui::Separator();
+
+        // Mostrar detalles de la textura (si tiene textura)
+        Material& material = selectedGameObject->getMaterial();
+        if (material.hasLoadedTexture()) {
+            ImGui::Text("Texture Path: %s", material.getTexturePath().c_str());
+            ImGui::Text("Width: %d", material.getTextureWidth());
+            ImGui::Text("Height: %d", material.getTextureHeight());
+
+            static bool showCheckeredTexture = false;
+            if (ImGui::Checkbox("Show Checkered Texture", &showCheckeredTexture)) {
+                if (showCheckeredTexture) {
+                    unsigned int checkeredTexture = Material::generateCheckeredTexture(256, 256);
+                    material.setTexture(checkeredTexture); // Cambia a la textura de cuadros
+                }
+                else {
+                    material.loadTexture(material.getTexturePath()); // Vuelve a cargar la textura original
+                }
+            }
+
+            // Mostrar la textura como una miniatura
+            ImGui::Image((void*)material.getTextureID(), ImVec2(100, 100));
+        }
+
         ImGui::End();
     }
 }
-
