@@ -5,6 +5,12 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include <SDL2/SDL.h>
+#include "GameObject.h"
+#include <memory>
+#include <vector>
+#include <iostream>
+
+extern std::vector<std::unique_ptr<GameObject>> gameObjects;
 
 using namespace std;
 
@@ -64,5 +70,16 @@ void MyWindow::swapBuffers() const {
 
 
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(_window));
+}
+
+void MyWindow::handleFileDrop(const char* filePath) {
+    std::cout << "File dropped: " << filePath << std::endl;
+    auto gameObject = std::make_unique<GameObject>();
+    if (gameObject->loadModel(filePath)) {
+        std::cout << "Model loaded successfully: " << filePath << std::endl;
+        gameObjects.push_back(std::move(gameObject));
+    } else {
+        std::cout << "Failed to load model: " << filePath << std::endl;
+    }
 }
 

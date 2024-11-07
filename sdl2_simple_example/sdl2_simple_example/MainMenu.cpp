@@ -12,8 +12,6 @@
 #include <vector>
 #include <iostream>
 
-std::vector<std::unique_ptr<GameObject>> gameObjects;
-
 void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
     if (ImGui::BeginMainMenuBar()) {
 

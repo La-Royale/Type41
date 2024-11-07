@@ -39,7 +39,9 @@ static void init_openGL() {
     glMatrixMode(GL_MODELVIEW);
 }
 
-static bool processEvents(Camera& camera, float deltaTime) {
+std::vector<std::unique_ptr<GameObject>> gameObjects;  // DefiniciÃ³n de la lista de objetos del juego
+
+static bool processEvents(MyWindow& window, Camera& camera, float deltaTime) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -70,6 +72,11 @@ static bool processEvents(Camera& camera, float deltaTime) {
         case SDL_MOUSEWHEEL:
             camera.processMouseScroll(event.wheel.y);
             break;
+        case SDL_DROPFILE:
+            std::cout << "File drop event detected" << std::endl;
+            window.handleFileDrop(event.drop.file);
+            SDL_free(event.drop.file);
+            break;
         default:
             ImGui_ImplSDL2_ProcessEvent(&event);
         }
@@ -81,13 +88,14 @@ int main(int argc, char** argv) {
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
 
-    std::vector<std::unique_ptr<GameObject>> gameObjects;  // Lista de objetos del juego
-    HierarchyPanel hierarchyPanel;                         // Panel de jerarquía
+    // Lista de objetos del juego
+    // std::vector<std::unique_ptr<GameObject>> gameObjects;  // Lista de objetos del juego
+    HierarchyPanel hierarchyPanel;                         // Panel de jerarquï¿½a
 
-    auto gameObject1 = std::make_unique<GameObject>();  // Esto creará GameObject_1
+    auto gameObject1 = std::make_unique<GameObject>();  // Esto crearï¿½ GameObject_1
     gameObject1->loadModel("BakerHouse.fbx");
 
-    auto gameObject2 = std::make_unique<GameObject>();  // Esto creará GameObject_2
+    auto gameObject2 = std::make_unique<GameObject>();  // Esto crearï¿½ GameObject_2
     gameObject2->loadModel("masterchief.fbx");
 
 
@@ -105,7 +113,7 @@ int main(int argc, char** argv) {
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
 
-    while (processEvents(camera, deltaTime)) {
+    while (processEvents(window, camera, deltaTime)) {
         const auto t0 = hrclock::now();
         deltaTime = chrono::duration<float>(t0 - lastFrame).count();
         lastFrame = t0;
@@ -120,7 +128,7 @@ int main(int argc, char** argv) {
             gameObject->draw();
         }
 
-        // Renderizamos el panel de jerarquía
+        // Renderizamos el panel de jerarquï¿½a
         //hierarchyPanel.Render(gameObjects);
 
         // Renderizamos la interfaz del editor

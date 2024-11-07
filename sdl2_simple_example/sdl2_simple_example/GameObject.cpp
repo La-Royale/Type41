@@ -2,13 +2,13 @@
 #include <GL/glew.h> // Incluye GLEW antes de OpenGL
 #include <unordered_set>
 #include <iostream>
-// Inicialización del contador estático para los IDs únicos
+// Inicializaciï¿½n del contador estï¿½tico para los IDs ï¿½nicos
 int GameObject::nextId = 0;
 std::unordered_set<std::string> GameObject::generatedNames;
 
 GameObject::GameObject(const std::string& customName)
     : id(++nextId), scale(1.0f, 1.0f, 1.0f) { // Asigna una escala por defecto de (1,1,1)
-    // Si no se proporciona un nombre, generamos uno único
+    // Si no se proporciona un nombre, generamos uno ï¿½nico
     name = customName.empty() ? generateUniqueName() : customName;
 }
 
@@ -22,7 +22,7 @@ const std::string& GameObject::getName() const {
 }
 
 void GameObject::setName(const std::string& newName) {
-    // Aseguramos que el nuevo nombre también sea único antes de asignarlo
+    // Aseguramos que el nuevo nombre tambiï¿½n sea ï¿½nico antes de asignarlo
     if (generatedNames.find(newName) == generatedNames.end()) {
         generatedNames.erase(name); // Si el objeto ya tiene un nombre, lo eliminamos del conjunto
         name = newName;
@@ -31,7 +31,14 @@ void GameObject::setName(const std::string& newName) {
 }
 
 bool GameObject::loadModel(const std::string& path) {
-    return modelLoader.loadModel(path);
+    std::cout << "Attempting to load model: " << path << std::endl;
+    bool result = modelLoader.loadModel(path);
+    if (result) {
+        std::cout << "Model loaded: " << path << std::endl;
+    } else {
+        std::cout << "Failed to load model: " << path << std::endl;
+    }
+    return result;
 }
 
 void GameObject::draw() {
@@ -45,9 +52,13 @@ void GameObject::draw() {
 
     modelLoader.drawModel();
     glPopMatrix();
+
+    // Restablecer el estado de OpenGL
+    glDisable(GL_TEXTURE_2D);
+    glColor3f(1.0f, 1.0f, 1.0f); // Restablecer el color a blanco
 }
 
-// Métodos de transformación
+// Mï¿½todos de transformaciï¿½n
 void GameObject::setPosition(const glm::vec3& pos) {
     position = pos;
 }
@@ -72,7 +83,7 @@ glm::vec3 GameObject::getRotation() const {
     return rotation;
 }
 
-// Métodos de material
+// Mï¿½todos de material
 void GameObject::setMaterial(const Material& mat) {
     material = mat;
 }
@@ -81,7 +92,7 @@ Material GameObject::getMaterial() const {
     return material;
 }
 
-// Método para generar un nombre único
+// Mï¿½todo para generar un nombre ï¿½nico
 std::string GameObject::generateUniqueName() {
     std::string uniqueName = "GameObject_" + std::to_string(nextId);
     while (generatedNames.find(uniqueName) != generatedNames.end()) {
