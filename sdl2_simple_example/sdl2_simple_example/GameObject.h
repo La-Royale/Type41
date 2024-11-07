@@ -30,11 +30,8 @@ public:
 
     // Métodos de material
     void setMaterial(const Material& material);
-<<<<<<< Updated upstream
     Material& getMaterial();  // Return a reference to the material
-=======
-    Material& getMaterial();
->>>>>>> Stashed changes
+
 
 private:
     std::string name;     // Nombre del objeto

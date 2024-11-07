@@ -44,16 +44,13 @@ bool Material::loadTexture(const std::string& path) {
     }
 
     hasTexture = true;
-<<<<<<< Updated upstream
     std::cout << "Texture loaded successfully: " << path << " with textureID: " << textureID << std::endl;
-=======
 
     // Guardar la ruta de la textura y el tamaño
     texturePath = path;
     textureWidth = ilGetInteger(IL_IMAGE_WIDTH);
     textureHeight = ilGetInteger(IL_IMAGE_HEIGHT);
 
->>>>>>> Stashed changes
     return true;
 }
 
