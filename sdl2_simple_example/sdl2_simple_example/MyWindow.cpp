@@ -78,7 +78,10 @@ void MyWindow::setDefaultMaterial(const Material& material) {
 
 void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPanel) {
     std::string path(filePath);
-    if (path.substr(path.find_last_of(".") + 1) == "fbx") {
+    std::string extension = path.substr(path.find_last_of(".") + 1);
+    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); // Convert to lowercase
+
+    if (extension == "fbx") {
         std::cout << "File dropped: " << filePath << std::endl;
         auto gameObject = std::make_unique<GameObject>();
         if (gameObject->loadModel(filePath)) {
@@ -87,7 +90,7 @@ void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPan
         } else {
             std::cout << "Failed to load model: " << filePath << std::endl;
         }
-    } else if (path.substr(path.find_last_of(".") + 1) == "png") {
+    } else if (extension == "png" || extension == "dds") {
         GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
         if (selectedGameObject) {
             Material& material = selectedGameObject->getMaterial();
