@@ -8,7 +8,7 @@
 enum LogType {
     INFO,
     WARNING,
-    AAAAA
+    INTRO
 
 };
 

@@ -6,25 +6,26 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include "ConfigPanel.h"
+#include "Logger.h"
 
 TimeManager timeManager;
-
+ConsolePanel* consolePanel;
 WindowEditor::WindowEditor()
-    : consolePanel(), configPanel(), hierarchyPanel(), inspectorPanel(), mainMenu(),
+    : consolePanel(new ConsolePanel()), configPanel(), hierarchyPanel(), inspectorPanel(), mainMenu(),
     showConsole(true), showConfig(true), showHierarchy(true), showInspector(true) {
 
     consolePanel = new ConsolePanel();
     configPanel = new ConfigPanel();
     hierarchyPanel = new HierarchyPanel();
     inspectorPanel = new InspectorPanel();
-
     mainMenu = new MainMenu();
 
-    consolePanel->Log("Inicio del sistema de juego.", INFO);
-    consolePanel->Log("Advertencia: Uso de memoria alto.", WARNING);
-    consolePanel->Log("Info: Jugador ha ingresado a la partida.", INFO);
-    consolePanel->Log("Advertencia: La conexión de red es inestable.", WARNING);
+    Logger::GetInstance().SetConsolePanel(consolePanel);
+
+    // Ahora puedes loguear mensajes
+    Logger::GetInstance().Log("Hello! The libraries on the project were all succesfuly added! You have now 2 game objects on scene!", INTRO);
 }
+
 
 WindowEditor::~WindowEditor() {
     delete consolePanel;
