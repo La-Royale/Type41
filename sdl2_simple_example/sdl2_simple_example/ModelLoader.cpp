@@ -18,7 +18,7 @@ bool ModelLoader::loadModel(const std::string& path) {
     scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenUVCoords);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         // Log de error
-        console.Log(("Failed to load model: " + path).c_str(), ERROR);
+        console.Log(("Failed to load model: " + path).c_str(), WARNING);
         return false;
     }
 

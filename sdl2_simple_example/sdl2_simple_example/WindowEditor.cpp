@@ -19,6 +19,11 @@ WindowEditor::WindowEditor()
     inspectorPanel = new InspectorPanel();
 
     mainMenu = new MainMenu();
+
+    consolePanel->Log("Inicio del sistema de juego.", INFO);
+    consolePanel->Log("Advertencia: Uso de memoria alto.", WARNING);
+    consolePanel->Log("Info: Jugador ha ingresado a la partida.", INFO);
+    consolePanel->Log("Advertencia: La conexión de red es inestable.", WARNING);
 }
 
 WindowEditor::~WindowEditor() {
