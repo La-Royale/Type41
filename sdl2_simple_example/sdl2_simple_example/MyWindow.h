@@ -20,5 +20,6 @@ public:
 	~MyWindow();
 
 	void swapBuffers() const;
+	void handleFileDrop(const char* filePath);
 
 };
