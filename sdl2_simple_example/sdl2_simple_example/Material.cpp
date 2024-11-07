@@ -51,11 +51,11 @@ void Material::use() const {
     if (hasTexture) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        std::cout << "Using texture with textureID: " << textureID << std::endl;
+        //std::cout << "Using texture with textureID: " << textureID << std::endl;
     } else {
         glDisable(GL_TEXTURE_2D);
         glColor3f(defaultColor.r, defaultColor.g, defaultColor.b);
-        std::cout << "Using default color: (" << defaultColor.r << ", " << defaultColor.g << ", " << defaultColor.b << ")" << std::endl;
+        //std::cout << "Using default color: (" << defaultColor.r << ", " << defaultColor.g << ", " << defaultColor.b << ")" << std::endl;
     }
 }
 
