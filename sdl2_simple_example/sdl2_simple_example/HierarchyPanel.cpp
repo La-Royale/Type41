@@ -1,4 +1,5 @@
 #include "HierarchyPanel.h"
+#include <iostream>
 
 HierarchyPanel::HierarchyPanel() : selectedGameObject(nullptr) {}
 HierarchyPanel::~HierarchyPanel() {}
@@ -14,6 +15,7 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
         // Si se selecciona un GameObject, lo guardamos como seleccionado
         if (ImGui::Selectable(name.c_str(), isSelected)) {
             selectedGameObject = gameObject.get();
+            std::cout << "HierarchyPanel -> Selected GameObject: " << selectedGameObject->getName() << std::endl;
         }
     }
 
@@ -23,13 +25,13 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
     if (selectedGameObject) {
         ImGui::Begin("Inspector");
 
-        // Mostrar la posición con sliders
+        // Mostrar la posiciï¿½n con sliders
         glm::vec3 position = selectedGameObject->getPosition();
         if (ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f)) {
             selectedGameObject->setPosition(position);
         }
 
-        // Mostrar rotación con sliders
+        // Mostrar rotaciï¿½n con sliders
         glm::vec3 rotation = selectedGameObject->getRotation();
         if (ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f)) {
             selectedGameObject->setRotation(rotation);

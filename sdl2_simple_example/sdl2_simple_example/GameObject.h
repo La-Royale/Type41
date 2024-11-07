@@ -30,7 +30,7 @@ public:
 
     // Métodos de material
     void setMaterial(const Material& material);
-    Material getMaterial() const;
+    Material& getMaterial();  // Return a reference to the material
 
 private:
     std::string name;     // Nombre del objeto

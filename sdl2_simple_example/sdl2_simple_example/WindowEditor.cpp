@@ -9,13 +9,12 @@
 
 TimeManager timeManager;
 
-WindowEditor::WindowEditor()
-    : consolePanel(), configPanel(), hierarchyPanel(), inspectorPanel(), mainMenu(),
+WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel)
+    : consolePanel(), configPanel(), hierarchyPanel(hierarchyPanel), inspectorPanel(), mainMenu(),
     showConsole(true), showConfig(true), showHierarchy(true), showInspector(true) {
 
     consolePanel = new ConsolePanel();
     configPanel = new ConfigPanel();
-    hierarchyPanel = new HierarchyPanel();
     inspectorPanel = new InspectorPanel();
 
     mainMenu = new MainMenu();
@@ -23,13 +22,12 @@ WindowEditor::WindowEditor()
     consolePanel->Log("Inicio del sistema de juego.", INFO);
     consolePanel->Log("Advertencia: Uso de memoria alto.", WARNING);
     consolePanel->Log("Info: Jugador ha ingresado a la partida.", INFO);
-    consolePanel->Log("Advertencia: La conexión de red es inestable.", WARNING);
+    consolePanel->Log("Advertencia: La conexiï¿½n de red es inestable.", WARNING);
 }
 
 WindowEditor::~WindowEditor() {
     delete consolePanel;
     delete configPanel;
-    delete hierarchyPanel;
     delete inspectorPanel;
     delete mainMenu;
 }
@@ -53,7 +51,7 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
         configPanel->Render();
     }
     if (showHierarchy) {
-        hierarchyPanel->Render(gameObjects);  // Pasamos el vector de GameObjects
+        hierarchyPanel.Render(gameObjects);  // Pasamos el vector de GameObjects
     }
 
     if (showInspector) {

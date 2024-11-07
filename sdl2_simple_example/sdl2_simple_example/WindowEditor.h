@@ -10,7 +10,7 @@
 
 class WindowEditor {
 public:
-    WindowEditor();
+    WindowEditor(HierarchyPanel& hierarchyPanel);
     ~WindowEditor();
     float inspectorHeight = 300.0f;
     void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
@@ -19,7 +19,7 @@ public:
 private:
     ConsolePanel* consolePanel;
     ConfigPanel* configPanel;
-    HierarchyPanel* hierarchyPanel;
+    HierarchyPanel& hierarchyPanel;
     InspectorPanel* inspectorPanel;
     MainMenu* mainMenu;
 

@@ -9,8 +9,9 @@ public:
     HierarchyPanel();
     ~HierarchyPanel();
 
-    // Renderiza la lista de GameObjects y maneja la selección
+    // Renderiza la lista de GameObjects y maneja la selecciï¿½n
     void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+    GameObject* getSelectedGameObject() const { return selectedGameObject; }
 
 private:
     GameObject* selectedGameObject;  // Puntero al GameObject actualmente seleccionado
