@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "Material.h"
 
 struct SDL_Window;
 
@@ -21,5 +22,9 @@ public:
 
 	void swapBuffers() const;
 	void handleFileDrop(const char* filePath);
+	void setDefaultMaterial(const Material& material);
+
+private:
+	Material _defaultMaterial;
 
 };

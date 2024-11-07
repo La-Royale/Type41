@@ -48,6 +48,10 @@ void MyWindow::swapBuffers() const {
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(_window));
 }
 
+void MyWindow::setDefaultMaterial(const Material& material) {
+    _defaultMaterial = material;
+}
+
 void MyWindow::handleFileDrop(const char* filePath) {
     std::cout << "File dropped: " << filePath << std::endl;
     auto gameObject = std::make_unique<GameObject>();

@@ -11,6 +11,10 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <string>
+
+extern std::vector<std::unique_ptr<GameObject>> gameObjects;
+extern Material defaultMaterial;
 
 void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
     if (ImGui::BeginMainMenuBar()) {
@@ -18,28 +22,46 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
         if (ImGui::BeginMenu("File")) {
             if (ImGui::BeginMenu("Primitive")) {
                 if (ImGui::MenuItem("Cube")) {
-
+                    auto gameObject = std::make_unique<GameObject>();
+                    if (gameObject->loadModel("Primitives/Cube.fbx")) {
+                        gameObject->setMaterial(defaultMaterial);
+                        gameObjects.push_back(std::move(gameObject));
+                    }
                 }
                 if (ImGui::MenuItem("Sphere")) {
-
+                    auto gameObject = std::make_unique<GameObject>();
+                    if (gameObject->loadModel("Primitives/Sphere.fbx")) {
+                        gameObject->setMaterial(defaultMaterial);
+                        gameObjects.push_back(std::move(gameObject));
+                    }
                 }
                 if (ImGui::MenuItem("Plane")) {
-
+                    auto gameObject = std::make_unique<GameObject>();
+                    if (gameObject->loadModel("Primitives/Plane.fbx")) {
+                        gameObject->setMaterial(defaultMaterial);
+                        gameObjects.push_back(std::move(gameObject));
+                    }
                 }
                 if (ImGui::MenuItem("Cylinder")) {
-
+                    auto gameObject = std::make_unique<GameObject>();
+                    if (gameObject->loadModel("Primitives/Cylinder.fbx")) {
+                        gameObject->setMaterial(defaultMaterial);
+                        gameObjects.push_back(std::move(gameObject));
+                    }
                 }
                 if (ImGui::MenuItem("Cone")) {
-
+                    auto gameObject = std::make_unique<GameObject>();
+                    if (gameObject->loadModel("Primitives/Cone.fbx")) {
+                        gameObject->setMaterial(defaultMaterial);
+                        gameObjects.push_back(std::move(gameObject));
+                    }
                 }
                 if (ImGui::MenuItem("Torus")) {
-
-                }
-                if (ImGui::MenuItem("Pyramid")) {
-
-                }
-                if (ImGui::MenuItem("Capsule")) {
-
+                    auto gameObject = std::make_unique<GameObject>();
+                    if (gameObject->loadModel("Primitives/Torus.fbx")) {
+                        gameObject->setMaterial(defaultMaterial);
+                        gameObjects.push_back(std::move(gameObject));
+                    }
                 }
                 ImGui::EndMenu();
             }

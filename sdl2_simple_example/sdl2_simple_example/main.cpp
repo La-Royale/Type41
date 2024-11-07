@@ -41,6 +41,8 @@ static void init_openGL() {
 
 std::vector<std::unique_ptr<GameObject>> gameObjects;  // Definición de la lista de objetos del juego
 
+Material defaultMaterial;
+
 static bool processEvents(MyWindow& window, Camera& camera, float deltaTime) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
@@ -87,6 +89,10 @@ static bool processEvents(MyWindow& window, Camera& camera, float deltaTime) {
 int main(int argc, char** argv) {
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
+
+    // Initialize default material
+    defaultMaterial.setDefaultColor(glm::vec3(0.8f, 0.8f, 0.8f));
+    window.setDefaultMaterial(defaultMaterial);
 
     // Lista de objetos del juego
     // std::vector<std::unique_ptr<GameObject>> gameObjects;  // Lista de objetos del juego
