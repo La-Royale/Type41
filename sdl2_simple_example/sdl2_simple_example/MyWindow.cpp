@@ -76,14 +76,29 @@ void MyWindow::setDefaultMaterial(const Material& material) {
     _defaultMaterial = material;
 }
 
-void MyWindow::handleFileDrop(const char* filePath) {
-    std::cout << "File dropped: " << filePath << std::endl;
-    auto gameObject = std::make_unique<GameObject>();
-    if (gameObject->loadModel(filePath)) {
-        std::cout << "Model loaded successfully: " << filePath << std::endl;
-        gameObjects.push_back(std::move(gameObject));
-    } else {
-        std::cout << "Failed to load model: " << filePath << std::endl;
+void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPanel) {
+    std::string path(filePath);
+    if (path.substr(path.find_last_of(".") + 1) == "fbx") {
+        std::cout << "File dropped: " << filePath << std::endl;
+        auto gameObject = std::make_unique<GameObject>();
+        if (gameObject->loadModel(filePath)) {
+            std::cout << "Model loaded successfully: " << filePath << std::endl;
+            gameObjects.push_back(std::move(gameObject));
+        } else {
+            std::cout << "Failed to load model: " << filePath << std::endl;
+        }
+    } else if (path.substr(path.find_last_of(".") + 1) == "png") {
+        GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+        if (selectedGameObject) {
+            Material& material = selectedGameObject->getMaterial();
+            if (material.loadTexture(filePath)) {
+                std::cout << "Texture loaded and set successfully: " << filePath << std::endl;
+            } else {
+                std::cout << "Failed to load texture: " << filePath << std::endl;
+            }
+        } else {
+            std::cout << "No GameObject selected to set the texture." << std::endl;
+        }
     }
 }
 

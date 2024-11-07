@@ -88,7 +88,7 @@ void GameObject::setMaterial(const Material& mat) {
     material = mat;
 }
 
-Material GameObject::getMaterial() const {
+Material& GameObject::getMaterial() {
     return material;
 }
 

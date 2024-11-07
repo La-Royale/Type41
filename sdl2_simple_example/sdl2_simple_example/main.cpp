@@ -44,7 +44,7 @@ std::vector<std::unique_ptr<GameObject>> gameObjects;  // Definición de la list
 
 Material defaultMaterial;
 
-static bool processEvents(MyWindow& window, Camera& camera, float deltaTime) {
+static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hierarchyPanel, float deltaTime) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
@@ -77,7 +77,7 @@ static bool processEvents(MyWindow& window, Camera& camera, float deltaTime) {
             break;
         case SDL_DROPFILE:
             std::cout << "File drop event detected" << std::endl;
-            window.handleFileDrop(event.drop.file);
+            window.handleFileDrop(event.drop.file, hierarchyPanel);
             SDL_free(event.drop.file);
             break;
         default:
@@ -116,12 +116,12 @@ int main(int argc, char** argv) {
     gameObjects.push_back(std::move(gameObject1));         // Agrega el GameObject a la lista
     gameObjects.push_back(std::move(gameObject2));
 
-    WindowEditor editor;
+    WindowEditor editor(hierarchyPanel);
     Camera camera;
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
 
-    while (processEvents(window, camera, deltaTime)) {
+    while (processEvents(window, camera, hierarchyPanel, deltaTime)) {
         const auto t0 = hrclock::now();
         deltaTime = chrono::duration<float>(t0 - lastFrame).count();
         lastFrame = t0;
@@ -135,6 +135,7 @@ int main(int argc, char** argv) {
         for (auto& gameObject : gameObjects) {
             gameObject->draw();
         }
+
 
         // Renderizamos el panel de jerarqu�a
         //hierarchyPanel.Render(gameObjects);

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Material.h"
+#include "HierarchyPanel.h"  // Include the HierarchyPanel header
 
 struct SDL_Window;
 
@@ -21,7 +22,7 @@ public:
 	~MyWindow();
 
 	void swapBuffers() const;
-	void handleFileDrop(const char* filePath);
+	void handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPanel);  // Update method declaration
 	void setDefaultMaterial(const Material& material);
 
 private:
