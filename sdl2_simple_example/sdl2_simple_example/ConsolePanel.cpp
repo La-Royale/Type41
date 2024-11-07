@@ -11,9 +11,20 @@ ConsolePanel::~ConsolePanel() {}
 void ConsolePanel::Render() {
     ImGui::Begin("Console");
 
-    // Mostrar los mensajes en la consola
+    // Mostrar los mensajes en la consola con colores según el tipo de mensaje
     for (const auto& message : messages) {
+        if (message.find("[INFO]") != std::string::npos) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.8f, 1.0f, 1.0f));  // Color azul para INFO
+        }
+        else if (message.find("[WARNING]") != std::string::npos) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.8f, 0.0f, 1.0f));  // Color amarillo para WARNING
+        }
+        else if (message.find("[ERROR]") != std::string::npos) {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));  // Color rojo para ERROR
+        }
+
         ImGui::TextUnformatted(message.c_str());
+        ImGui::PopStyleColor();  // Restaurar el color
     }
 
     ImGui::End();
@@ -28,7 +39,7 @@ void ConsolePanel::Log(const char* message, LogType type) {
         case WARNING:
             formattedMessage = "[WARNING] " + std::string(message);
             break;
-        case ERROR:
+        case AAAAA:
             formattedMessage = "[ERROR] " + std::string(message);
             break;
     }

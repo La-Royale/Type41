@@ -18,6 +18,7 @@
 #include "Camera.h" 
 #include "GameObject.h"
 #include "HierarchyPanel.h"
+#include "ConsolePanel.h"
 
 using namespace std;
 using hrclock = chrono::high_resolution_clock;
@@ -87,6 +88,7 @@ static bool processEvents(MyWindow& window, Camera& camera, float deltaTime) {
 }
 
 int main(int argc, char** argv) {
+
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
 
