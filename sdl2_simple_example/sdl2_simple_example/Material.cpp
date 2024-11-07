@@ -6,6 +6,7 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <string>
+#include <vector>
 
 Material::Material() : textureID(0), hasTexture(false), defaultColor(1.0f, 0.0f, 1.0f) {
     ilInit();
@@ -43,8 +44,47 @@ bool Material::loadTexture(const std::string& path) {
     }
 
     hasTexture = true;
+<<<<<<< Updated upstream
     std::cout << "Texture loaded successfully: " << path << " with textureID: " << textureID << std::endl;
+=======
+
+    // Guardar la ruta de la textura y el tamaño
+    texturePath = path;
+    textureWidth = ilGetInteger(IL_IMAGE_WIDTH);
+    textureHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+
+>>>>>>> Stashed changes
     return true;
+}
+
+
+GLuint Material::generateCheckeredTexture(int width, int height) {
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Crear una textura de cuadros simples
+    std::vector<unsigned char> data(width * height * 4);
+    for (int y = 0; y < height; ++y) {
+        for (int x = 0; x < width; ++x) {
+            unsigned char r = ((x / 32) + (y / 32)) % 2 == 0 ? 255 : 0;
+            unsigned char g = r;
+            unsigned char b = r;
+            unsigned char a = 255;
+            data[(y * width + x) * 4 + 0] = r;
+            data[(y * width + x) * 4 + 1] = g;
+            data[(y * width + x) * 4 + 2] = b;
+            data[(y * width + x) * 4 + 3] = a;
+        }
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    return textureID;
 }
 
 void Material::use() const {
