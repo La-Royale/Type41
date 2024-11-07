@@ -6,23 +6,18 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include "ConfigPanel.h"
+#include "Logger.h"
 
 TimeManager timeManager;
 
 WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel)
-    : consolePanel(), configPanel(), hierarchyPanel(hierarchyPanel), inspectorPanel(), mainMenu(),
+    : consolePanel(new ConsolePanel()), configPanel(new ConfigPanel()), hierarchyPanel(hierarchyPanel), inspectorPanel(new InspectorPanel()), mainMenu(new MainMenu()),
     showConsole(true), showConfig(true), showHierarchy(true), showInspector(true) {
 
-    consolePanel = new ConsolePanel();
-    configPanel = new ConfigPanel();
-    inspectorPanel = new InspectorPanel();
+    Logger::GetInstance().SetConsolePanel(consolePanel);
 
-    mainMenu = new MainMenu();
-
-    consolePanel->Log("Inicio del sistema de juego.", INFO);
-    consolePanel->Log("Advertencia: Uso de memoria alto.", WARNING);
-    consolePanel->Log("Info: Jugador ha ingresado a la partida.", INFO);
-    consolePanel->Log("Advertencia: La conexi�n de red es inestable.", WARNING);
+    // Ahora puedes loguear mensajes
+    Logger::GetInstance().Log("Hello! The libraries on the project were all succesfuly added! You have now 2 game objects on scene!", INTRO);
 }
 
 WindowEditor::~WindowEditor() {
@@ -61,7 +56,6 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
-
 
 void WindowEditor::HandleEvents() {
 }

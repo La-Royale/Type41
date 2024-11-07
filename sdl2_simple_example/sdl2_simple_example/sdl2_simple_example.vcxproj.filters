@@ -110,5 +110,8 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Basico</Filter>
     </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files\Paneles</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

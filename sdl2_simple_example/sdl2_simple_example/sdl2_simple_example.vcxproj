@@ -148,6 +148,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="HierarchyPanel.h" />
     <ClInclude Include="InspectorPanel.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="ModelLoader.h" />
