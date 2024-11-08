@@ -21,13 +21,24 @@ public:
     void drawModel();
     const aiScene* getScene() const;
 
+    bool isShowingTriangleNormals() const { return showTriangleNormals; }
+    bool isShowingFaceNormals() const { return showFaceNormals; }
+
+    void setShowTriangleNormals(bool show);
+    void setShowFaceNormals(bool show);
+
 private:
     void drawNode(aiNode* node, const aiScene* scene);
     void drawPrimitive();
+    void drawTriangleNormals(); // Dibuja normales de triángulo
+    void drawFaceNormals();     // Dibuja normales de cara
 
     Assimp::Importer importer;
     const aiScene* scene;
     std::vector<Vertex> primitiveVertices;
+
+    bool showTriangleNormals = false; // Variable para normales de triángulo
+    bool showFaceNormals = false;     // Variable para normales de cara
 };
 
 #endif // MODELLOADER_H

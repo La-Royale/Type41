@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
+#include "Logger.h"
 
 Material::Material() : textureID(0), hasTexture(false), defaultColor(1.0f, 0.0f, 1.0f) {
     ilInit();
@@ -39,12 +40,12 @@ bool Material::loadTexture(const std::string& path) {
     ilDeleteImages(1, &imageID);
 
     if (textureID == 0) {
-        std::cerr << "Failed to bind texture: " << path << std::endl;
+        Logger::GetInstance().Log("OBJECT INVALID TO ADD", WARNING);
         return false;
     }
 
     hasTexture = true;
-    std::cout << "Texture loaded successfully: " << path << " with textureID: " << textureID << std::endl;
+    Logger::GetInstance().Log("TEXTURE WAS SUCCESFULY ADDED", INFO);
 
     // Guardar la ruta de la textura y el tamaño
     texturePath = path;
