@@ -46,24 +46,28 @@ Material defaultMaterial;
 
 static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hierarchyPanel, float deltaTime) {
     SDL_Event event;
+    bool isAltPressed = false;  // Esta variable controlará el estado de la tecla Alt
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT:
             return false;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_f) {
-                // Verificar si hay un objeto seleccionado
+                // Centrar la cámara en el objeto seleccionado
                 GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
                 if (selectedGameObject) {
-                    // Obtener el tamaño de la malla
                     glm::vec3 meshSize = selectedGameObject->getMeshSize();
-                    // Centrar la cámara en el objeto con el tamaño de la malla
                     camera.resetFocus(selectedGameObject->getPosition(), meshSize);
                 }
             }
             else if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(true);
             }
+            // Detectamos cuando se presiona la tecla Alt
+            else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
+                isAltPressed = true;  // Activamos el estado de Alt
+            }
+            // También procesamos el movimiento WASD aquí, independientemente de Alt
             else {
                 camera.processKeyboard(event.key.keysym.sym, deltaTime);
             }
@@ -72,6 +76,10 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(false);
             }
+            // Detectamos cuando se suelta la tecla Alt
+            else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
+                isAltPressed = false;  // Desactivamos el estado de Alt
+            }
             break;
         case SDL_MOUSEMOTION:
             if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
@@ -79,6 +87,13 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             }
             else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
                 camera.processMousePan(event.motion.xrel, -event.motion.yrel); // Pan con el botón central
+            }
+            else if (isAltPressed && SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+                // Orbitación con el botón izquierdo y ALT
+                GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+                if (selectedGameObject) {
+                    camera.processMouseOrbit(event.motion.xrel, -event.motion.yrel, selectedGameObject->getPosition());
+                }
             }
             ImGui_ImplSDL2_ProcessEvent(&event);
             break;
@@ -96,6 +111,8 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
     }
     return true;
 }
+
+
 
 
 int main(int argc, char** argv) {

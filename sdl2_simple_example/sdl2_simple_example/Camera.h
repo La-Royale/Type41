@@ -17,6 +17,7 @@ public:
     void update(float deltaTime);
     void resetFocus(const glm::vec3& targetPosition, const glm::vec3& meshSize);
     void processMousePan(float xoffset, float yoffset);
+    void processMouseOrbit(float xoffset, float yoffset, const glm::vec3& targetPosition);
 
     void enableFPSMode(bool enable);
     bool isFPSModeEnabled() const;
