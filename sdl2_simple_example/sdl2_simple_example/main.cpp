@@ -40,7 +40,7 @@ static void init_openGL() {
     glMatrixMode(GL_MODELVIEW);
 }
 
-std::vector<std::unique_ptr<GameObject>> gameObjects;  // Definición de la lista de objetos del juego
+std::vector<std::unique_ptr<GameObject>> gameObjects;
 
 Material defaultMaterial;
 
@@ -50,10 +50,16 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
         switch (event.type) {
         case SDL_QUIT:
             return false;
-            break;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_f) {
-                camera.resetFocus(glm::vec3(0.0f));
+                // Verificar si hay un objeto seleccionado
+                GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+                if (selectedGameObject) {
+                    // Obtener el tamaño de la malla
+                    glm::vec3 meshSize = selectedGameObject->getMeshSize();
+                    // Centrar la cámara en el objeto con el tamaño de la malla
+                    camera.resetFocus(selectedGameObject->getPosition(), meshSize);
+                }
             }
             else if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(true);
@@ -67,11 +73,15 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
                 camera.enableFPSMode(false);
             }
             break;
-        /*case SDL_MOUSEMOTION:
+        case SDL_MOUSEMOTION:
             if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
                 camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
             }
-            break;*/
+            else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+                camera.processMousePan(event.motion.xrel, -event.motion.yrel); // Pan con el botón central
+            }
+            ImGui_ImplSDL2_ProcessEvent(&event);
+            break;
         case SDL_MOUSEWHEEL:
             camera.processMouseScroll(event.wheel.y);
             break;
@@ -87,33 +97,29 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
     return true;
 }
 
+
 int main(int argc, char** argv) {
 
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
     init_openGL();
 
-    // Initialize default material
     defaultMaterial.setDefaultColor(glm::vec3(0.8f, 0.8f, 0.8f));
     window.setDefaultMaterial(defaultMaterial);
 
-    // Lista de objetos del juego
-    // std::vector<std::unique_ptr<GameObject>> gameObjects;  // Lista de objetos del juego
-    HierarchyPanel hierarchyPanel;                         // Panel de jerarqu�a
+    HierarchyPanel hierarchyPanel;
 
-    auto gameObject1 = std::make_unique<GameObject>();  // Esto crear� GameObject_1
+    auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
 
-    auto gameObject2 = std::make_unique<GameObject>();  // Esto crear� GameObject_2
+    auto gameObject2 = std::make_unique<GameObject>();
     gameObject2->loadModel("masterchief.fbx");
-
 
     Material material;
     material.loadTexture("Baker_house.png");
     gameObject1->setMaterial(material);
     gameObject2->setMaterial(material);
 
-
-    gameObjects.push_back(std::move(gameObject1));         // Agrega el GameObject a la lista
+    gameObjects.push_back(std::move(gameObject1));
     gameObjects.push_back(std::move(gameObject2));
 
     WindowEditor editor(hierarchyPanel);
@@ -128,6 +134,12 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Actualizamos la proyección según el zoom de la cámara
+        glm::mat4 projection = camera.getProjectionMatrix(float(WINDOW_SIZE.x) / WINDOW_SIZE.y);
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(&projection[0][0]);
+        glMatrixMode(GL_MODELVIEW);
+
         glm::mat4 view = camera.getViewMatrix();
         glLoadMatrixf(&view[0][0]);
 
@@ -136,13 +148,7 @@ int main(int argc, char** argv) {
             gameObject->draw();
         }
 
-
-        // Renderizamos el panel de jerarqu�a
-        //hierarchyPanel.Render(gameObjects);
-
-        // Renderizamos la interfaz del editor
         editor.Render(gameObjects);
-
         window.swapBuffers();
 
         const auto t1 = hrclock::now();

@@ -2,6 +2,8 @@
 #include <GL/glew.h> // Incluye GLEW antes de OpenGL
 #include <unordered_set>
 #include <iostream>
+#include <cfloat>
+
 // Inicializaci�n del contador est�tico para los IDs �nicos
 int GameObject::nextId = 0;
 std::unordered_set<std::string> GameObject::generatedNames;
@@ -98,4 +100,22 @@ std::string GameObject::generateUniqueName() {
     }
     generatedNames.insert(uniqueName);
     return uniqueName;
+}
+
+glm::vec3 GameObject::getMeshSize() const {
+    const aiScene* scene = modelLoader.getScene();
+    glm::vec3 minBound(FLT_MAX), maxBound(-FLT_MAX);
+
+    if (scene) {
+        for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+            aiMesh* mesh = scene->mMeshes[i];
+            for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+                aiVector3D vertex = mesh->mVertices[j];
+                minBound = glm::min(minBound, glm::vec3(vertex.x, vertex.y, vertex.z));
+                maxBound = glm::max(maxBound, glm::vec3(vertex.x, vertex.y, vertex.z));
+            }
+        }
+    }
+
+    return maxBound - minBound;
 }
