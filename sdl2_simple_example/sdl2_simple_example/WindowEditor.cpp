@@ -18,6 +18,7 @@ WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel)
 
     // Ahora puedes loguear mensajes
     Logger::GetInstance().Log("Hello! The libraries on the project were all succesfuly added! You have now 2 game objects on scene!", INTRO);
+    Logger::GetInstance().Log("MONTOTO WE LOVE YOU!!", INTRO);
 }
 
 WindowEditor::~WindowEditor() {
