@@ -45,8 +45,8 @@ void Camera::processMouseScroll(float yoffset) {
 
 void Camera::processMousePan(float xoffset, float yoffset) {
     float panSpeed = mouseSensitivity * 0.05f;
-    position += right * -xoffset * panSpeed;
-    position += up * yoffset * panSpeed;
+    position += right * -xoffset * panSpeed; // Mueve en X
+    position -= up * yoffset * panSpeed;     // Mueve en Y
 }
 
 void Camera::update(float deltaTime) {}

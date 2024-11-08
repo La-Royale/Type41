@@ -70,8 +70,12 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
                 camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
             }
+            else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+                camera.processMousePan(event.motion.xrel, -event.motion.yrel); // Pan con el botón central
+            }
             ImGui_ImplSDL2_ProcessEvent(&event);
             break;
+
         case SDL_MOUSEWHEEL:
             camera.processMouseScroll(event.wheel.y);
             break;
