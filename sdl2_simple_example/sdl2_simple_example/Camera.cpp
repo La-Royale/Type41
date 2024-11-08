@@ -37,11 +37,35 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
     updateCameraVectors();
 }
 
-void Camera::processMouseScroll(float yoffset) {
-    zoom -= yoffset;
-    if (zoom < 1.0f) zoom = 1.0f;
-    if (zoom > 200.0f) zoom = 200.0f;
+void Camera::processMouseOrbit(float xoffset, float yoffset, const glm::vec3& targetPosition) {
+    float orbitSpeed = 1.0f;
+
+    // Modificar el ángulo de la cámara según el movimiento del ratón
+    yaw += xoffset * orbitSpeed;
+    pitch += yoffset * orbitSpeed;
+
+    // Limitar el ángulo de elevación (pitch)
+    if (pitch > 89.0f) pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+    // Calcular la nueva dirección de la cámara basada en la orbita
+    updateCameraVectors();
+
+    // Posicionar la cámara en torno al objeto seleccionado
+    position = targetPosition - front * glm::length(targetPosition - position);
 }
+
+
+void Camera::processMouseScroll(float yoffset) {
+    // Aumentamos o disminuimos la distancia de la cámara, basándonos en el movimiento de la rueda del ratón
+    float zoomSpeed = 0.1f;  // Controla qué tan rápido cambia la distancia
+    position += front * yoffset * zoomSpeed;  // Ajustamos la posición de la cámara a lo largo de la dirección 'front'
+
+    // Limitar la distancia de la cámara
+    if (glm::length(position) < 1.0f) position = glm::normalize(position) * 1.0f;  // No dejar que la cámara se acerque demasiado
+    if (glm::length(position) > 80.0f) position = glm::normalize(position) * 80.0f;  // No dejar que la cámara se aleje demasiado
+}
+
 
 void Camera::processMousePan(float xoffset, float yoffset) {
     float panSpeed = mouseSensitivity * 0.05f;
@@ -53,7 +77,7 @@ void Camera::update(float deltaTime) {}
 
 void Camera::resetFocus(const glm::vec3& targetPosition, const glm::vec3& meshSize) {
     // Calcular la distancia de la cámara en función del tamaño de la malla
-    float distance = glm::length(meshSize) * 1.5f;  // Multiplicamos por un factor para dar espacio
+    float distance = glm::length(meshSize) * 0.2f;  // Multiplicamos por un factor para dar espacio
 
     // Ajustar la posición de la cámara
     position = targetPosition - front * distance;
