@@ -52,7 +52,12 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             return false;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_f) {
-                camera.resetFocus(glm::vec3(0.0f));
+                // Verificar si hay un objeto seleccionado
+                GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+                if (selectedGameObject) {
+                    // Centrar la cámara en el objeto seleccionado
+                    camera.resetFocus(selectedGameObject->getPosition());
+                }
             }
             else if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(true);
