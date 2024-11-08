@@ -15,7 +15,7 @@ public:
     void processMouseScroll(float yoffset);
     void processKeyboard(SDL_Keycode key, float deltaTime);
     void update(float deltaTime);
-    void resetFocus(const glm::vec3& targetPosition);
+    void resetFocus(const glm::vec3& targetPosition, const glm::vec3& meshSize);
     void processMousePan(float xoffset, float yoffset);
 
     void enableFPSMode(bool enable);
