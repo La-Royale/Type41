@@ -51,8 +51,15 @@ void Camera::processMousePan(float xoffset, float yoffset) {
 
 void Camera::update(float deltaTime) {}
 
-void Camera::resetFocus(const glm::vec3& targetPosition) {
-    position = targetPosition - front * 10.0f;
+void Camera::resetFocus(const glm::vec3& targetPosition, const glm::vec3& meshSize) {
+    // Calcular la distancia de la cámara en función del tamaño de la malla
+    float distance = glm::length(meshSize) * 1.5f;  // Multiplicamos por un factor para dar espacio
+
+    // Ajustar la posición de la cámara
+    position = targetPosition - front * distance;
+
+    // Actualizamos los vectores de la cámara
+    updateCameraVectors();
 }
 
 void Camera::enableFPSMode(bool enable) {

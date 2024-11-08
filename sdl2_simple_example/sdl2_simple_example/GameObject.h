@@ -29,9 +29,14 @@ public:
     glm::vec3 getRotation() const;
 
     // Métodos de material
-    void setMaterial(const Material& material);
-    Material& getMaterial();  // Return a reference to the material
+    void setMaterial(const Material& mat);
+    Material& getMaterial();
+
+    // Devuelve el ModelLoader asociado al GameObject
     ModelLoader& getModelLoader();
+
+    // Método para obtener el tamaño de la malla (bounding box)
+    glm::vec3 getMeshSize() const;
 
 private:
     std::string name;     // Nombre del objeto

@@ -55,8 +55,10 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
                 // Verificar si hay un objeto seleccionado
                 GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
                 if (selectedGameObject) {
-                    // Centrar la cámara en el objeto seleccionado
-                    camera.resetFocus(selectedGameObject->getPosition());
+                    // Obtener el tamaño de la malla
+                    glm::vec3 meshSize = selectedGameObject->getMeshSize();
+                    // Centrar la cámara en el objeto con el tamaño de la malla
+                    camera.resetFocus(selectedGameObject->getPosition(), meshSize);
                 }
             }
             else if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
@@ -80,7 +82,6 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             }
             ImGui_ImplSDL2_ProcessEvent(&event);
             break;
-
         case SDL_MOUSEWHEEL:
             camera.processMouseScroll(event.wheel.y);
             break;
@@ -95,6 +96,7 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
     }
     return true;
 }
+
 
 int main(int argc, char** argv) {
 
