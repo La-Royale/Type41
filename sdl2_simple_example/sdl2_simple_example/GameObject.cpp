@@ -31,13 +31,7 @@ void GameObject::setName(const std::string& newName) {
 }
 
 bool GameObject::loadModel(const std::string& path) {
-    std::cout << "Attempting to load model: " << path << std::endl;
     bool result = modelLoader.loadModel(path);
-    if (result) {
-        std::cout << "Model loaded: " << path << std::endl;
-    } else {
-        std::cout << "Failed to load model: " << path << std::endl;
-    }
     return result;
 }
 
@@ -90,6 +84,10 @@ void GameObject::setMaterial(const Material& mat) {
 
 Material& GameObject::getMaterial() {
     return material;
+}
+
+ModelLoader& GameObject::getModelLoader() {
+    return modelLoader; // Devuelve el ModelLoader asociado al GameObject
 }
 
 // M�todo para generar un nombre �nico

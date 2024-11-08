@@ -25,19 +25,17 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
     if (selectedGameObject) {
         ImGui::Begin("Inspector");
 
-        // Mostrar la posici�n con sliders
+        // Mostrar la posición, rotación y escala con sliders
         glm::vec3 position = selectedGameObject->getPosition();
         if (ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f)) {
             selectedGameObject->setPosition(position);
         }
 
-        // Mostrar rotaci�n con sliders
         glm::vec3 rotation = selectedGameObject->getRotation();
         if (ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f)) {
             selectedGameObject->setRotation(rotation);
         }
 
-        // Mostrar escala con sliders
         glm::vec3 scale = selectedGameObject->getScale();
         if (ImGui::SliderFloat3("Scale", &scale.x, 0.1f, 10.0f)) {
             selectedGameObject->setScale(scale);
@@ -56,17 +54,38 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
             if (ImGui::Checkbox("Show Checkered Texture", &showCheckeredTexture)) {
                 if (showCheckeredTexture) {
                     unsigned int checkeredTexture = Material::generateCheckeredTexture(256, 256);
-                    material.setTexture(checkeredTexture); // Cambia a la textura de cuadros
+                    material.setTexture(checkeredTexture);
                 }
                 else {
-                    material.loadTexture(material.getTexturePath()); // Vuelve a cargar la textura original
+                    material.loadTexture(material.getTexturePath());
                 }
             }
 
-            // Mostrar la textura como una miniatura
             ImGui::Image((void*)material.getTextureID(), ImVec2(100, 100));
         }
 
-        ImGui::End();
+        ImGui::Separator();
+
+        // Mostrar información de la malla (si tiene malla)
+        ModelLoader& modelLoader = selectedGameObject->getModelLoader(); // Ahora podemos acceder al ModelLoader
+        const aiScene* scene = modelLoader.getScene();
+        if (scene) {
+            ImGui::Text("Mesh Information:");
+            ImGui::Text("Number of Meshes: %d", scene->mNumMeshes);
+
+            if (ImGui::Button("Show Triangle Normals")) {
+                modelLoader.setShowTriangleNormals(!modelLoader.isShowingTriangleNormals()); // Toggle
+            }
+
+            if (ImGui::Button("Show Face Normals")) {
+                modelLoader.setShowFaceNormals(!modelLoader.isShowingFaceNormals()); // Toggle
+            }
+
+            else {
+                ImGui::Text("No mesh loaded.");
+            }
+
+            ImGui::End();
+        }
     }
 }

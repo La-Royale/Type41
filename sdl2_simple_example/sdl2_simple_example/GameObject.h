@@ -31,7 +31,7 @@ public:
     // Métodos de material
     void setMaterial(const Material& material);
     Material& getMaterial();  // Return a reference to the material
-
+    ModelLoader& getModelLoader();
 
 private:
     std::string name;     // Nombre del objeto

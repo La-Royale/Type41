@@ -9,6 +9,7 @@
 #include <memory>
 #include <vector>
 #include <iostream>
+#include "Logger.h"
 
 extern std::vector<std::unique_ptr<GameObject>> gameObjects;
 
@@ -85,10 +86,7 @@ void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPan
         std::cout << "File dropped: " << filePath << std::endl;
         auto gameObject = std::make_unique<GameObject>();
         if (gameObject->loadModel(filePath)) {
-            std::cout << "Model loaded successfully: " << filePath << std::endl;
             gameObjects.push_back(std::move(gameObject));
-        } else {
-            std::cout << "Failed to load model: " << filePath << std::endl;
         }
     } else if (extension == "png" || extension == "dds") {
         GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
@@ -100,7 +98,7 @@ void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPan
                 std::cout << "Failed to load texture: " << filePath << std::endl;
             }
         } else {
-            std::cout << "No GameObject selected to set the texture." << std::endl;
+            Logger::GetInstance().Log("SELECT AN OBJECT TO ADD A TEXTURE", WARNING);
         }
     }
 }
