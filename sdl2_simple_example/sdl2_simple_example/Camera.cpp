@@ -40,7 +40,7 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 void Camera::processMouseScroll(float yoffset) {
     zoom -= yoffset;
     if (zoom < 1.0f) zoom = 1.0f;
-    if (zoom > 45.0f) zoom = 45.0f;
+    if (zoom > 200.0f) zoom = 200.0f;
 }
 
 void Camera::processMousePan(float xoffset, float yoffset) {
