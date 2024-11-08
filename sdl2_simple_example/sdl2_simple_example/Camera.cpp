@@ -7,8 +7,8 @@ glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
 
 Camera::Camera()
     : position(glm::vec3(0.0f, 0.0f, 3.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)),
-      up(glm::vec3(0.0f, 1.0f, 0.0f)), worldUp(up), yaw(-90.0f), pitch(0.0f),
-      movementSpeed(2.5f), mouseSensitivity(0.1f), zoom(45.0f), fpsMode(false) {
+    up(glm::vec3(0.0f, 1.0f, 0.0f)), worldUp(up), yaw(-90.0f), pitch(0.0f),
+    movementSpeed(2.5f), mouseSensitivity(0.1f), zoom(45.0f), fpsMode(false) {
     updateCameraVectors();
 }
 
@@ -41,21 +41,16 @@ void Camera::processMouseScroll(float yoffset) {
     zoom -= yoffset;
     if (zoom < 1.0f) zoom = 1.0f;
     if (zoom > 45.0f) zoom = 45.0f;
-
 }
 
 void Camera::processMousePan(float xoffset, float yoffset) {
-    float panSpeed = mouseSensitivity * 0.05f; // Ajusta la velocidad de movimiento en 2D
+    float panSpeed = mouseSensitivity * 0.05f;
     position += right * -xoffset * panSpeed;
     position += up * yoffset * panSpeed;
 }
 
+void Camera::update(float deltaTime) {}
 
-void Camera::update(float deltaTime) {
-    if (fpsMode) {
-    }
-}
-//Al pulsar la F (centrar en el gameobject seleccionado)
 void Camera::resetFocus(const glm::vec3& targetPosition) {
     position = targetPosition - front * 10.0f;
 }
