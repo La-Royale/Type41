@@ -94,6 +94,40 @@ void ModelLoader::setShowFaceNormals(bool show) {
 void ModelLoader::drawTriangleNormals() {
     if (!scene) return;
 
+    glPushMatrix();
+    float scale = 0.2f; 
+    glScalef(scale, scale, scale);
+
+    glLineWidth(3.0f); 
+    glColor3f(1.0f, 0.0f, 0.0f);
+
+    glBegin(GL_LINES);
+    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+        aiMesh* mesh = scene->mMeshes[i];
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            aiFace& face = mesh->mFaces[j];
+            for (unsigned int k = 0; k < face.mNumIndices; k++) {
+                unsigned int index1 = face.mIndices[k];
+                unsigned int index2 = face.mIndices[(k + 1) % face.mNumIndices];
+                aiVector3D vertex1 = mesh->mVertices[index1];
+                aiVector3D vertex2 = mesh->mVertices[index2];
+
+                glVertex3f(vertex1.x, vertex1.y, vertex1.z);
+                glVertex3f(vertex2.x, vertex2.y, vertex2.z);
+            }
+        }
+    }
+    glEnd();
+
+    glLineWidth(1.0f); 
+    glColor3f(1.0f, 1.0f, 1.0f); 
+
+    glPopMatrix();
+}
+
+void ModelLoader::drawFaceNormals() {
+    if (!scene) return;
+
     glBegin(GL_LINES);
     for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[i];
@@ -107,36 +141,6 @@ void ModelLoader::drawTriangleNormals() {
                 glVertex3f(vertex.x, vertex.y, vertex.z);
                 glVertex3f(vertex.x + normal.x * 0.2f, vertex.y + normal.y * 0.2f, vertex.z + normal.z * 0.2f);
             }
-        }
-    }
-    glEnd();
-}
-
-void ModelLoader::drawFaceNormals() {
-    if (!scene) return;
-
-    glBegin(GL_LINES);
-    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-        aiMesh* mesh = scene->mMeshes[i];
-        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
-            aiFace& face = mesh->mFaces[j];
-            aiVector3D centroid(0.0f, 0.0f, 0.0f);
-
-            for (unsigned int k = 0; k < face.mNumIndices; k++) {
-                unsigned int index = face.mIndices[k];
-                centroid += mesh->mVertices[index];
-            }
-            centroid /= (float)face.mNumIndices;
-
-            aiVector3D faceNormal(0.0f, 0.0f, 0.0f);
-            for (unsigned int k = 0; k < face.mNumIndices; k++) {
-                unsigned int index = face.mIndices[k];
-                faceNormal += mesh->mNormals[index];
-            }
-            faceNormal.Normalize();
-
-            glVertex3f(centroid.x, centroid.y, centroid.z);
-            glVertex3f(centroid.x-10 + faceNormal.x-10 * 0.2f, centroid.y-10 + faceNormal.y-10 * 0.2f, centroid.z-10 + faceNormal.z-10 * 0.2f);
         }
     }
     glEnd();
