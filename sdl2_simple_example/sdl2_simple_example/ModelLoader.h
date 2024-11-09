@@ -39,6 +39,7 @@ private:
 
     bool showTriangleNormals = false; // Variable para normales de triángulo
     bool showFaceNormals = false;     // Variable para normales de cara
+    std::vector<std::vector<unsigned int>> originalQuads;
 };
 
 #endif // MODELLOADER_H
