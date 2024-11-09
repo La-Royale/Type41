@@ -10,13 +10,20 @@
 
 TimeManager timeManager;
 
-WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel)
-    : consolePanel(new ConsolePanel()), configPanel(new ConfigPanel()), hierarchyPanel(hierarchyPanel), inspectorPanel(new InspectorPanel()), mainMenu(new MainMenu()),
-    showConsole(true), showConfig(true), showHierarchy(true), showInspector(true) {
+WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
+    : consolePanel(new ConsolePanel()),
+    configPanel(new ConfigPanel(window)),  // Pasamos 'window' a ConfigPanel
+    hierarchyPanel(hierarchyPanel),
+    inspectorPanel(new InspectorPanel()),
+    mainMenu(new MainMenu()),
+    showConsole(true),
+    showConfig(true),
+    showHierarchy(true),
+    showInspector(true) {
 
     Logger::GetInstance().SetConsolePanel(consolePanel);
 
-    // Ahora puedes loguear mensajes
+    // Mensajes de log
     Logger::GetInstance().Log("Hello! The libraries on the project were all succesfuly added! You have now 2 game objects on scene!", INTRO);
     Logger::GetInstance().Log("MONTOTO WE LOVE YOU!!", INTRO);
 }
