@@ -16,6 +16,7 @@ public:
     // Nuevos métodos para obtener la textura y sus dimensiones
     unsigned int getTextureID() const { return textureID; }
     bool hasLoadedTexture() const { return hasTexture; }
+
     int getTextureWidth() const { return textureWidth; }
     int getTextureHeight() const { return textureHeight; }
 
@@ -27,6 +28,7 @@ public:
     static unsigned int generateCheckeredTexture(int width, int height);
 
 private:
+
     unsigned int textureID;
     bool hasTexture;
     glm::vec3 defaultColor;

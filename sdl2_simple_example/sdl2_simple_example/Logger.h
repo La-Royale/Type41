@@ -12,15 +12,15 @@ public:
         return instance;
     }
 
-    // Método para enviar un mensaje al console panel
+
     void Log(const std::string& message, LogType type) {
-        std::cout << "Logger: Enviando mensaje: " << message << std::endl;  // Debug
+
         if (consolePanel) {
-            std::cout << "ConsolePanel está asignado. Enviando log..." << std::endl;  // Debug
+            //std::cout << "ConsolePanel está asignado. Enviando log..." << std::endl;  // Debug
             consolePanel->Log(message.c_str(), type);  // Pasa el mensaje a ConsolePanel
         }
         else {
-            std::cout << "ConsolePanel no está asignado" << std::endl;  // Debug
+            //std::cout << "ConsolePanel no está asignado" << std::endl;  // Debug
         }
     }
 
