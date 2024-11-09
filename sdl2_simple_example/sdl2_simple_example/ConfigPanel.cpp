@@ -1,20 +1,18 @@
 #include "ConfigPanel.h"
 #include "imgui.h"
+#include <SDL2/SDL.h>  // Asegúrate de incluir el header de SDL2
 #include <GL/glew.h>
 #include <GL/gl.h>
-#include <SDL2/SDL.h>
-#include <IL/il.h> // DevIL
-#include <string>
 #include <vector>
 
+// Asegúrate de incluir el encabezado de Windows si estás usando funciones de memoria de Windows
 #ifdef _WIN32
-#include <windows.h> // Para GlobalMemoryStatusEx
+#include <windows.h>
 #endif
 
-ConfigPanel::ConfigPanel() {}
-
+// Constructor de ConfigPanel
+ConfigPanel::ConfigPanel(MyWindow* window) : _window(window) {}
 ConfigPanel::~ConfigPanel() {}
-
 void ConfigPanel::UpdateFPS(float fps) {
     frameCount++;
 
@@ -44,7 +42,6 @@ void ConfigPanel::Render() {
     ImGui::Text("Software Versions");
     ImGui::Text("SDL Version: %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
     ImGui::Text("OpenGL Version: %s", glGetString(GL_VERSION));
-    ImGui::Text("DevIL Version: %d", IL_VERSION);
 
     // Información de hardware
     ImGui::Separator();
@@ -65,6 +62,41 @@ void ConfigPanel::Render() {
 #else
     ImGui::Text("Memory information not available on this platform.");
 #endif
+
+    // Separador
+    ImGui::Separator();
+
+    // Agregar un combo-box para seleccionar la resolución
+    ImGui::Text("Change Window Resolution:");
+
+    const char* resolutions[] = {
+        "1600x900 (ORIGINAL)",  // Resolución original
+        "1280x720",  // Resolución 720p
+        "1920x1080", // Resolución 1080p
+        "2560x1440"  // Resolución 1440p
+    };
+
+    static int selectedResolution = 0; // Índice seleccionado en el combo-box
+
+    // Si la selección cambia, ajustamos el tamaño de la ventana
+    if (ImGui::Combo("##Resolution", &selectedResolution, resolutions, IM_ARRAYSIZE(resolutions))) {
+        switch (selectedResolution) {
+        case 0:
+            SDL_SetWindowSize(_window->getWindow(), 1600, 900);  // 1600x900
+            break;
+        case 1:
+            SDL_SetWindowSize(_window->getWindow(), 1280, 720);  // 1280x720
+            break;
+        case 2:
+            SDL_SetWindowSize(_window->getWindow(), 1920, 1080); // 1920x1080
+            break;
+        case 3:
+            SDL_SetWindowSize(_window->getWindow(), 2560, 1440); // 2560x1440
+            break;
+        default:
+            break;
+        }
+    }
 
     ImGui::End();
 }

@@ -117,33 +117,47 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
 
 int main(int argc, char** argv) {
 
+    // Crear la ventana
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
+
+    // Crear el panel de configuración, pasándole la referencia de la ventana
+    ConfigPanel configPanel(&window);
+
+    // Inicializar OpenGL
     init_openGL();
 
+    // Establecer color por defecto
     defaultMaterial.setDefaultColor(glm::vec3(0.8f, 0.8f, 0.8f));
     window.setDefaultMaterial(defaultMaterial);
 
+    // Crear el panel de jerarquía (debe ser una referencia)
     HierarchyPanel hierarchyPanel;
 
+    // Crear algunos objetos de juego y cargarlos
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("BakerHouse.fbx");
 
     auto gameObject2 = std::make_unique<GameObject>();
     gameObject2->loadModel("masterchief.fbx");
 
+    // Establecer materiales
     Material material;
     material.loadTexture("Baker_house.png");
     gameObject1->setMaterial(material);
     gameObject2->setMaterial(material);
 
+    // Agregar objetos de juego a la lista
     gameObjects.push_back(std::move(gameObject1));
     gameObjects.push_back(std::move(gameObject2));
 
-    WindowEditor editor(hierarchyPanel);
+    // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
+    WindowEditor editor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta
+
     Camera camera;
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
 
+    // Bucle principal de la aplicación
     while (processEvents(window, camera, hierarchyPanel, deltaTime)) {
         const auto t0 = hrclock::now();
         deltaTime = chrono::duration<float>(t0 - lastFrame).count();
@@ -151,7 +165,7 @@ int main(int argc, char** argv) {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Actualizamos la proyección según el zoom de la cámara
+        // Actualizar la proyección de la cámara
         glm::mat4 projection = camera.getProjectionMatrix(float(WINDOW_SIZE.x) / WINDOW_SIZE.y);
         glMatrixMode(GL_PROJECTION);
         glLoadMatrixf(&projection[0][0]);
@@ -160,11 +174,12 @@ int main(int argc, char** argv) {
         glm::mat4 view = camera.getViewMatrix();
         glLoadMatrixf(&view[0][0]);
 
-        // Dibujamos cada GameObject en la escena
+        // Dibujar cada objeto en la escena
         for (auto& gameObject : gameObjects) {
             gameObject->draw();
         }
 
+        // Renderizar el editor de la ventana
         editor.Render(gameObjects);
         window.swapBuffers();
 
