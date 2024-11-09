@@ -31,6 +31,7 @@ Type41 es un motor en 3D realizado con SDL2, OpenGL, glew, DevIL, GLM, Assimp e 
     - A: Mover hacia la izquierda la cámara
     - LSHIFT + W | A | S | D: Duplica la velocidad del movimiento de la cámara
     - MMB Scroll: zoom in || zoom out
+    - MMB Desplazamiento de la cámara
     - ALT+LMB: Orbitar el objeto seleccionado
     - F: Centra la cámara a objeto seleccionado
     
