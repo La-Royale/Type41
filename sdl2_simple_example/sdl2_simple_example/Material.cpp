@@ -3,7 +3,6 @@
 #include <IL/il.h>
 #include <IL/ilu.h>
 #include <IL/ilut.h>
-#include <iostream>
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
@@ -22,46 +21,48 @@ Material::~Material() {
 }
 
 bool Material::loadTexture(const std::string& path) {
-    ILconst_string apath = reinterpret_cast<const ILconst_string>(path.c_str());
+    ilEnable(IL_ORIGIN_SET);
+    ilOriginFunc(IL_ORIGIN_LOWER_LEFT);
 
+    ILconst_string apath = reinterpret_cast<const ILconst_string>(path.c_str());
     ILuint imageID;
     ilGenImages(1, &imageID);
     ilBindImage(imageID);
 
     if (!ilLoadImage(apath)) {
         ILenum error = ilGetError();
-        std::cerr << "Failed to load image: " << path << " - Error: " << iluErrorString(error) << std::endl;
         ilDeleteImages(1, &imageID);
         return false;
     }
 
-    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
-    textureID = ilutGLBindTexImage();
-    ilDeleteImages(1, &imageID);
-
-    if (textureID == 0) {
-        Logger::GetInstance().Log("OBJECT INVALID TO ADD", WARNING);
-        return false;
-    }
-
-    hasTexture = true;
-    Logger::GetInstance().Log("TEXTURE WAS SUCCESFULY ADDED", INFO);
-
-    // Guardar la ruta de la textura y el tamaño
-    texturePath = path;
     textureWidth = ilGetInteger(IL_IMAGE_WIDTH);
     textureHeight = ilGetInteger(IL_IMAGE_HEIGHT);
+    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
-    return true;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureWidth, textureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    ilDeleteImages(1, &imageID);
+
+    int glWidth, glHeight;
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &glWidth);
+    glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &glHeight);
+
+    texturePath = path;
+    hasTexture = (textureID != 0);
+    Logger::GetInstance().Log(hasTexture ? "TEXTURE WAS SUCCESSFULLY ADDED" : "OBJECT INVALID TO ADD", hasTexture ? INFO : WARNING);
+
+    return hasTexture;
 }
-
 
 GLuint Material::generateCheckeredTexture(int width, int height) {
     GLuint textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // Crear una textura de cuadros simples
     std::vector<unsigned char> data(width * height * 4);
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
@@ -89,11 +90,10 @@ void Material::use() const {
     if (hasTexture) {
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        //std::cout << "Using texture with textureID: " << textureID << std::endl;
-    } else {
+    }
+    else {
         glDisable(GL_TEXTURE_2D);
         glColor3f(defaultColor.r, defaultColor.g, defaultColor.b);
-        //std::cout << "Using default color: (" << defaultColor.r << ", " << defaultColor.g << ", " << defaultColor.b << ")" << std::endl;
     }
 }
 
