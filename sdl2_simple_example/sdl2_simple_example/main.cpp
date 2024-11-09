@@ -1,280 +1,207 @@
-	#include <GL/glew.h>
-	#include <chrono>
-	#include <thread>
-	#include <exception>
-	#include <glm/glm.hpp>
-	#include <SDL2/SDL_events.h>
-	#include "MyWindow.h"
-	#include "imgui_impl_sdl2.h"
+#include <GL/glew.h>
+#include <iostream>
+#include <GL/gl.h>
+#include <chrono>
+#include <thread>
+#include <exception>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> 
+#include <SDL2/SDL_events.h>
+#include <memory>
+#include <vector>
 
-	#include <stdio.h>
-	#include <assimp/cimport.h>
-	#include <assimp/scene.h>
-	#include <assimp/postprocess.h>
-	#include <assimp/Importer.hpp>
+#include "MyWindow.h"
+#include "imgui_impl_sdl2.h"
+#include "WindowEditor.h"
+#include "ModelLoader.h"
+#include "Material.h"
+#include "Camera.h" 
+#include "GameObject.h"
+#include "HierarchyPanel.h"
+#include "ConsolePanel.h"
 
+using namespace std;
+using hrclock = chrono::high_resolution_clock;
+using ivec2 = glm::ivec2;
 
-	using namespace std;
+static const ivec2 WINDOW_SIZE(1600, 900);
+static const unsigned int FPS = 60;
+static const auto FRAME_DT = 1.0s / FPS;
 
-	using hrclock = chrono::high_resolution_clock;
-	using u8vec4 = glm::u8vec4;
-	using ivec2 = glm::ivec2;
-	using vec3 = glm::dvec3;
+static void init_openGL() {
+    glewInit();
+    if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.5, 0.5, 0.5, 1.0);
 
-	static const ivec2 WINDOW_SIZE(500, 500);
-	static const unsigned int FPS = 60;
-	static const auto FRAME_DT = 1.0s / FPS;
+    glMatrixMode(GL_PROJECTION);
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), float(WINDOW_SIZE.x) / WINDOW_SIZE.y, 0.1f, 100.0f);
+    glLoadMatrixf(&projection[0][0]);
+    glMatrixMode(GL_MODELVIEW);
+}
 
+std::vector<std::unique_ptr<GameObject>> gameObjects;
 
-	GLubyte checkerImage[256][256][4];
+Material defaultMaterial;
 
-	int _HEIGHT = 256;
-	int _WIDTH = 256;
-	GLuint textureID;
-
-	vector <GLfloat> uv;
-
-	void Start() {
-	
-	
-		for (int i = 0; i < _HEIGHT; i++) {
-			for (int j = 0; j < _WIDTH; j++) {
-				int c = ((((i & 0x8) == 0) ^ (((j & 0x8)) == 0))) * 255;
-				checkerImage[i][j][0] = (GLubyte)c;
-				checkerImage[i][j][1] = (GLubyte)c;
-				checkerImage[i][j][2] = (GLubyte)c;
-				checkerImage[i][j][3] = (GLubyte)255;
-			}
-		}
-
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glGenTextures(1, &textureID);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _WIDTH, _HEIGHT, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, checkerImage);
-	}
-	static void init_openGL() {
-		glewInit();
-		if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.5, 0.5, 0.5, 1.0);
-	}
-
-	static void draw_line(float x1, float y1, float z1, float x2, float y2, float z2) {
-		glLineWidth(2.0f);
-		glBegin(GL_LINES);
-		glColor3f(0.0, 0.0, 0.0);
-		glVertex3f(x1, y1, z1);
-		glVertex3f(x2, y2, z2);
-
-		glEnd();
-	}
-	static void draw_cube(const u8vec4& color, const vec3& center, double size) {
-		//glColor4ub(color.r, color.g, color.b, color.a);
-	
-	
-		double half = size / 2.0;
-		vec3 vertices[8] = {
-			vec3(center.x - half, center.y - half, center.z + half), // V�rtice 0
-			vec3(center.x + half, center.y - half, center.z + half), // V�rtice 1
-			vec3(center.x + half, center.y + half, center.z + half), // V�rtice 2
-			vec3(center.x - half, center.y + half, center.z + half), // V�rtice 3
-			vec3(center.x - half, center.y - half, center.z - half), // V�rtice 4
-			vec3(center.x + half, center.y - half, center.z - half), // V�rtice 5
-			vec3(center.x + half, center.y + half, center.z - half), // V�rtice 6
-			vec3(center.x - half, center.y + half, center.z - half)  // V�rtice 7
-		};
-
-		glBegin(GL_TRIANGLES);
-		// Frente Blanco
-		glColor3f(1.0f, 0.5f, 0.0f);
-		glVertex3dv(&vertices[0].x); glVertex3dv(&vertices[1].x); glVertex3dv(&vertices[2].x);
-		glVertex3dv(&vertices[2].x); glVertex3dv(&vertices[3].x); glVertex3dv(&vertices[0].x);
-		// Derecha
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3dv(&vertices[1].x); glVertex3dv(&vertices[5].x); glVertex3dv(&vertices[6].x);
-		glVertex3dv(&vertices[6].x); glVertex3dv(&vertices[2].x); glVertex3dv(&vertices[1].x);
-		// Atr�s
-		glColor3f(.0f, 0.0f, 1.0f);
-		glVertex3dv(&vertices[5].x); glVertex3dv(&vertices[4].x); glVertex3dv(&vertices[7].x);
-		glVertex3dv(&vertices[7].x); glVertex3dv(&vertices[6].x); glVertex3dv(&vertices[5].x);
-		// Izquierda Naranja
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glVertex3dv(&vertices[4].x); glVertex3dv(&vertices[0].x); glVertex3dv(&vertices[3].x);
-		glVertex3dv(&vertices[3].x); glVertex3dv(&vertices[7].x); glVertex3dv(&vertices[4].x);
-		// Arriba
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3dv(&vertices[3].x); glVertex3dv(&vertices[2].x); glVertex3dv(&vertices[6].x);
-		glVertex3dv(&vertices[6].x); glVertex3dv(&vertices[7].x); glVertex3dv(&vertices[3].x);
-		// Abajo
-		glColor3f(1.0f, 1.0f, 0.0f);
-		glVertex3dv(&vertices[4].x); glVertex3dv(&vertices[5].x); glVertex3dv(&vertices[1].x);
-		glVertex3dv(&vertices[1].x); glVertex3dv(&vertices[0].x); glVertex3dv(&vertices[4].x);
-		glEnd();
-
-	}
-
-
-	//static void draw_triangle(const u8vec4& color, const vec3& center, double size) {
-	//	glColor4ub(color.r, color.g, color.b, color.a);
-	//	glBegin(GL_TRIANGLES);
-	//	glVertex3d(center.x, center.y + size, center.z);
-	//	glVertex3d(center.x - size, center.y - size, center.z);
-	//	glVertex3d(center.x + size, center.y - size, center.z);
-	//	glEnd();
-	//}
-
-	const aiScene* loadFBX(const std::string& filePath) {
-		Assimp::Importer importer;
-		const aiScene* scene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_FlipUVs);
-		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-			printf("ERROR::ASSIMP::%s\n", importer.GetErrorString());
-			return nullptr;
-		}
-		return scene;
-	}
-
-	void drawMesh(aiMesh* mesh, const aiScene* scene) {
-		std::vector<float> vertices;
-		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-			vertices.push_back(mesh->mVertices[i].x);
-			vertices.push_back(mesh->mVertices[i].y);
-			vertices.push_back(mesh->mVertices[i].z);
-
-			if (mesh->HasNormals()) {
-				vertices.push_back(mesh->mNormals[i].x);
-				vertices.push_back(mesh->mNormals[i].y);
-				vertices.push_back(mesh->mNormals[i].z);
-			}
-
-			if (mesh->mTextureCoords[0]) {
-				uv.push_back(mesh->mTextureCoords[0][i].x);
-				uv.push_back(mesh->mTextureCoords[0][i].y);
-			}
-		}
-
-		glEnable(GL_TEXTURE_2D);  // Activa las texturas
-		glBindTexture(GL_TEXTURE_2D, textureID);  // Enlaza la textura cargada
-
-		glBegin(GL_TRIANGLES);
-		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-			aiFace face = mesh->mFaces[i];
-			for (unsigned int j = 0; j < face.mNumIndices; j++) {
-				unsigned int vertexIndex = face.mIndices[j];
-				glTexCoord2f(uv[vertexIndex * 2], uv[vertexIndex * 2 + 1]);  // Coord. de textura
-				glVertex3fv(&vertices[vertexIndex * 3]);  // Coord. de v�rtice
-			}
-		}
-		glEnd();
-
-		glDisable(GL_TEXTURE_2D);  // Desactiva las texturas
-	}
+static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hierarchyPanel, float deltaTime) {
+    SDL_Event event;
+    bool isAltPressed = false;  // Esta variable controlará el estado de la tecla Alt
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
+        case SDL_QUIT:
+            return false;
+        case SDL_KEYDOWN:
+            if (event.key.keysym.sym == SDLK_f) {
+                // Centrar la cámara en el objeto seleccionado
+                GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+                if (selectedGameObject) {
+                    glm::vec3 meshSize = selectedGameObject->getMeshSize();
+                    camera.resetFocus(selectedGameObject->getPosition(), meshSize);
+                }
+            }
+            else if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
+                camera.enableFPSMode(true);
+            }
+            // Detectamos cuando se presiona la tecla Alt
+            else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
+                isAltPressed = true;  // Activamos el estado de Alt
+            }
+            // También procesamos el movimiento WASD aquí, independientemente de Alt
+            else {
+                camera.processKeyboard(event.key.keysym.sym, deltaTime);
+            }
+            break;
+        case SDL_KEYUP:
+            if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
+                camera.enableFPSMode(false);
+            }
+            // Detectamos cuando se suelta la tecla Alt
+            else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
+                isAltPressed = false;  // Desactivamos el estado de Alt
+            }
+            break;
+        case SDL_MOUSEMOTION:
+            if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+                camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
+            }
+            else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
+                camera.processMousePan(event.motion.xrel, -event.motion.yrel); // Pan con el botón central
+            }
+            else if (isAltPressed && SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+                // Orbitación con el botón izquierdo y ALT
+                GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+                if (selectedGameObject) {
+                    camera.processMouseOrbit(event.motion.xrel, -event.motion.yrel, selectedGameObject->getPosition());
+                }
+            }
+            ImGui_ImplSDL2_ProcessEvent(&event);
+            break;
+        case SDL_MOUSEWHEEL:
+            camera.processMouseScroll(event.wheel.y);
+            break;
+        case SDL_DROPFILE:
+            std::cout << "File drop event detected" << std::endl;
+            window.handleFileDrop(event.drop.file, hierarchyPanel);
+            SDL_free(event.drop.file);
+            break;
+        default:
+            ImGui_ImplSDL2_ProcessEvent(&event);
+        }
+    }
+    return true;
+}
 
 
 
-	void processNode(aiNode* node, const aiScene* scene) {
-		for (unsigned int i = 0; i < node->mNumMeshes; i++) {
-			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			drawMesh(mesh, scene);
-		}
-		for (unsigned int i = 0; i < node->mNumChildren; i++) {
-			processNode(node->mChildren[i], scene);
-		}
-	}
+
+int main(int argc, char** argv) {
+
+    // Crear la ventana
+    MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
+
+    // Crear el panel de configuración, pasándole la referencia de la ventana
+    ConfigPanel configPanel(&window);
+
+    // Inicializar OpenGL
+    init_openGL();
+
+    // Establecer color por defecto
+    defaultMaterial.setDefaultColor(glm::vec3(0.8f, 0.8f, 0.8f));
+    window.setDefaultMaterial(defaultMaterial);
+
+    // Crear el panel de jerarquía (debe ser una referencia)
+    HierarchyPanel hierarchyPanel;
+
+    // Crear algunos objetos de juego y cargarlos
+    auto gameObject1 = std::make_unique<GameObject>();
+    gameObject1->loadModel("Assets/Models/BakerHouse.fbx");
+
+    auto gameObject2 = std::make_unique<GameObject>();
+    gameObject2->loadModel("Assets/Models/PremiumHouse.fbx");
+    gameObject2->setPosition(glm::vec3(1.0f, 0.2f, 0.0f));
+    gameObject2->setRotation(glm::vec3(-90.0f, 0.0f, -90.0f));
 
 
-	const char* file = "ht.fbx";
-	const struct aiScene* scene = aiImportFile(file, aiProcess_Triangulate);
+    auto gameObject3 = std::make_unique<GameObject>();
+    gameObject3->loadModel("Assets/Models/AngryDragon.fbx");
+    gameObject3->setPosition(glm::vec3(0.0f, 0.8f, 0.0f));
+    gameObject3->setRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
+    gameObject3->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
 
-	static void DrawFBX() {
-		if (!scene) {
-			fprintf(stderr, "Error al cargar el archivo: %s\n", aiGetErrorString());
-			return;
-		}
+    // Establecer materiales
+    Material material;
+    material.loadTexture("Assets/Textures/Baker_house.png");
+    gameObject1->setMaterial(material);
 
-		for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-			aiMesh* mesh = scene->mMeshes[i];
+    material.loadTexture("Assets/Textures/Premium_house.png");
+    gameObject2->setMaterial(material);    
+    
+    material.loadTexture("Assets/Textures/Angry_dragon.png");
+    gameObject3->setMaterial(material);
 
-			GLuint VAO, VBO;
-			glGenVertexArrays(1, &VAO);
-			glGenBuffers(1, &VBO);
+    // Agregar objetos de juego a la lista
+    gameObjects.push_back(std::move(gameObject1));
+    gameObjects.push_back(std::move(gameObject2));
+    gameObjects.push_back(std::move(gameObject3));
 
-			glBindVertexArray(VAO);
+    // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
+    WindowEditor editor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta
 
-			float multi = 1;
+    Camera camera;
+    float deltaTime = 0.0f;
+    auto lastFrame = hrclock::now();
 
-			// Cargar los v�rtices
-			GLfloat* vertices = new GLfloat[mesh->mNumVertices * 3];
-			for (unsigned int v = 0; v < mesh->mNumVertices; v++) {
-				aiVector3D vertex = mesh->mVertices[v];
-				//mover fbx
-				vertices[v * 3] = vertex.x * multi;
-				vertices[v * 3 + 1] = vertex.z * multi - 0.5;
-				vertices[v * 3 + 2] = vertex.y * multi;
-			}
+    // Bucle principal de la aplicación
+    while (processEvents(window, camera, hierarchyPanel, deltaTime)) {
+        const auto t0 = hrclock::now();
+        deltaTime = chrono::duration<float>(t0 - lastFrame).count();
+        lastFrame = t0;
 
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, mesh->mNumVertices * 3 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-			delete[] vertices;
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
-			glEnableVertexAttribArray(0);
+        // Actualizar la proyección de la cámara
+        glm::mat4 projection = camera.getProjectionMatrix(float(WINDOW_SIZE.x) / WINDOW_SIZE.y);
+        glMatrixMode(GL_PROJECTION);
+        glLoadMatrixf(&projection[0][0]);
+        glMatrixMode(GL_MODELVIEW);
 
-		
+        glm::mat4 view = camera.getViewMatrix();
+        glLoadMatrixf(&view[0][0]);
 
-			// Dibuja la malla
-			glDrawArrays(GL_TRIANGLES, 0, mesh->mNumVertices);
+        // Dibujar cada objeto en la escena
+        for (auto& gameObject : gameObjects) {
+            gameObject->draw();
+        }
 
+        // Renderizar el editor de la ventana
+        editor.Render(gameObjects);
+        window.swapBuffers();
 
-			// Limpiar
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
+        const auto t1 = hrclock::now();
+        const auto dt = t1 - t0;
+        if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
+    }
 
-
-		}
-	}
-
-	static void display_func(const aiScene* scene) {
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//draw_triangle(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 0.2);
-		//draw_cube(u8vec4(255, 0, 0, 255), vec3(0.0, 0.0, 0.0), 1.0);
-		glRotatef(0.8f, 1.0f, 1.0f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		DrawFBX();
-	}
-
-	static bool processEvents() {
-		SDL_Event event;
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-			case SDL_QUIT:
-				return false;
-				break;
-			default:
-				ImGui_ImplSDL2_ProcessEvent(&event);
-			}
-		}
-		return true;
-	}
-
-	int main(int argc, char** argv) {
-		MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
-		init_openGL();
-
-
-		Start();
-
-		while (processEvents()) {
-			const auto t0 = hrclock::now();
-			display_func(scene);  // Pasa la escena cargada
-			window.swapBuffers();
-			const auto t1 = hrclock::now();
-			const auto dt = t1 - t0;
-			if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
-		}
-		return 0;
-	}
+    return 0;
+}

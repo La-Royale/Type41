@@ -5,6 +5,13 @@
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
 #include <SDL2/SDL.h>
+#include "GameObject.h"
+#include <memory>
+#include <vector>
+#include <iostream>
+#include "Logger.h"
+
+extern std::vector<std::unique_ptr<GameObject>> gameObjects;
 
 using namespace std;
 
@@ -64,5 +71,35 @@ void MyWindow::swapBuffers() const {
 
 
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(_window));
+}
+
+void MyWindow::setDefaultMaterial(const Material& material) {
+    _defaultMaterial = material;
+}
+
+void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPanel) {
+    std::string path(filePath);
+    std::string extension = path.substr(path.find_last_of(".") + 1);
+    std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); // Convert to lowercase
+
+    if (extension == "fbx") {
+        std::cout << "File dropped: " << filePath << std::endl;
+        auto gameObject = std::make_unique<GameObject>();
+        if (gameObject->loadModel(filePath)) {
+            gameObjects.push_back(std::move(gameObject));
+        }
+    } else if (extension == "png" || extension == "dds") {
+        GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
+        if (selectedGameObject) {
+            Material& material = selectedGameObject->getMaterial();
+            if (material.loadTexture(filePath)) {
+                std::cout << "Texture loaded and set successfully: " << filePath << std::endl;
+            } else {
+                std::cout << "Failed to load texture: " << filePath << std::endl;
+            }
+        } else {
+            Logger::GetInstance().Log("SELECT AN OBJECT TO ADD A TEXTURE", WARNING);
+        }
+    }
 }
 

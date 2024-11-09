@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AboutPanel.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ConfigPanel.cpp" />
     <ClCompile Include="ConsolePanel.cpp" />
     <ClCompile Include="Editor.cpp" />
@@ -135,16 +135,21 @@
     <ClCompile Include="InspectorPanel.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="MyWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AboutPanel.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ConfigPanel.h" />
     <ClInclude Include="ConsolePanel.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="HierarchyPanel.h" />
     <ClInclude Include="InspectorPanel.h" />
+    <ClInclude Include="Logger.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="MyWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
