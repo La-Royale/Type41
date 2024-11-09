@@ -30,8 +30,8 @@ public:
 private:
     void drawNode(aiNode* node, const aiScene* scene);
     void drawPrimitive();
-    void drawTriangleNormals(); // Dibuja normales de triángulo
-    void drawFaceNormals();     // Dibuja normales de cara
+    void drawTriangleNormals(); 
+    void drawFaceNormals();    
 
     Assimp::Importer importer;
     const aiScene* scene;
