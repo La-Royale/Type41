@@ -4,16 +4,15 @@
 #include <iostream>
 #include <cfloat>
 
-// Inicializaci�n del contador est�tico para los IDs �nicos
+// Inicialización del contador estático para los IDs únicos
 int GameObject::nextId = 0;
 std::unordered_set<std::string> GameObject::generatedNames;
 
-GameObject::GameObject(const std::string& customName)
-    : id(++nextId), scale(1.0f, 1.0f, 1.0f) { // Asigna una escala por defecto de (1,1,1)
-    // Si no se proporciona un nombre, generamos uno �nico
+GameObject::GameObject(const std::string& customName, bool isStatic)
+    : id(++nextId), scale(1.0f, 1.0f, 1.0f), isStatic(isStatic) { // Asigna una escala por defecto de (1,1,1)
+    // Si no se proporciona un nombre, generamos uno único
     name = customName.empty() ? generateUniqueName() : customName;
 }
-
 
 GameObject::~GameObject() {
     generatedNames.erase(name); // Al destruir el objeto, eliminamos su nombre del conjunto
@@ -24,7 +23,7 @@ const std::string& GameObject::getName() const {
 }
 
 void GameObject::setName(const std::string& newName) {
-    // Aseguramos que el nuevo nombre tambi�n sea �nico antes de asignarlo
+    // Aseguramos que el nuevo nombre también sea único antes de asignarlo
     if (generatedNames.find(newName) == generatedNames.end()) {
         generatedNames.erase(name); // Si el objeto ya tiene un nombre, lo eliminamos del conjunto
         name = newName;
@@ -54,9 +53,11 @@ void GameObject::draw() {
     glColor3f(1.0f, 1.0f, 1.0f); // Restablecer el color a blanco
 }
 
-// M�todos de transformaci�n
+// Métodos de transformación
 void GameObject::setPosition(const glm::vec3& pos) {
-    position = pos;
+    if (!isStatic) {
+        position = pos;
+    }
 }
 
 glm::vec3 GameObject::getPosition() const {
@@ -64,7 +65,9 @@ glm::vec3 GameObject::getPosition() const {
 }
 
 void GameObject::setScale(const glm::vec3& scl) {
-    scale = scl;
+    if (!isStatic) {
+        scale = scl;
+    }
 }
 
 glm::vec3 GameObject::getScale() const {
@@ -72,14 +75,16 @@ glm::vec3 GameObject::getScale() const {
 }
 
 void GameObject::setRotation(const glm::vec3& rot) {
-    rotation = rot;
+    if (!isStatic) {
+        rotation = rot;
+    }
 }
 
 glm::vec3 GameObject::getRotation() const {
     return rotation;
 }
 
-// M�todos de material
+// Métodos de material
 void GameObject::setMaterial(const Material& mat) {
     material = mat;
 }
@@ -92,7 +97,7 @@ ModelLoader& GameObject::getModelLoader() {
     return modelLoader; // Devuelve el ModelLoader asociado al GameObject
 }
 
-// M�todo para generar un nombre �nico
+// Método para generar un nombre único
 std::string GameObject::generateUniqueName() {
     std::string uniqueName = "GameObject_" + std::to_string(nextId);
     while (generatedNames.find(uniqueName) != generatedNames.end()) {
@@ -118,4 +123,12 @@ glm::vec3 GameObject::getMeshSize() const {
     }
 
     return maxBound - minBound;
+}
+
+bool GameObject::getStatic() const {
+    return isStatic;
+}
+
+void GameObject::setStatic(bool isStatic) {
+    this->isStatic = isStatic;
 }

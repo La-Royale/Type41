@@ -9,8 +9,8 @@
 
 class GameObject {
 public:
-    // Constructor con nombre opcional. Si no se proporciona, genera uno único.
-    GameObject(const std::string& name = "");
+    // Constructor con nombre opcional y flag isStatic. Si no se proporciona, genera uno único.
+    GameObject(const std::string& name = "", bool isStatic = false);
     ~GameObject();
 
     const std::string& getName() const;
@@ -27,6 +27,9 @@ public:
     glm::vec3 getScale() const;
     void setRotation(const glm::vec3& rotation);
     glm::vec3 getRotation() const;
+
+    bool getStatic() const;
+    void setStatic(bool isStatic);
 
     // Métodos de material
     void setMaterial(const Material& mat);
@@ -45,6 +48,7 @@ private:
     glm::vec3 scale;      // Escala del objeto
     glm::vec3 rotation;   // Rotación del objeto
     Material material;    // Material del objeto
+    bool isStatic;        // Flag para indicar si el objeto es estático
 
     static int nextId;    // Contador estático de instancias
     static std::unordered_set<std::string> generatedNames; // Conjunto de nombres generados

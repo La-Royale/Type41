@@ -101,6 +101,14 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
                 modelLoader.setShowFaceNormals(!modelLoader.isShowingFaceNormals()); // Toggle
             }
 
+            ImGui::Separator();
+
+            // Checkbox for isStatic
+            bool isStatic = selectedGameObject->getStatic();
+            if (ImGui::Checkbox("Is Static", &isStatic)) {
+                selectedGameObject->setStatic(isStatic);
+            }
+
             else {
                 ImGui::Text("No mesh loaded.");
             }
