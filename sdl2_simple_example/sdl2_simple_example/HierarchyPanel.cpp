@@ -22,44 +22,27 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
     ImGui::End();
 
     // Mostrar detalles del GameObject seleccionado en un panel de "Inspector"
-    if (selectedGameObject) {
-        ImGui::Begin("Inspector");
+        if (selectedGameObject) {
 
-        // Mostrar la posición con slider y campo de texto
-        glm::vec3 position = selectedGameObject->getPosition();
-        if (ImGui::SliderFloat3("Position", &position.x, -100.0f, 100.0f)) {
-            selectedGameObject->setPosition(position);
-        }
+            ImGui::Begin("Inspector");
 
-        ImGui::InputFloat("Pos X", &position.x, 0.1f);  // Entrada manual para X
-        ImGui::InputFloat("Pos Y", &position.y, 0.1f);  // Entrada manual para Y
-        ImGui::InputFloat("Pos Z", &position.z, 0.1f);  // Entrada manual para Z
+            // Mostrar la posición con DragFloat3
+            glm::vec3 position = selectedGameObject->getPosition();
+            if (ImGui::DragFloat3("Position", &position.x, 0.1f, -100.0f, 100.0f)) {
+                selectedGameObject->setPosition(position);
+            }
 
-        selectedGameObject->setPosition(position);
+            // Mostrar la rotación con DragFloat3
+            glm::vec3 rotation = selectedGameObject->getRotation();
+            if (ImGui::DragFloat3("Rotation", &rotation.x, 0.1f, -180.0f, 180.0f)) {
+                selectedGameObject->setRotation(rotation);
+            }
 
-        // Mostrar la rotación con slider y campo de texto
-        glm::vec3 rotation = selectedGameObject->getRotation();
-        if (ImGui::SliderFloat3("Rotation", &rotation.x, -180.0f, 180.0f)) {
-            selectedGameObject->setRotation(rotation);
-        }
-
-        ImGui::InputFloat("Rot X", &rotation.x, 0.1f);  // Entrada manual para X
-        ImGui::InputFloat("Rot Y", &rotation.y, 0.1f);  // Entrada manual para Y
-        ImGui::InputFloat("Rot Z", &rotation.z, 0.1f);  // Entrada manual para Z
-
-        selectedGameObject->setRotation(rotation);
-
-        // Mostrar la escala con slider y campo de texto
-        glm::vec3 scale = selectedGameObject->getScale();
-        if (ImGui::SliderFloat3("Scale", &scale.x, 0.1f, 10.0f)) {
-            selectedGameObject->setScale(scale);
-        }
-
-        ImGui::InputFloat("Scale X", &scale.x, 0.1f);  // Entrada manual para X
-        ImGui::InputFloat("Scale Y", &scale.y, 0.1f);  // Entrada manual para Y
-        ImGui::InputFloat("Scale Z", &scale.z, 0.1f);  // Entrada manual para Z
-
-        selectedGameObject->setScale(scale);
+            // Mostrar la escala con DragFloat3
+            glm::vec3 scale = selectedGameObject->getScale();
+            if (ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.1f, 10.0f)) {
+                selectedGameObject->setScale(scale);
+            }
 
         ImGui::Separator();
 

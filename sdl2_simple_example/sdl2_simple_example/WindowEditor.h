@@ -5,6 +5,7 @@
 #include "ConfigPanel.h"
 #include "HierarchyPanel.h"
 #include "InspectorPanel.h"
+#include "ScenePanel.h"
 #include "MainMenu.h"
 #include "TimeManager.h"
 #include "MyWindow.h"
@@ -23,10 +24,12 @@ private:
     ConfigPanel* configPanel;
     HierarchyPanel& hierarchyPanel;
     InspectorPanel* inspectorPanel;
+    ScenePanel* scenePanel;
     MainMenu* mainMenu;
 
     bool showConsole;
     bool showConfig;
     bool showHierarchy;
     bool showInspector;
+    bool showScene;
 };

@@ -16,9 +16,11 @@
 #include "ModelLoader.h"
 #include "Material.h"
 #include "Camera.h" 
+
 #include "GameObject.h"
 #include "HierarchyPanel.h"
 #include "ConsolePanel.h"
+#include "ScenePanel.h"
 
 using namespace std;
 using hrclock = chrono::high_resolution_clock;
@@ -119,12 +121,10 @@ int main(int argc, char** argv) {
 
     // Crear la ventana
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
-
+    init_openGL();
     // Crear el panel de configuración, pasándole la referencia de la ventana
     ConfigPanel configPanel(&window);
-
-    // Inicializar OpenGL
-    init_openGL();
+    ScenePanel scenePanel;
 
     // Establecer color por defecto
     defaultMaterial.setDefaultColor(glm::vec3(0.8f, 0.8f, 0.8f));
@@ -143,11 +143,11 @@ int main(int argc, char** argv) {
     gameObject2->setRotation(glm::vec3(-90.0f, 0.0f, -90.0f));
 
 
-    auto gameObject3 = std::make_unique<GameObject>();
+    /*auto gameObject3 = std::make_unique<GameObject>();
     gameObject3->loadModel("Assets/Models/AngryDragon.fbx");
     gameObject3->setPosition(glm::vec3(0.0f, 0.8f, 0.0f));
     gameObject3->setRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
-    gameObject3->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
+    gameObject3->setScale(glm::vec3(0.1f, 0.1f, 0.1f));*/
 
     // Establecer materiales
     Material material;
@@ -157,13 +157,13 @@ int main(int argc, char** argv) {
     material.loadTexture("Assets/Textures/Premium_house.png");
     gameObject2->setMaterial(material);    
     
-    material.loadTexture("Assets/Textures/Angry_dragon.png");
-    gameObject3->setMaterial(material);
+    //material.loadTexture("Assets/Textures/Angry_dragon.png");
+    //gameObject3->setMaterial(material);
 
     // Agregar objetos de juego a la lista
     gameObjects.push_back(std::move(gameObject1));
     gameObjects.push_back(std::move(gameObject2));
-    gameObjects.push_back(std::move(gameObject3));
+    //gameObjects.push_back(std::move(gameObject3));
 
     // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
     WindowEditor editor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta
@@ -173,35 +173,40 @@ int main(int argc, char** argv) {
     auto lastFrame = hrclock::now();
 
     // Bucle principal de la aplicación
+    // Bucle principal de la aplicación
     while (processEvents(window, camera, hierarchyPanel, deltaTime)) {
         const auto t0 = hrclock::now();
         deltaTime = chrono::duration<float>(t0 - lastFrame).count();
         lastFrame = t0;
 
+        // Limpia el buffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Actualizar la proyección de la cámara
+        // Actualiza la proyección de la cámara
         glm::mat4 projection = camera.getProjectionMatrix(float(WINDOW_SIZE.x) / WINDOW_SIZE.y);
         glMatrixMode(GL_PROJECTION);
         glLoadMatrixf(&projection[0][0]);
         glMatrixMode(GL_MODELVIEW);
 
+        // Matriz de vista de la cámara
         glm::mat4 view = camera.getViewMatrix();
         glLoadMatrixf(&view[0][0]);
 
-        // Dibujar cada objeto en la escena
-        for (auto& gameObject : gameObjects) {
-            gameObject->draw();
-        }
+        // Llama al renderizado de la escena dentro del ScenePanel
+        //scenePanel.Render();
 
         // Renderizar el editor de la ventana
         editor.Render(gameObjects);
+
+        // Cambia los buffers
         window.swapBuffers();
 
+        // Control de FPS
         const auto t1 = hrclock::now();
         const auto dt = t1 - t0;
         if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
     }
+
 
     return 0;
 }
