@@ -1,4 +1,5 @@
 #include "ScenePanel.h"
+<<<<<<< Updated upstream
 #include <iostream>
 #include <imgui.h>
 #include <GL/glew.h>
@@ -126,4 +127,34 @@ void ScenePanel::RenderImGui() {
     ImGui::Image((void*)(intptr_t)texture, ImVec2(panelWidth, panelHeight), ImVec2(0, 1), ImVec2(1, 0));
 
     ImGui::End();
+=======
+#include <vector>
+#include <string>
+
+// Constructor y destructor sin cambios
+ScenePanel::ScenePanel() {}
+ScenePanel::~ScenePanel() {}
+
+// Método para renderizar el panel de escena
+void ScenePanel::Render() {
+    ImGui::Begin("Scene");
+
+    // Ejemplo: Iterar sobre una lista de objetos en la escena
+    if (sceneObjects) {
+        for (size_t i = 0; i < sceneObjects->size(); ++i) {
+            const std::string& objectName = (*sceneObjects)[i];
+            ImGui::Text("%zu: %s", i + 1, objectName.c_str());
+        }
+    }
+    else {
+        ImGui::Text("No hay objetos en la escena.");
+    }
+
+    ImGui::End();
+}
+
+// Método para configurar la lista de objetos
+void ScenePanel::SetSceneObjects(const std::vector<std::string>* objects) {
+    sceneObjects = objects;
+>>>>>>> Stashed changes
 }

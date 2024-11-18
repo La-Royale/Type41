@@ -9,6 +9,7 @@
 #include "MainMenu.h"
 #include "TimeManager.h"
 #include "MyWindow.h"
+#include "ScenePanel.h"
 
 class WindowEditor {
 public:
@@ -26,6 +27,7 @@ private:
     InspectorPanel* inspectorPanel;
     ScenePanel* scenePanel;
     MainMenu* mainMenu;
+    ScenePanel* scenePanel;
 
     bool showConsole;
     bool showConfig;

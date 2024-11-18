@@ -20,8 +20,13 @@ WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
     showConsole(true),
     showConfig(true),
     showHierarchy(true),
+<<<<<<< Updated upstream
     showScene(true),
     showInspector(true) {
+=======
+    showInspector(true),
+    showScene(true){
+>>>>>>> Stashed changes
 
     Logger::GetInstance().SetConsolePanel(consolePanel);
 
@@ -64,7 +69,12 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
         inspectorPanel->Render();
     }
 
+<<<<<<< Updated upstream
     if (showScene) {
+=======
+    if (showScene)
+    {
+>>>>>>> Stashed changes
         scenePanel->Render();
     }
 

@@ -26,7 +26,7 @@ using namespace std;
 using hrclock = chrono::high_resolution_clock;
 using ivec2 = glm::ivec2;
 
-static const ivec2 WINDOW_SIZE(1600, 900);
+static const ivec2 WINDOW_SIZE(1280, 720);
 static const unsigned int FPS = 60;
 static const auto FRAME_DT = 1.0s / FPS;
 
@@ -132,6 +132,9 @@ int main(int argc, char** argv) {
 
     // Crear el panel de jerarquía (debe ser una referencia)
     HierarchyPanel hierarchyPanel;
+
+    ScenePanel scenePanel;
+    //scenePanel.SetSceneObjects(gameObjects);
 
     // Crear algunos objetos de juego y cargarlos
     auto gameObject1 = std::make_unique<GameObject>();

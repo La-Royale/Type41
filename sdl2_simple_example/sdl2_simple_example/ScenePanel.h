@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #ifndef SCENEPANEL_H
 #define SCENEPANEL_H
 
@@ -5,12 +6,19 @@
 #include <memory>
 #include "GameObject.h"
 #include "Camera.h"
+=======
+#pragma once
+#include "imgui.h"
+#include <vector>
+#include <string>
+>>>>>>> Stashed changes
 
 class ScenePanel {
 public:
     ScenePanel();
     ~ScenePanel();
 
+<<<<<<< Updated upstream
     // Inicializa el panel
     void Init();
 
@@ -52,3 +60,14 @@ private:
 };
 
 #endif // SCENEPANEL_H
+=======
+    void Render(); // Renderiza la lista de objetos de la escena
+    void Log(const char* message); // Método para registrar mensajes en consola
+
+    // Método para configurar la lista de objetos
+    void SetSceneObjects(const std::vector<std::string>* objects);
+
+private:
+    const std::vector<std::string>* sceneObjects = nullptr; // Lista de objetos de la escena
+};
+>>>>>>> Stashed changes
