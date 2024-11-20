@@ -16,7 +16,7 @@
 extern std::vector<std::unique_ptr<GameObject>> gameObjects;
 extern Material defaultMaterial;
 
-void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector) {
+void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector, bool& showScene) {
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
@@ -85,6 +85,7 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
                 ImGui::MenuItem("Configuration", NULL, &showConfig);
                 ImGui::MenuItem("Hierarchy", NULL, &showHierarchy);
                 ImGui::MenuItem("Inspector", NULL, &showInspector);
+                ImGui::MenuItem("Scene", NULL, &showScene);
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();

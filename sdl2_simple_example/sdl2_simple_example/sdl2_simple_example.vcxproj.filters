@@ -72,6 +72,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Basico</Filter>
     </ClCompile>
+    <ClCompile Include="ScenePanel.cpp">
+      <Filter>Source Files\Paneles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigPanel.h">
@@ -111,6 +114,9 @@
       <Filter>Header Files\Basico</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
+      <Filter>Header Files\Paneles</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenePanel.h">
       <Filter>Header Files\Paneles</Filter>
     </ClInclude>
   </ItemGroup>

@@ -120,6 +120,9 @@ int main(int argc, char** argv) {
     // Crear la ventana
     MyWindow window("SDL2 Simple Example", WINDOW_SIZE.x, WINDOW_SIZE.y);
 
+    //Crear rejilla
+
+
     // Crear el panel de configuración, pasándole la referencia de la ventana
     ConfigPanel configPanel(&window);
 

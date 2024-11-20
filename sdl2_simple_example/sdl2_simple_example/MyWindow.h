@@ -35,5 +35,4 @@ public:
 
 private:
     Material _defaultMaterial;
-
 };
