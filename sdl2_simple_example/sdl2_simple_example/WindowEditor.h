@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "GL/glew.h"
 #include "ConsolePanel.h"
 #include "ConfigPanel.h"
 #include "HierarchyPanel.h"
@@ -17,9 +18,11 @@ public:
     float inspectorHeight = 300.0f;
     void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void HandleEvents();
-
+    void SetFramebuffer(GLuint framebufferTexture);
 
 private:
+    GLuint framebufferTexture;
+
     ConsolePanel* consolePanel;
     ConfigPanel* configPanel;
     HierarchyPanel& hierarchyPanel;

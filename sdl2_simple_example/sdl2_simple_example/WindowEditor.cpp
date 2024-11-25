@@ -38,6 +38,10 @@ WindowEditor::~WindowEditor() {
     delete mainMenu;
 }
 
+void WindowEditor::SetFramebuffer(GLuint framebufferTexture) {
+    this->framebufferTexture = framebufferTexture;
+}
+
 void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     timeManager.Update();
     float deltaTime = timeManager.GetDeltaTime();
@@ -67,6 +71,16 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
     if (showScene) {
         scenePanel->Render();
     }
+
+    ImGui::Begin("Scene");
+    ImVec2 panelSize = ImGui::GetContentRegionAvail();  // Tamaño dinámico
+    if (framebufferTexture != 0) {
+        ImGui::Image((void*)(intptr_t)framebufferTexture, panelSize);
+    }
+    else {
+        ImGui::Text("No framebuffer texture available.");
+    }
+    ImGui::End();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
