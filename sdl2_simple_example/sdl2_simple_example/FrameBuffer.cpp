@@ -1,7 +1,7 @@
 #include "Framebuffer.h"
 #include <iostream>
 
-Framebuffer::Framebuffer() : framebuffer(0), texture(0), depthRenderbuffer(0) {}
+Framebuffer::Framebuffer() : framebuffer(0), texture(0), depthRenderbuffer(0), _width(0), _height(0) {}
 
 Framebuffer::~Framebuffer() {
     glDeleteFramebuffers(1, &framebuffer);
@@ -10,12 +10,15 @@ Framebuffer::~Framebuffer() {
 }
 
 void Framebuffer::Init(int width, int height) {
+    _width = width;
+    _height = height;
+
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
@@ -26,15 +29,18 @@ void Framebuffer::Init(int width, int height) {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
 
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cerr << "Error: Framebuffer no está completo" << std::endl;
+        std::cerr << "Error: Framebuffer no estÃ¡ completo" << std::endl;
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void Framebuffer::Resize(int width, int height) {
+    _width = width;
+    _height = height;
+
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
     glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);

@@ -12,9 +12,13 @@ public:
     void Unbind();
 
     GLuint GetTexture() const;
+    int width() const { return _width; }
+    int height() const { return _height; }
 
 private:
     GLuint framebuffer;
     GLuint texture;
     GLuint depthRenderbuffer;
+    int _width;
+    int _height;
 };

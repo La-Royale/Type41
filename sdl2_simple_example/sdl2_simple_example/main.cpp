@@ -20,6 +20,7 @@
 #include "GameObject.h"
 #include "HierarchyPanel.h"
 #include "ConsolePanel.h"
+#include "ScenePanel.h"
 
 using namespace std;
 using hrclock = chrono::high_resolution_clock;
@@ -31,6 +32,8 @@ static const auto FRAME_DT = 1.0s / FPS;
 
 GLuint sceneFramebuffer, sceneTexture, depthRenderbuffer;
 Framebuffer framebuffer;
+WindowEditor* editor; // Declare editor as a global pointer
+
 static void init_openGL() {
     glewInit();
     if (!GLEW_VERSION_3_0) throw exception("OpenGL 3.0 API is not available");
@@ -70,7 +73,7 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
                 isAltPressed = true;  // Activamos el estado de Alt
             }
-            // También procesamos el movimiento WASD aquí, independientemente de Alt
+            // Tambi��n procesamos el movimiento WASD aquí, independientemente de Alt
             else {
                 camera.processKeyboard(event.key.keysym.sym, deltaTime);
             }
@@ -107,6 +110,14 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             std::cout << "File drop event detected" << std::endl;
             window.handleFileDrop(event.drop.file, hierarchyPanel);
             SDL_free(event.drop.file);
+            break;
+        case SDL_WINDOWEVENT:
+            if (event.window.event == SDL_WINDOWEVENT_RESIZED) {
+                int newWidth = event.window.data1;
+                int newHeight = event.window.data2;
+                framebuffer.Resize(newWidth, newHeight);
+                editor->SetFramebuffer(framebuffer.GetTexture()); // Update framebuffer texture in editor
+            }
             break;
         default:
             ImGui_ImplSDL2_ProcessEvent(&event);
@@ -210,8 +221,12 @@ int main(int argc, char** argv) {
     gameObjects.push_back(std::move(gameObject3));
 
     // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
-    WindowEditor editor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta
-    editor.SetFramebuffer(framebuffer.GetTexture());
+    editor = new WindowEditor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta
+    editor->SetFramebuffer(framebuffer.GetTexture());
+
+    // Crear el panel de escena
+    ScenePanel scenePanel;
+    scenePanel.SetFramebufferTexture(framebuffer.GetTexture());
 
     Camera camera;
     float deltaTime = 0.0f;
@@ -224,13 +239,13 @@ int main(int argc, char** argv) {
         lastFrame = t0;
 
         // **1. Renderizar al framebuffer**
-        glBindFramebuffer(GL_FRAMEBUFFER, sceneFramebuffer);  // Vincular framebuffer
-        glViewport(0, 0, WINDOW_SIZE.x, WINDOW_SIZE.y);
-        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);        // Ajustar el viewport
+        framebuffer.Bind();  // Vincular framebuffer
+        glViewport(0, 0, framebuffer.width(), framebuffer.height()); // Ajustar el viewport al tamaño del framebuffer
+        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);        // Ajustar el viewport
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    // Limpiar buffers
 
         // Actualizar la proyección y vista de la cámara
-        glm::mat4 projection = camera.getProjectionMatrix(float(WINDOW_SIZE.x) / WINDOW_SIZE.y);
+        glm::mat4 projection = camera.getProjectionMatrix(float(framebuffer.width()) / framebuffer.height());
         glMatrixMode(GL_PROJECTION);
         glLoadMatrixf(&projection[0][0]);
         glMatrixMode(GL_MODELVIEW);
@@ -243,62 +258,10 @@ int main(int argc, char** argv) {
             gameObject->draw();
         }
 
-        glViewport(0, 0, WINDOW_SIZE.x, WINDOW_SIZE.y);
-        glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        glBegin(GL_TRIANGLES);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex3f(-0.5f, -0.5f, -2.0f);
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex3f(0.5f, -0.5f, -2.0f);
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex3f(0.0f, 0.5f, -2.0f);
-        glEnd();
-
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if (status != GL_FRAMEBUFFER_COMPLETE) {
-            std::cerr << "Framebuffer no completo. Error: ";
-            switch (status) {
-            case GL_FRAMEBUFFER_UNDEFINED:
-                std::cerr << "GL_FRAMEBUFFER_UNDEFINED" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-                std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-                std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_UNSUPPORTED:
-                std::cerr << "GL_FRAMEBUFFER_UNSUPPORTED" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
-                std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE" << std::endl;
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-                std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS" << std::endl;
-                break;
-            default:
-                std::cerr << "Estado desconocido: " << status << std::endl;
-            }
-        }
-        else {
-            std::cout << "Framebuffer completo y listo para usar." << std::endl;
-        }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // Desvincula el framebuffer
+        framebuffer.Unbind(); // Desvincular framebuffer
 
         // Renderizar la interfaz de usuario (ImGui)
-        editor.Render(gameObjects);  // Aquí se incluye el panel con la textura del framebuffer
+        editor->Render(gameObjects);  // Aquí se incluye el panel con la textura del framebuffer
 
         // Intercambiar buffers
         window.swapBuffers();
@@ -307,6 +270,8 @@ int main(int argc, char** argv) {
         const auto dt = t1 - t0;
         if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
     }
+
+    delete editor; // Clean up the editor
 
     return 0;
 }
