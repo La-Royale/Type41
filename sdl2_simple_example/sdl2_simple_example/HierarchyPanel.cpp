@@ -5,7 +5,11 @@ HierarchyPanel::HierarchyPanel() : selectedGameObject(nullptr) {}
 HierarchyPanel::~HierarchyPanel() {}
 
 void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
-    ImGui::Begin("Hierarchy");
+
+    ImGui::SetNextWindowPos(ImVec2(0, 19));
+    ImGui::SetNextWindowSize(ImVec2(176, 701));
+
+    ImGui::Begin("Hierarchy", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     // Iterar sobre todos los GameObjects en la lista y mostrar su nombre
     for (const auto& gameObject : gameObjects) {
@@ -22,7 +26,10 @@ void HierarchyPanel::Render(const std::vector<std::unique_ptr<GameObject>>& game
     ImGui::End();
 
     if (selectedGameObject) {
-        ImGui::Begin("Inspector");
+        ImGui::SetNextWindowPos(ImVec2(946, 19));
+        ImGui::SetNextWindowSize(ImVec2(334, 280));
+
+        ImGui::Begin("Inspector", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
         glm::vec3 position = selectedGameObject->getPosition();
         if (ImGui::DragFloat3("Position", &position.x, -0.1f, 0.1f)) {

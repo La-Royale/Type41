@@ -7,6 +7,7 @@
 #include "HierarchyPanel.h"
 #include "InspectorPanel.h"
 #include "ScenePanel.h"
+#include "ResourcesPanel.h"
 #include "MainMenu.h"
 #include "TimeManager.h"
 #include "MyWindow.h"
@@ -29,10 +30,12 @@ private:
     InspectorPanel* inspectorPanel;
     ScenePanel* scenePanel;
     MainMenu* mainMenu;
+    ResourcesPanel* resourcesPanel;
 
     bool showConsole;
     bool showConfig;
     bool showHierarchy;
     bool showInspector;
     bool showScene;
+    bool showResources;
 };

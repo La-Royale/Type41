@@ -26,7 +26,10 @@ void ConfigPanel::UpdateFPS(float fps) {
 }
 
 void ConfigPanel::Render() {
-    ImGui::Begin("Configuration");
+    ImGui::SetNextWindowPos(ImVec2(946, 299));
+    ImGui::SetNextWindowSize(ImVec2(334, 421));
+
+    ImGui::Begin("Configuration", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
 
     // Mostrar el historial de FPS
     if (!fpsHistory.empty()) {
@@ -64,39 +67,39 @@ void ConfigPanel::Render() {
 #endif
 
     // Separador
-    ImGui::Separator();
+    //ImGui::Separator();
 
-    // Agregar un combo-box para seleccionar la resolución
-    ImGui::Text("Change Window Resolution:");
+    //// Agregar un combo-box para seleccionar la resolución
+    //ImGui::Text("Change Window Resolution:");
 
-    const char* resolutions[] = {
-        "1600x900 (ORIGINAL)",  // Resolución original
-        "1280x720",  // Resolución 720p
-        "1920x1080", // Resolución 1080p
-        "2560x1440"  // Resolución 1440p
-    };
+    //const char* resolutions[] = {
+    //    "1600x900 (ORIGINAL)",  // Resolución original
+    //    "1280x720",  // Resolución 720p
+    //    "1920x1080", // Resolución 1080p
+    //    "2560x1440"  // Resolución 1440p
+    //};
 
-    static int selectedResolution = 0; // Índice seleccionado en el combo-box
+    //static int selectedResolution = 0; // Índice seleccionado en el combo-box
 
-    // Si la selección cambia, ajustamos el tamaño de la ventana
-    if (ImGui::Combo("##Resolution", &selectedResolution, resolutions, IM_ARRAYSIZE(resolutions))) {
-        switch (selectedResolution) {
-        case 0:
-            SDL_SetWindowSize(_window->getWindow(), 1600, 900);  // 1600x900
-            break;
-        case 1:
-            SDL_SetWindowSize(_window->getWindow(), 1280, 720);  // 1280x720
-            break;
-        case 2:
-            SDL_SetWindowSize(_window->getWindow(), 1920, 1080); // 1920x1080
-            break;
-        case 3:
-            SDL_SetWindowSize(_window->getWindow(), 2560, 1440); // 2560x1440
-            break;
-        default:
-            break;
-        }
-    }
+    //// Si la selección cambia, ajustamos el tamaño de la ventana
+    //if (ImGui::Combo("##Resolution", &selectedResolution, resolutions, IM_ARRAYSIZE(resolutions))) {
+    //    switch (selectedResolution) {
+    //    case 0:
+    //        SDL_SetWindowSize(_window->getWindow(), 1600, 900);  // 1600x900
+    //        break;
+    //    case 1:
+    //        SDL_SetWindowSize(_window->getWindow(), 1280, 720);  // 1280x720
+    //        break;
+    //    case 2:
+    //        SDL_SetWindowSize(_window->getWindow(), 1920, 1080); // 1920x1080
+    //        break;
+    //    case 3:
+    //        SDL_SetWindowSize(_window->getWindow(), 2560, 1440); // 2560x1440
+    //        break;
+    //    default:
+    //        break;
+    //    }
+    //}
 
     ImGui::End();
 }

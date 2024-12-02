@@ -78,6 +78,9 @@
     <ClCompile Include="FrameBuffer.cpp">
       <Filter>Source Files\Basico</Filter>
     </ClCompile>
+    <ClCompile Include="ResourcesPanel.cpp">
+      <Filter>Source Files\Paneles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigPanel.h">
@@ -124,6 +127,9 @@
     </ClInclude>
     <ClInclude Include="FrameBuffer.h">
       <Filter>Header Files\Basico</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourcesPanel.h">
+      <Filter>Header Files\Paneles</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

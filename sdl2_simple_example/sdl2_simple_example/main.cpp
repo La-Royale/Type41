@@ -190,35 +190,15 @@ int main(int argc, char** argv) {
 
     // Crear algunos objetos de juego y cargarlos
     auto gameObject1 = std::make_unique<GameObject>();
-    gameObject1->loadModel("Assets/Models/BakerHouse.fbx");
-
-    auto gameObject2 = std::make_unique<GameObject>();
-    gameObject2->loadModel("Assets/Models/PremiumHouse.fbx");
-    gameObject2->setPosition(glm::vec3(1.0f, 0.2f, 0.0f));
-    gameObject2->setRotation(glm::vec3(-90.0f, 0.0f, -90.0f));
-
-
-    auto gameObject3 = std::make_unique<GameObject>();
-    gameObject3->loadModel("Assets/Models/AngryDragon.fbx");
-    gameObject3->setPosition(glm::vec3(0.0f, 0.8f, 0.0f));
-    gameObject3->setRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
-    gameObject3->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
+    gameObject1->loadModel("Assets/Models/Street environment_V01.fbx");
 
     // Establecer materiales
     Material material;
-    material.loadTexture("Assets/Textures/Baker_house.png");
+    material.loadTexture("Assets/Textures/Building_V02_C.png");
     gameObject1->setMaterial(material);
 
-    material.loadTexture("Assets/Textures/Premium_house.png");
-    gameObject2->setMaterial(material);    
-    
-    material.loadTexture("Assets/Textures/Angry_dragon.png");
-    gameObject3->setMaterial(material);
-
     // Agregar objetos de juego a la lista
-    gameObjects.push_back(std::move(gameObject1));
-    gameObjects.push_back(std::move(gameObject2));
-    gameObjects.push_back(std::move(gameObject3));
+    gameObjects.push_back(std::move(gameObject1));  
 
     // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
     editor = new WindowEditor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta

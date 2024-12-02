@@ -16,7 +16,7 @@
 extern std::vector<std::unique_ptr<GameObject>> gameObjects;
 extern Material defaultMaterial;
 
-void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector, bool& showScene) {
+void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, bool& showInspector, bool& showScene, bool& showResources) {
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
@@ -80,12 +80,24 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
                 SDL_OpenURL("https://github.com/La-Royale/Type41");
             }
 
-            if (ImGui::BeginMenu("Windows")) {
-                ImGui::MenuItem("Console", NULL, &showConsole);
-                ImGui::MenuItem("Configuration", NULL, &showConfig);
-                ImGui::MenuItem("Hierarchy", NULL, &showHierarchy);
-                ImGui::MenuItem("Inspector", NULL, &showInspector);
-                ImGui::MenuItem("Scene", NULL, &showScene);
+            //if (ImGui::BeginMenu("Show")) {
+            //    ImGui::MenuItem("Console", NULL, &showConsole);
+            //    ImGui::MenuItem("Configuration", NULL, &showConfig);
+            //    ImGui::MenuItem("Hierarchy", NULL, &showHierarchy);
+            //    ImGui::MenuItem("Inspector", NULL, &showInspector);
+            //    ImGui::MenuItem("Scene", NULL, &showScene);
+            //    ImGui::EndMenu();
+            //}
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Window")) {
+            if (ImGui::BeginMenu("Layout")) {
+                ImGui::MenuItem("Console");
+                ImGui::MenuItem("Configuration");
+                ImGui::MenuItem("Hierarchy");
+                ImGui::MenuItem("Inspector");
+                ImGui::MenuItem("Scene");
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();

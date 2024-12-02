@@ -17,11 +17,13 @@ WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
     inspectorPanel(new InspectorPanel()),
     scenePanel(new ScenePanel()),
     mainMenu(new MainMenu()),
+    resourcesPanel(new ResourcesPanel()),
     showConsole(true),
     showConfig(true),
     showHierarchy(true),
     showInspector(true),
-    showScene(true)     {
+    showScene(true),
+    showResources(true)     {
 
     Logger::GetInstance().SetConsolePanel(consolePanel);
 
@@ -35,6 +37,7 @@ WindowEditor::~WindowEditor() {
     delete configPanel;
     delete inspectorPanel;
     delete scenePanel;
+    delete resourcesPanel;
     delete mainMenu;
 }
 
@@ -53,7 +56,7 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    mainMenu->Render(showConsole, showConfig, showHierarchy, showInspector, showScene);
+    mainMenu->Render(showConsole, showConfig, showHierarchy, showInspector, showScene, showResources);
 
     if (showConsole) {
         consolePanel->Render();
@@ -71,6 +74,10 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
 
     if (showScene) {
         scenePanel->Render();
+    }
+
+    if (showResources) {
+        resourcesPanel->Render();
     }
 
     ImGui::Render();
