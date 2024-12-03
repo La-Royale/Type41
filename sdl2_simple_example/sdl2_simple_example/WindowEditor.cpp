@@ -17,7 +17,7 @@ WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
     inspectorPanel(new InspectorPanel()),
     scenePanel(new ScenePanel()),
     mainMenu(new MainMenu()),
-    resourcesPanel(new ResourcesPanel()),
+    resourcesPanel(new ResourcesPanel(consolePanel)),
     showConsole(true),
     showConfig(true),
     showHierarchy(true),
@@ -59,13 +59,13 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
     mainMenu->Render(showConsole, showConfig, showHierarchy, showInspector, showScene, showResources);
 
     if (showConsole) {
-        consolePanel->Render();
+        //consolePanel->Render();
     }
     if (showConfig) {
         configPanel->Render();
     }
     if (showHierarchy) {
-        hierarchyPanel.Render(gameObjects);  // Pasamos el vector de GameObjects
+        //hierarchyPanel.Render(gameObjects);  // Pasamos el vector de GameObjects
     }
 
     if (showInspector) {

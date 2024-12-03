@@ -10,7 +10,10 @@ ConsolePanel::ConsolePanel() {
 ConsolePanel::~ConsolePanel() {}
 
 void ConsolePanel::Render() {
-    ImGui::Begin("Console");
+    ImGui::SetNextWindowPos(ImVec2(176, 545));
+    ImGui::SetNextWindowSize(ImVec2(770, 174));
+
+    ImGui::Begin("Console", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
 
     // Mostrar los mensajes en la consola con colores según el tipo de mensaje
     for (const auto& message : messages) {
