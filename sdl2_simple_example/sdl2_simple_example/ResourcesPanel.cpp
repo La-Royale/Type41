@@ -7,10 +7,18 @@ namespace fs = std::filesystem;
 ResourcesPanel::ResourcesPanel() {
     currentPath = fs::current_path().string();
     pathHistory.push_back(currentPath); 
+
+    folderIcon = LoadImage("Assets/Sprites/System/folderIcon.png");
+    fileIcon = LoadImage("Assets/Sprites/System/folderIcon.png");
+
+    if (!folderIcon || !fileIcon) {
+        Log("Error: No se pudieron cargar los iconos.");
+    }
 }
 ResourcesPanel::~ResourcesPanel() {}
 
 void ResourcesPanel::Render() {
+
     ImGui::Begin("Resources");
 
     // Botón para subir un nivel en el árbol de directorios
@@ -42,14 +50,16 @@ void ResourcesPanel::Render() {
         const std::string name = entry.path().filename().string(); // Obtiene solo el nombre
 
         if (entry.is_directory()) {
-            // Mostrar carpetas
+            ImGui::Image(folderIcon, ImVec2(16, 16)); // Icono de carpeta
+            ImGui::SameLine();
             if (ImGui::Selectable((name + "/").c_str(), false)) {
                 NavigateTo(entry.path().string());
             }
         }
         else {
-            // Mostrar archivos
-            ImGui::Text(name.c_str());
+            ImGui::Image(fileIcon, ImVec2(16, 16)); // Icono de archivo
+            ImGui::SameLine();
+            ImGui::Text("%s", name.c_str());
         }
     }
 
@@ -74,4 +84,13 @@ void ResourcesPanel::NavigateTo(const std::string& path) {
 
 void ResourcesPanel::Log(const char* message) {
     // Implementación para registrar un mensaje
+}
+
+// Método para cargar una imagen (puedes adaptarlo según tu backend)
+ImTextureID ResourcesPanel::LoadImage(const std::string& path) {
+    // Esto depende de tu implementación de backend de ImGui.
+    // Aquí debes cargar la textura y devolver un ImTextureID.
+    // Si usas OpenGL, por ejemplo, puedes usar stb_image.h para cargar la imagen
+    // y crear una textura de OpenGL, devolviendo el ID de la textura.
+    return nullptr; // Implementa la carga real aquí
 }

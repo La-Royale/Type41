@@ -2,6 +2,8 @@
 #include "imgui.h"
 #include "ConsolePanel.h"
 
+typedef void* ImTextureID;
+
 class ResourcesPanel {
 public:
     ResourcesPanel();
@@ -17,4 +19,9 @@ private:
 
     void NavigateTo(const std::string& path); // Método para cambiar de carpeta
     // Estructuras necesarias para el log
+
+    ImTextureID folderIcon;       // Icono de carpeta
+    ImTextureID fileIcon;         // Icono de archivo
+
+    ImTextureID LoadImage(const std::string& path); // Método para cargar imágenes
 };
