@@ -4,13 +4,17 @@
 
 class ResourcesPanel {
 public:
-    ResourcesPanel(ConsolePanel* consolePanel);
+    ResourcesPanel();
     ~ResourcesPanel();
 
     void Render(); // Renderiza el log de consola
     void Log(const char* message); // Método para registrar mensajes en consola
 
 private:
-    ConsolePanel* consolePanel;
+    std::string currentPath;
+
+    std::vector<std::string> pathHistory; // Historia de carpetas para botones de navegación
+
+    void NavigateTo(const std::string& path); // Método para cambiar de carpeta
     // Estructuras necesarias para el log
 };

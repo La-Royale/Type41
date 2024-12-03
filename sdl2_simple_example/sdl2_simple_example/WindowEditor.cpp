@@ -19,7 +19,7 @@ WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
     inspectorPanel(new InspectorPanel()),
     scenePanel(new ScenePanel()),
     mainMenu(new MainMenu()),
-    resourcesPanel(new ResourcesPanel(consolePanel)),
+    resourcesPanel(new ResourcesPanel),
     showConsole(true),
     showConfig(true),
     showHierarchy(true),
