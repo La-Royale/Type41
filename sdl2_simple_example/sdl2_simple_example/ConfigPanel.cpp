@@ -26,10 +26,10 @@ void ConfigPanel::UpdateFPS(float fps) {
 }
 
 void ConfigPanel::Render() {
-    ImGui::SetNextWindowPos(ImVec2(946, 299));
-    ImGui::SetNextWindowSize(ImVec2(334, 421));
+    //ImGui::SetNextWindowPos(ImVec2(946, 299));
+    //ImGui::SetNextWindowSize(ImVec2(334, 421));
 
-    ImGui::Begin("Configuration", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("Configuration"/*, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse*/);
 
     // Mostrar el historial de FPS
     if (!fpsHistory.empty()) {

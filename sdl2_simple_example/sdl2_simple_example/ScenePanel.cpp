@@ -4,10 +4,10 @@ ScenePanel::~ScenePanel() {}
 
 void ScenePanel::Render() {
 
-    ImGui::SetNextWindowPos(ImVec2(176, 19));
-    ImGui::SetNextWindowSize(ImVec2(770, 500));
+    //ImGui::SetNextWindowPos(ImVec2(176, 19));
+    //ImGui::SetNextWindowSize(ImVec2(770, 500));
 
-    ImGui::Begin("Scene", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse); // Deshabilitar el movimiento de la ventana
+    ImGui::Begin("Scene"/*, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse*/); // Deshabilitar el movimiento de la ventana
     ImVec2 panelSize = ImGui::GetContentRegionAvail(); // Obtener el tamaño disponible del panel
 
     // Calcular el tamaño de la textura manteniendo la relación de aspecto

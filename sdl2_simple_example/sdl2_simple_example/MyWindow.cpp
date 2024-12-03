@@ -22,6 +22,7 @@ MyWindow::MyWindow(const std::string& title, int w, int h) : _width(w), _height(
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+
     _window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, w, h, SDL_WINDOW_OPENGL);
     if (!_window) throw exception(SDL_GetError());
 
@@ -31,6 +32,12 @@ MyWindow::MyWindow(const std::string& title, int w, int h) : _width(w), _height(
     if (SDL_GL_SetSwapInterval(1) != 0) throw exception(SDL_GetError());
 
     ImGui::CreateContext();
+
+    g_io = &ImGui::GetIO();
+    g_io->ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable keyboard controls
+    g_io->ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable docking
+    //g_io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable multiple viewports
+
     ImGui_ImplSDL2_InitForOpenGL(_window, _ctx);
     ImGui_ImplOpenGL3_Init("#version 130");
 }
@@ -46,6 +53,13 @@ MyWindow::~MyWindow() {
 }
 
 void MyWindow::swapBuffers() const {
+
+    if (g_io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        SDL_GL_MakeCurrent(_window, _ctx);
+    }
+
     SDL_GL_SwapWindow(static_cast<SDL_Window*>(_window));
 }
 

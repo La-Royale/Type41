@@ -32,7 +32,8 @@ public:
 
     // Nuevo método para obtener la ventana SDL
     SDL_Window* getWindow() const { return _window; }
-
+    ImGuiIO* g_io= nullptr;
 private:
     Material _defaultMaterial;
+    
 };

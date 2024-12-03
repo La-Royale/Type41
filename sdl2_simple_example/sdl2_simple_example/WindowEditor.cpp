@@ -3,8 +3,10 @@
 #include "imgui.h"
 #include <SDL2/SDL_video.h>
 #include <SDL2/SDL_opengl.h>
+
 #include "imgui_impl_sdl2.h"
 #include "imgui_impl_opengl3.h"
+
 #include "ConfigPanel.h"
 #include "Logger.h"
 
@@ -59,13 +61,13 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
     mainMenu->Render(showConsole, showConfig, showHierarchy, showInspector, showScene, showResources);
 
     if (showConsole) {
-        //consolePanel->Render();
+        consolePanel->Render();
     }
     if (showConfig) {
         configPanel->Render();
     }
     if (showHierarchy) {
-        //hierarchyPanel.Render(gameObjects);  // Pasamos el vector de GameObjects
+        hierarchyPanel.Render(gameObjects);
     }
 
     if (showInspector) {
@@ -79,9 +81,11 @@ void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameOb
     if (showResources) {
         resourcesPanel->Render();
     }
-
+        
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 }
 
 void WindowEditor::HandleEvents() {
