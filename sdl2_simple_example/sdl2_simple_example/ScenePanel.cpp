@@ -28,6 +28,7 @@ void ScenePanel::Render() {
     } else {
         ImGui::Text("No framebuffer texture available.");
     }
+
     ImGui::End();
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 #include "imgui.h"
+#include "MyWindow.h"
+#include "HierarchyPanel.h"
 
 class ScenePanel {
 public:
@@ -12,7 +14,12 @@ public:
     // Método para establecer la textura del framebuffer
     void SetFramebufferTexture(unsigned int texture);
 
+    void SetWindow(MyWindow* window);
+    void SetHierarchyPanel(HierarchyPanel* hierarchyPanel);
+
 private:
     // Estructuras necesarias para el log
+    MyWindow* window = nullptr;         // Puntero al objeto MyWindow
+    HierarchyPanel* hierarchy = nullptr; // Puntero al objeto HierarchyPanel
     unsigned int framebufferTexture; // Textura del framebuffer
 };
