@@ -8,6 +8,20 @@
 int GameObject::nextId = 0;
 std::unordered_set<std::string> GameObject::generatedNames;
 
+std::unique_ptr<GameObject> GameObject::clone() const {
+    std::unique_ptr<GameObject> cloned = std::make_unique<GameObject>(name, isStatic);
+
+    // Copiar otros miembros de datos que deban ser duplicados
+    cloned->position = this->position;
+    cloned->rotation = this->rotation;
+    cloned->scale = this->scale;
+    cloned->material = this->material;
+
+    // Aquí puedes hacer lo mismo con otros recursos si es necesario.
+
+    return cloned;
+}
+
 GameObject::GameObject(const std::string& customName, bool isStatic)
     : id(++nextId), scale(1.0f, 1.0f, 1.0f), isStatic(isStatic) { // Asigna una escala por defecto de (1,1,1)
     // Si no se proporciona un nombre, generamos uno único

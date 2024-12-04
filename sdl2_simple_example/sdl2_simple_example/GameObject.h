@@ -6,12 +6,16 @@
 #include "Material.h"
 #include <string>
 #include <unordered_set>
+#include <memory> // Para std::unique_ptr
 
 class GameObject {
 public:
     // Constructor con nombre opcional y flag isStatic. Si no se proporciona, genera uno único.
     GameObject(const std::string& name = "", bool isStatic = false);
     ~GameObject();
+
+    GameObject(const GameObject&) = delete;
+    GameObject& operator=(const GameObject&) = delete;
 
     const std::string& getName() const;
     void setName(const std::string& name);
@@ -40,6 +44,9 @@ public:
 
     // Método para obtener el tamaño de la malla (bounding box)
     glm::vec3 getMeshSize() const;
+
+    // Método para clonar el objeto
+    std::unique_ptr<GameObject> clone() const;
 
 private:
     std::string name;     // Nombre del objeto

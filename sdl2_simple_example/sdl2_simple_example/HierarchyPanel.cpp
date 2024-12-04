@@ -37,7 +37,16 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
             }
 
             if (ImGui::MenuItem("Duplicate")) {
-                std::cout << "Duplicate selected for: " << name << std::endl;
+                if (selectedGameObject) {
+                    // Crear una copia del objeto seleccionado utilizando el método clone
+                    std::unique_ptr<GameObject> duplicatedObject = selectedGameObject->clone();
+
+                    // Modificar el nombre del objeto duplicado para evitar duplicados en la jerarquía
+                    duplicatedObject->setName(selectedGameObject->getName() + "_Copy");
+
+                    // Añadir el objeto duplicado a la lista de objetos
+                    gameObjects.push_back(std::move(duplicatedObject));
+                }
             }
 
             if (ImGui::MenuItem("Change Name")) {
