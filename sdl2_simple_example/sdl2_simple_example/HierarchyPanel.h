@@ -10,9 +10,9 @@ public:
     ~HierarchyPanel();
 
     // Renderiza la lista de GameObjects y maneja la selecci�n
-    void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+    void Render(std::vector<std::unique_ptr<GameObject>>& gameObjects);
     GameObject* getSelectedGameObject() const { return selectedGameObject; }
-
+    bool isRenaming;
 private:
     GameObject* selectedGameObject;  // Puntero al GameObject actualmente seleccionado
 };

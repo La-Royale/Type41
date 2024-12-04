@@ -48,7 +48,7 @@ void WindowEditor::SetFramebuffer(GLuint framebufferTexture) {
     scenePanel->SetFramebufferTexture(framebufferTexture); // Ensure the ScenePanel gets the framebuffer texture
 }
 
-void WindowEditor::Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects) {
+void WindowEditor::Render(std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     timeManager.Update();
     float deltaTime = timeManager.GetDeltaTime();
     float fps = 1.0f / deltaTime;

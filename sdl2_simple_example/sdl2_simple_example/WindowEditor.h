@@ -17,7 +17,7 @@ public:
     WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window);
     ~WindowEditor();
     float inspectorHeight = 300.0f;
-    void Render(const std::vector<std::unique_ptr<GameObject>>& gameObjects);
+    void Render(std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void HandleEvents();
     void SetFramebuffer(GLuint framebufferTexture);
 
