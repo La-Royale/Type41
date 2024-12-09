@@ -22,6 +22,9 @@ public:
     void enableFPSMode(bool enable);
     bool isFPSModeEnabled() const;
 
+    void updateFrustum();
+    bool isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound) const;
+
 private:
     glm::vec3 position;
     glm::vec3 front;
@@ -35,6 +38,8 @@ private:
     float mouseSensitivity;
     float zoom;
     bool fpsMode;
+
+    glm::vec4 frustumPlanes[6];
 
     void updateCameraVectors();
 };

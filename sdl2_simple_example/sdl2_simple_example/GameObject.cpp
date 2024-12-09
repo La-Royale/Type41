@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <iostream>
 #include <cfloat>
+#include <glm/gtc/matrix_transform.hpp> // Incluir el encabezado correcto
 
 // Inicialización del contador estático para los IDs únicos
 int GameObject::nextId = 0;
@@ -145,4 +146,40 @@ bool GameObject::getStatic() const {
 
 void GameObject::setStatic(bool isStatic) {
     this->isStatic = isStatic;
+}
+
+glm::vec3 GameObject::getMinBound() const {
+    return modelLoader.getMinBound();
+}
+
+glm::vec3 GameObject::getMaxBound() const {
+    return modelLoader.getMaxBound();
+}
+
+glm::vec3 GameObject::getGlobalMinBound() const {
+    glm::vec3 localMin = modelLoader.getMinBound();
+    glm::vec3 globalMin = position + glm::vec3(scale.x * localMin.x, scale.y * localMin.y, scale.z * localMin.z);
+
+    // Aplicar rotación
+    glm::mat4 rotationMatrix = glm::mat4(1.0f);
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    globalMin = glm::vec3(rotationMatrix * glm::vec4(globalMin, 1.0f));
+
+    return globalMin;
+}
+
+glm::vec3 GameObject::getGlobalMaxBound() const {
+    glm::vec3 localMax = modelLoader.getMaxBound();
+    glm::vec3 globalMax = position + glm::vec3(scale.x * localMax.x, scale.y * localMax.y, scale.z * localMax.z);
+
+    // Aplicar rotación
+    glm::mat4 rotationMatrix = glm::mat4(1.0f);
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+    globalMax = glm::vec3(rotationMatrix * glm::vec4(globalMax, 1.0f));
+
+    return globalMax;
 }

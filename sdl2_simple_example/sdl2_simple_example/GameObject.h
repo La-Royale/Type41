@@ -48,6 +48,11 @@ public:
     // Método para clonar el objeto
     std::unique_ptr<GameObject> clone() const;
 
+    glm::vec3 getMinBound() const;
+    glm::vec3 getMaxBound() const;
+    glm::vec3 getGlobalMinBound() const;
+    glm::vec3 getGlobalMaxBound() const;
+
 private:
     std::string name;     // Nombre del objeto
     ModelLoader modelLoader;

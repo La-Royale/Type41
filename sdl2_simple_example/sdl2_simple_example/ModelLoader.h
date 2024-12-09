@@ -6,6 +6,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <glm/glm.hpp>
 
 struct Vertex {
     float x, y, z;    // Posición
@@ -29,6 +30,9 @@ public:
     void setShowFaceNormals(bool show);
     void setShowBoundingBox(bool show);
 
+    glm::vec3 getMinBound() const;
+    glm::vec3 getMaxBound() const;
+
 private:
     void drawNode(aiNode* node, const aiScene* scene);
     void drawPrimitive();
@@ -44,6 +48,9 @@ private:
     bool showFaceNormals = false;     // Variable para normales de cara
     bool showBoundingBox = false;     // Variable para mostrar la bounding box
     std::vector<std::vector<unsigned int>> originalQuads;
+
+    glm::vec3 minBound;
+    glm::vec3 maxBound;
 };
 
 #endif // MODELLOADER_H

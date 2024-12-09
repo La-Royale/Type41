@@ -35,6 +35,17 @@ bool ModelLoader::loadModel(const std::string& path) {
         return false;
     }
 
+    minBound = glm::vec3(FLT_MAX);
+    maxBound = glm::vec3(-FLT_MAX);
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+        aiMesh* mesh = scene->mMeshes[i];
+        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+            aiVector3D vertex = mesh->mVertices[j];
+            minBound = glm::min(minBound, glm::vec3(vertex.x, vertex.y, vertex.z));
+            maxBound = glm::max(maxBound, glm::vec3(vertex.x, vertex.y, vertex.z));
+        }
+    }
+
     Logger::GetInstance().Log("OBJECT WAS SUCCESFULLY ADDED", INFO);
     primitiveVertices.clear();
     return true;
@@ -244,4 +255,12 @@ void ModelLoader::drawBoundingBox() {
     glColor3f(1.0f, 1.0f, 1.0f);
 
     glPopMatrix();
+}
+
+glm::vec3 ModelLoader::getMinBound() const {
+    return minBound;
+}
+
+glm::vec3 ModelLoader::getMaxBound() const {
+    return maxBound;
 }

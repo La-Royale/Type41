@@ -40,30 +40,30 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 void Camera::processMouseOrbit(float xoffset, float yoffset, const glm::vec3& targetPosition) {
     float orbitSpeed = 1.0f;
 
-    // Modificar el ángulo de la cámara según el movimiento del ratón
+    // Modificar el ï¿½ngulo de la cï¿½mara segï¿½n el movimiento del ratï¿½n
     yaw += xoffset * orbitSpeed;
     pitch += yoffset * orbitSpeed;
 
-    // Limitar el ángulo de elevación (pitch)
+    // Limitar el ï¿½ngulo de elevaciï¿½n (pitch)
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
-    // Calcular la nueva dirección de la cámara basada en la orbita
+    // Calcular la nueva direcciï¿½n de la cï¿½mara basada en la orbita
     updateCameraVectors();
 
-    // Posicionar la cámara en torno al objeto seleccionado
+    // Posicionar la cï¿½mara en torno al objeto seleccionado
     position = targetPosition - front * glm::length(targetPosition - position);
 }
 
 
 void Camera::processMouseScroll(float yoffset) {
-    // Aumentamos o disminuimos la distancia de la cámara, basándonos en el movimiento de la rueda del ratón
-    float zoomSpeed = 0.1f;  // Controla qué tan rápido cambia la distancia
-    position += front * yoffset * zoomSpeed;  // Ajustamos la posición de la cámara a lo largo de la dirección 'front'
+    // Aumentamos o disminuimos la distancia de la cï¿½mara, basï¿½ndonos en el movimiento de la rueda del ratï¿½n
+    float zoomSpeed = 0.1f;  // Controla quï¿½ tan rï¿½pido cambia la distancia
+    position += front * yoffset * zoomSpeed;  // Ajustamos la posiciï¿½n de la cï¿½mara a lo largo de la direcciï¿½n 'front'
 
-    // Limitar la distancia de la cámara
-    if (glm::length(position) < 1.0f) position = glm::normalize(position) * 1.0f;  // No dejar que la cámara se acerque demasiado
-    if (glm::length(position) > 80.0f) position = glm::normalize(position) * 80.0f;  // No dejar que la cámara se aleje demasiado
+    // Limitar la distancia de la cï¿½mara
+    if (glm::length(position) < 1.0f) position = glm::normalize(position) * 1.0f;  // No dejar que la cï¿½mara se acerque demasiado
+    if (glm::length(position) > 80.0f) position = glm::normalize(position) * 80.0f;  // No dejar que la cï¿½mara se aleje demasiado
 }
 
 
@@ -76,13 +76,13 @@ void Camera::processMousePan(float xoffset, float yoffset) {
 void Camera::update(float deltaTime) {}
 
 void Camera::resetFocus(const glm::vec3& targetPosition, const glm::vec3& meshSize) {
-    // Calcular la distancia de la cámara en función del tamaño de la malla
+    // Calcular la distancia de la cï¿½mara en funciï¿½n del tamaï¿½o de la malla
     float distance = glm::length(meshSize) * 0.2f;  // Multiplicamos por un factor para dar espacio
 
-    // Ajustar la posición de la cámara
+    // Ajustar la posiciï¿½n de la cï¿½mara
     position = targetPosition - front * distance;
 
-    // Actualizamos los vectores de la cámara
+    // Actualizamos los vectores de la cï¿½mara
     updateCameraVectors();
 }
 
@@ -103,4 +103,55 @@ void Camera::updateCameraVectors() {
 
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
+}
+
+void Camera::updateFrustum() {
+    glm::mat4 projView = getProjectionMatrix(1.0f) * getViewMatrix();
+    frustumPlanes[0] = glm::vec4(projView[0][3] + projView[0][0], projView[1][3] + projView[1][0], projView[2][3] + projView[2][0], projView[3][3] + projView[3][0]); // Left
+    frustumPlanes[1] = glm::vec4(projView[0][3] - projView[0][0], projView[1][3] - projView[1][0], projView[2][3] - projView[2][0], projView[3][3] - projView[3][0]); // Right
+    frustumPlanes[2] = glm::vec4(projView[0][3] + projView[0][1], projView[1][3] + projView[1][1], projView[2][3] + projView[2][1], projView[3][3] + projView[3][1]); // Bottom
+    frustumPlanes[3] = glm::vec4(projView[0][3] - projView[0][1], projView[1][3] - projView[1][1], projView[2][3] - projView[2][1], projView[3][3] - projView[3][1]); // Top
+    frustumPlanes[4] = glm::vec4(projView[0][3] + projView[0][2], projView[1][3] + projView[1][2], projView[2][3] + projView[2][2], projView[3][3] + projView[3][2]); // Near
+    frustumPlanes[5] = glm::vec4(projView[0][3] - projView[0][2], projView[1][3] - projView[1][2], projView[2][3] - projView[2][2], projView[3][3] - projView[3][2]); // Far
+
+    for (int i = 0; i < 6; ++i) {
+        float length = glm::length(glm::vec3(frustumPlanes[i]));
+        frustumPlanes[i] /= length;
+    }
+}
+
+bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound) const {
+    for (int i = 0; i < 6; ++i) {
+        glm::vec3 positiveVertex = minBound;
+        glm::vec3 negativeVertex = maxBound;
+
+        if (frustumPlanes[i].x >= 0) {
+            positiveVertex.x = maxBound.x;
+            negativeVertex.x = minBound.x;
+        } else {
+            positiveVertex.x = minBound.x;
+            negativeVertex.x = maxBound.x;
+        }
+
+        if (frustumPlanes[i].y >= 0) {
+            positiveVertex.y = maxBound.y;
+            negativeVertex.y = minBound.y;
+        } else {
+            positiveVertex.y = minBound.y;
+            negativeVertex.y = maxBound.y;
+        }
+
+        if (frustumPlanes[i].z >= 0) {
+            positiveVertex.z = maxBound.z;
+            negativeVertex.z = minBound.z;
+        } else {
+            positiveVertex.z = minBound.z;
+            negativeVertex.z = maxBound.z;
+        }
+
+        if (glm::dot(glm::vec3(frustumPlanes[i]), positiveVertex) + frustumPlanes[i].w < 0) {
+            return false;
+        }
+    }
+    return true;
 }

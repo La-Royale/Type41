@@ -9,6 +9,7 @@
 #include <SDL2/SDL_events.h>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include "Framebuffer.h"
 #include "MyWindow.h"
@@ -212,6 +213,8 @@ int main(int argc, char** argv) {
     float deltaTime = 0.0f;
     auto lastFrame = hrclock::now();
 
+    std::unordered_map<std::string, bool> objectVisibility;
+
     // Bucle principal de la aplicación
     while (processEvents(window, camera, hierarchyPanel, deltaTime)) {
         const auto t0 = hrclock::now();
@@ -233,9 +236,25 @@ int main(int argc, char** argv) {
         glm::mat4 view = camera.getViewMatrix();
         glLoadMatrixf(&view[0][0]);
 
+        camera.updateFrustum();
+
         // Dibujar objetos de la escena
         for (auto& gameObject : gameObjects) {
-            gameObject->draw();
+            bool isVisible = camera.isBoxInFrustum(gameObject->getGlobalMinBound(), gameObject->getGlobalMaxBound());
+            const std::string& name = gameObject->getName();
+
+            if (isVisible) {
+                gameObject->draw();
+                if (objectVisibility[name] == false) {
+                    //std::cout << "Object " << name << " is now visible." << std::endl;
+                    objectVisibility[name] = true;
+                }
+            } else {
+                if (objectVisibility[name] == true) {
+                    //std::cout << "Object " << name << " is now hidden." << std::endl;
+                    objectVisibility[name] = false;
+                }
+            }
         }
 
         framebuffer.Unbind(); // Desvincular framebuffer
