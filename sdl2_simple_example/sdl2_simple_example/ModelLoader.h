@@ -23,15 +23,18 @@ public:
 
     bool isShowingTriangleNormals() const { return showTriangleNormals; }
     bool isShowingFaceNormals() const { return showFaceNormals; }
+    bool isShowingBoundingBox() const { return showBoundingBox; }
 
     void setShowTriangleNormals(bool show);
     void setShowFaceNormals(bool show);
+    void setShowBoundingBox(bool show);
 
 private:
     void drawNode(aiNode* node, const aiScene* scene);
     void drawPrimitive();
     void drawTriangleNormals(); 
     void drawFaceNormals();    
+    void drawBoundingBox();
 
     Assimp::Importer importer;
     const aiScene* scene;
@@ -39,6 +42,7 @@ private:
 
     bool showTriangleNormals = false; // Variable para normales de triángulo
     bool showFaceNormals = false;     // Variable para normales de cara
+    bool showBoundingBox = false;     // Variable para mostrar la bounding box
     std::vector<std::vector<unsigned int>> originalQuads;
 };
 

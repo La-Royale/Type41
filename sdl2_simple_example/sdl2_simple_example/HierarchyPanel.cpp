@@ -160,6 +160,10 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
                 modelLoader.setShowFaceNormals(!modelLoader.isShowingFaceNormals()); // Toggle
             }
 
+            if (ImGui::Button("Show Bounding Box")) {
+                modelLoader.setShowBoundingBox(!modelLoader.isShowingBoundingBox()); // Toggle
+            }
+
             ImGui::Separator();
 
             // Checkbox for isStatic

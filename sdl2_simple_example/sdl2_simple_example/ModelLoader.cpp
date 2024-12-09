@@ -2,6 +2,8 @@
 #include "ModelLoader.h"
 #include "Logger.h"
 #include <iostream>
+#include <glm/glm.hpp> 
+#include <cfloat>
 
 ModelLoader::ModelLoader() : scene(nullptr) {}
 
@@ -47,6 +49,9 @@ void ModelLoader::drawModel() {
         }
         if (showFaceNormals) {
             drawFaceNormals();
+        }
+        if (showBoundingBox) {
+            drawBoundingBox();
         }
     }
     else if (!primitiveVertices.empty()) {
@@ -106,6 +111,10 @@ void ModelLoader::setShowTriangleNormals(bool show) {
 
 void ModelLoader::setShowFaceNormals(bool show) {
     showFaceNormals = show;
+}
+
+void ModelLoader::setShowBoundingBox(bool show) {
+    showBoundingBox = show;
 }
 
 // Dibuja las normales de las caras del modelo triangulado
@@ -189,6 +198,50 @@ void ModelLoader::drawFaceNormals() {
 
     glLineWidth(1.0f); 
     glColor3f(1.0f, 1.0f, 1.0f); 
+
+    glPopMatrix();
+}
+
+void ModelLoader::drawBoundingBox() {
+    if (!scene) return;
+
+    glPushMatrix();
+    float scale = 0.2f;
+    glScalef(scale, scale, scale);
+
+    glLineWidth(2.0f);
+    glColor3f(0.0f, 0.0f, 1.0f);
+
+    glm::vec3 minBound(FLT_MAX), maxBound(-FLT_MAX);
+    for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+        aiMesh* mesh = scene->mMeshes[i];
+        for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+            aiVector3D vertex = mesh->mVertices[j];
+            minBound = glm::min(minBound, glm::vec3(vertex.x, vertex.y, vertex.z));
+            maxBound = glm::max(maxBound, glm::vec3(vertex.x, vertex.y, vertex.z));
+        }
+    }
+
+    glBegin(GL_LINES);
+    // Dibujar las líneas de la bounding box
+    glVertex3f(minBound.x, minBound.y, minBound.z); glVertex3f(maxBound.x, minBound.y, minBound.z);
+    glVertex3f(maxBound.x, minBound.y, minBound.z); glVertex3f(maxBound.x, maxBound.y, minBound.z);
+    glVertex3f(maxBound.x, maxBound.y, minBound.z); glVertex3f(minBound.x, maxBound.y, minBound.z);
+    glVertex3f(minBound.x, maxBound.y, minBound.z); glVertex3f(minBound.x, minBound.y, minBound.z);
+
+    glVertex3f(minBound.x, minBound.y, maxBound.z); glVertex3f(maxBound.x, minBound.y, maxBound.z);
+    glVertex3f(maxBound.x, minBound.y, maxBound.z); glVertex3f(maxBound.x, maxBound.y, maxBound.z);
+    glVertex3f(maxBound.x, maxBound.y, maxBound.z); glVertex3f(minBound.x, maxBound.y, maxBound.z);
+    glVertex3f(minBound.x, maxBound.y, maxBound.z); glVertex3f(minBound.x, minBound.y, maxBound.z);
+
+    glVertex3f(minBound.x, minBound.y, minBound.z); glVertex3f(minBound.x, minBound.y, maxBound.z);
+    glVertex3f(maxBound.x, minBound.y, minBound.z); glVertex3f(maxBound.x, minBound.y, maxBound.z);
+    glVertex3f(maxBound.x, maxBound.y, minBound.z); glVertex3f(maxBound.x, maxBound.y, maxBound.z);
+    glVertex3f(minBound.x, maxBound.y, minBound.z); glVertex3f(minBound.x, maxBound.y, maxBound.z);
+    glEnd();
+
+    glLineWidth(1.0f);
+    glColor3f(1.0f, 1.0f, 1.0f);
 
     glPopMatrix();
 }
