@@ -227,6 +227,9 @@ int main(int argc, char** argv) {
 
     std::unordered_map<std::string, bool> objectVisibility;
 
+    bool resetObjects = false;
+    bool saveObjects = false;
+
     // Bucle principal de la aplicación
     while (processEvents(window, camera, hierarchyPanel, deltaTime)) {
         const auto t0 = hrclock::now();
@@ -270,18 +273,30 @@ int main(int argc, char** argv) {
         }
 
         if (editor->simulationPanel->GetState() == SimulationState::RUNNING) {
+            // Save current state of the scene
+            if(saveObjects){
+                for (const auto& gameObject : gameObjects) {
+                    initialPositions[gameObject->getName()] = gameObject->getPosition();
+                    initialRotations[gameObject->getName()] = gameObject->getRotation();
+                    initialScales[gameObject->getName()] = gameObject->getScale();
+                }
+                saveObjects = false;
+            }
+
             // Update game objects (Por ahora no hace nada)
             for (auto& gameObject : gameObjects) {
                 gameObject->update(deltaTime);
             }
-        } else if (editor->simulationPanel->GetState() == SimulationState::STOPPED) {
+            resetObjects = true;
+        } else if (editor->simulationPanel->GetState() == SimulationState::STOPPED && resetObjects) {
             // Reset game objects to initial positions / rotations / scales
             for (auto& gameObject : gameObjects) {
                 gameObject->setPosition(initialPositions[gameObject->getName()]);
                 gameObject->setRotation(initialRotations[gameObject->getName()]);
                 gameObject->setScale(initialScales[gameObject->getName()]);
-
             }
+            resetObjects = false;
+            saveObjects = true;
         }
 
         framebuffer.Unbind(); // Desvincular framebuffer
