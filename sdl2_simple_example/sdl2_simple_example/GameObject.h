@@ -53,6 +53,8 @@ public:
     glm::vec3 getGlobalMinBound() const;
     glm::vec3 getGlobalMaxBound() const;
 
+    void update(float deltaTime);
+
 private:
     std::string name;     // Nombre del objeto
     ModelLoader modelLoader;

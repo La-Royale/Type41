@@ -165,6 +165,11 @@ void resizeFramebuffer(int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+std::unordered_map<std::string, glm::vec3> initialPositions;
+std::unordered_map<std::string, glm::vec3> initialRotations;
+std::unordered_map<std::string, glm::vec3> initialScales;
+
+
 int main(int argc, char** argv) {
 
     // Crear la ventana
@@ -208,6 +213,13 @@ int main(int argc, char** argv) {
     // Crear el panel de escena
     ScenePanel scenePanel;
     scenePanel.SetFramebufferTexture(framebuffer.GetTexture());
+
+    // Guardar posición inicial de los objetos
+    for (const auto& gameObject : gameObjects) {
+        initialPositions[gameObject->getName()] = gameObject->getPosition();
+        initialRotations[gameObject->getName()] = gameObject->getRotation();
+        initialScales[gameObject->getName()] = gameObject->getScale();
+    }
 
     Camera camera;
     float deltaTime = 0.0f;
@@ -254,6 +266,21 @@ int main(int argc, char** argv) {
                     //std::cout << "Object " << name << " is now hidden." << std::endl;
                     objectVisibility[name] = false;
                 }
+            }
+        }
+
+        if (editor->simulationPanel->GetState() == SimulationState::RUNNING) {
+            // Update game objects (Por ahora no hace nada)
+            for (auto& gameObject : gameObjects) {
+                gameObject->update(deltaTime);
+            }
+        } else if (editor->simulationPanel->GetState() == SimulationState::STOPPED) {
+            // Reset game objects to initial positions / rotations / scales
+            for (auto& gameObject : gameObjects) {
+                gameObject->setPosition(initialPositions[gameObject->getName()]);
+                gameObject->setRotation(initialRotations[gameObject->getName()]);
+                gameObject->setScale(initialScales[gameObject->getName()]);
+
             }
         }
 

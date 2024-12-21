@@ -144,6 +144,7 @@
     <ClCompile Include="MyWindow.cpp" />
     <ClCompile Include="ResourcesPanel.cpp" />
     <ClCompile Include="ScenePanel.cpp" />
+    <ClCompile Include="SimulationPanel.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="WindowEditor.cpp" />
   </ItemGroup>
@@ -162,6 +163,7 @@
     <ClInclude Include="MyWindow.h" />
     <ClInclude Include="ResourcesPanel.h" />
     <ClInclude Include="ScenePanel.h" />
+    <ClInclude Include="SimulationPanel.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="WindowEditor.h" />
   </ItemGroup>

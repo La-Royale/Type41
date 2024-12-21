@@ -20,6 +20,7 @@ WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
     scenePanel(new ScenePanel()),
     mainMenu(new MainMenu()),
     resourcesPanel(new ResourcesPanel),
+    simulationPanel(new SimulationPanel()), // Initialize SimulationPanel
     showConsole(true),
     showConfig(true),
     showHierarchy(true),
@@ -41,6 +42,7 @@ WindowEditor::~WindowEditor() {
     delete scenePanel;
     delete resourcesPanel;
     delete mainMenu;
+    delete simulationPanel; // Clean up SimulationPanel
 }
 
 void WindowEditor::SetFramebuffer(GLuint framebufferTexture) {
@@ -53,6 +55,8 @@ void WindowEditor::Render(std::vector<std::unique_ptr<GameObject>>& gameObjects)
     float deltaTime = timeManager.GetDeltaTime();
     float fps = 1.0f / deltaTime;
     configPanel->UpdateFPS(fps);
+
+    simulationPanel->UpdateElapsedTime(deltaTime);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
@@ -81,11 +85,11 @@ void WindowEditor::Render(std::vector<std::unique_ptr<GameObject>>& gameObjects)
     if (showResources) {
         resourcesPanel->Render();
     }
-        
+
+    simulationPanel->Render(); 
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
 }
 
 void WindowEditor::HandleEvents() {

@@ -183,3 +183,6 @@ glm::vec3 GameObject::getGlobalMaxBound() const {
 
     return globalMax;
 }
+
+void GameObject::update(float deltaTime) {
+}

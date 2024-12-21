@@ -81,6 +81,9 @@
     <ClCompile Include="ResourcesPanel.cpp">
       <Filter>Source Files\Paneles</Filter>
     </ClCompile>
+    <ClCompile Include="SimulationPanel.cpp">
+      <Filter>Source Files\Paneles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigPanel.h">
@@ -129,6 +132,9 @@
       <Filter>Header Files\Basico</Filter>
     </ClInclude>
     <ClInclude Include="ResourcesPanel.h">
+      <Filter>Header Files\Paneles</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulationPanel.h">
       <Filter>Header Files\Paneles</Filter>
     </ClInclude>
   </ItemGroup>

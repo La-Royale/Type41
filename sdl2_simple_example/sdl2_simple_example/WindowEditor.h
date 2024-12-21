@@ -11,6 +11,7 @@
 #include "MainMenu.h"
 #include "TimeManager.h"
 #include "MyWindow.h"
+#include "SimulationPanel.h"
 
 class WindowEditor {
 public:
@@ -20,6 +21,8 @@ public:
     void Render(std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void HandleEvents();
     void SetFramebuffer(GLuint framebufferTexture);
+
+    SimulationPanel* simulationPanel;
 
 private:
     GLuint framebufferTexture;
