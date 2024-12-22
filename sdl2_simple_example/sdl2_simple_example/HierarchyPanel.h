@@ -11,8 +11,12 @@ public:
 
     // Renderiza la lista de GameObjects y maneja la selecci�n
     void Render(std::vector<std::unique_ptr<GameObject>>& gameObjects);
+    void RenderGameObject(GameObject* gameObject, std::vector<std::unique_ptr<GameObject>>& gameObjects);
+    void RenderInspector(GameObject* selectedGameObject);
+
     GameObject* getSelectedGameObject() const { return selectedGameObject; }
     bool isRenaming;
 private:
+    GameObject* draggedObject;
     GameObject* selectedGameObject;  // Puntero al GameObject actualmente seleccionado
 };

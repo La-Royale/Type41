@@ -1,9 +1,13 @@
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include "GameObject.h"
 #include <GL/glew.h> // Incluye GLEW antes de OpenGL
 #include <unordered_set>
 #include <iostream>
 #include <cfloat>
-#include <glm/gtc/matrix_transform.hpp> // Incluir el encabezado correcto
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> // Para translate, rotate y scale
+#include <glm/gtx/euler_angles.hpp>     // Para matrices de rotación con ángulos de Euler
 
 // Inicialización del contador estático para los IDs únicos
 int GameObject::nextId = 0;
@@ -12,16 +16,26 @@ std::unordered_set<std::string> GameObject::generatedNames;
 std::unique_ptr<GameObject> GameObject::clone() const {
     std::unique_ptr<GameObject> cloned = std::make_unique<GameObject>(name, isStatic);
 
-    // Copiar otros miembros de datos que deban ser duplicados
-    cloned->position = this->position;
-    cloned->rotation = this->rotation;
-    cloned->scale = this->scale;
-    cloned->material = this->material;
+    // Copiar datos de la transformación
+    cloned->position = position;
+    cloned->rotation = rotation;
+    cloned->scale = scale;
+    cloned->material = material;
 
-    // Aquí puedes hacer lo mismo con otros recursos si es necesario.
+    // Copiar la jerarquía (relación padre-hijo)
+    for (GameObject* child : children) {
+        cloned->addChild(child->clone().release());  // Clonamos y agregamos los hijos
+    }
+
+    // Si el objeto tiene un padre, debemos asegurarnos de que la jerarquía se mantenga
+    if (parent) {
+        // Asegúrate de no copiar la relación jerárquica al clon directamente
+        // cloned->setParent(parent);  // No se debería clonar la relación padre-hijo aquí
+    }
 
     return cloned;
 }
+
 
 GameObject::GameObject(const std::string& customName, bool isStatic)
     : id(++nextId), scale(1.0f, 1.0f, 1.0f), isStatic(isStatic) { // Asigna una escala por defecto de (1,1,1)
@@ -31,24 +45,6 @@ GameObject::GameObject(const std::string& customName, bool isStatic)
 
 GameObject::~GameObject() {
     generatedNames.erase(name); // Al destruir el objeto, eliminamos su nombre del conjunto
-}
-
-const std::string& GameObject::getName() const {
-    return name;
-}
-
-void GameObject::setName(const std::string& newName) {
-    // Aseguramos que el nuevo nombre también sea único antes de asignarlo
-    if (generatedNames.find(newName) == generatedNames.end()) {
-        generatedNames.erase(name); // Si el objeto ya tiene un nombre, lo eliminamos del conjunto
-        name = newName;
-        generatedNames.insert(name); // Insertamos el nuevo nombre
-    }
-}
-
-bool GameObject::loadModel(const std::string& path) {
-    bool result = modelLoader.loadModel(path);
-    return result;
 }
 
 void GameObject::draw() {
@@ -68,49 +64,125 @@ void GameObject::draw() {
     glColor3f(1.0f, 1.0f, 1.0f); // Restablecer el color a blanco
 }
 
-// Métodos de transformación
+void GameObject::updateParentTransform() {
+    if (parent && !parent->isUpdating) {
+        parent->updateTransform();  // Aseguramos que la transformación del padre esté actualizada
+    }
+}
+
+void GameObject::updateTransform() {
+    if (isUpdating) {
+        return;  // Si ya estamos actualizando, salimos para evitar recursión infinita
+    }
+
+    isUpdating = true;  // Marcamos que estamos actualizando este objeto
+
+    if (parent) {
+        parent->updateTransform();  // Asegura que el padre esté actualizado
+    }
+
+    globalTransform = getGlobalTransform();  // Actualizamos la transformación global
+
+    updateChildrenTransform();  // Propagamos las transformaciones a los hijos
+
+    isUpdating = false;  // Marcamos que hemos terminado de actualizar
+}
+
+
+void GameObject::updateChildrenTransform() {
+    for (GameObject* child : children) {
+        child->updateTransform();  // Recursivamente actualizamos la transformación de cada hijo
+    }
+}
+
+// Métodos de posición, rotación y escala
+glm::vec3 GameObject::getPosition() const { return position; }
 void GameObject::setPosition(const glm::vec3& pos) {
-    if (!isStatic) {
-        position = pos;
-    }
+    position = pos;
+    updateTransform();  // Propagamos el cambio al padre y a los hijos
 }
 
-glm::vec3 GameObject::getPosition() const {
-    return position;
-}
-
-void GameObject::setScale(const glm::vec3& scl) {
-    if (!isStatic) {
-        scale = scl;
-    }
-}
-
-glm::vec3 GameObject::getScale() const {
-    return scale;
-}
-
+glm::vec3 GameObject::getRotation() const { return rotation; }
 void GameObject::setRotation(const glm::vec3& rot) {
-    if (!isStatic) {
-        rotation = rot;
+    rotation = rot;
+    updateTransform(); // Notificar al padre de cualquier cambio
+}
+
+glm::vec3 GameObject::getScale() const { return scale; }
+void GameObject::setScale(const glm::vec3& scl) {
+    scale = scl;
+    updateTransform(); // Notificar al padre de cualquier cambio
+}
+
+// Métodos de jerarquía padre-hijo
+GameObject* GameObject::getParent() const { return parent; }
+
+void GameObject::setParent(GameObject* newParent) {
+    if (parent == newParent) {
+        return; // Si el nuevo padre es el mismo que el actual, no hacemos nada
+    }
+
+    // Evitar ciclos: No podemos hacer un objeto hijo de sí mismo
+    GameObject* temp = newParent;
+    while (temp) {
+        if (temp == this) {
+            std::cerr << "No se puede hacer un objeto hijo de sí mismo." << std::endl;
+            return; // Evitamos el ciclo
+        }
+        temp = temp->getParent();
+    }
+
+    // Si ya tenía un padre, eliminar de sus hijos
+    if (parent) {
+        parent->removeChild(this);
+    }
+
+    parent = newParent; // Asignar el nuevo padre
+
+    // Si hay un nuevo padre, agregar como hijo y notificar la jerarquía
+    if (parent) {
+        parent->addChild(this);
+    }
+
+    // Actualizar transformaciones
+    updateTransform();
+}
+
+
+
+const std::vector<GameObject*>& GameObject::getChildren() const {
+    return children;
+}
+
+void GameObject::addChild(GameObject* child) {
+    if (child && std::find(children.begin(), children.end(), child) == children.end()) {
+        children.push_back(child);  // Añadimos el hijo si no está ya en la lista
     }
 }
 
-glm::vec3 GameObject::getRotation() const {
-    return rotation;
+void GameObject::removeChild(GameObject* child) {
+    children.erase(std::remove(children.begin(), children.end(), child), children.end());
 }
 
-// Métodos de material
-void GameObject::setMaterial(const Material& mat) {
-    material = mat;
+// Cálculo de la transformación global
+glm::mat4 GameObject::getGlobalTransform() const {
+    glm::mat4 localTransform = glm::mat4(1.0f);  // Inicia con una matriz identidad
+
+    // Aplica las transformaciones locales
+    localTransform = glm::translate(localTransform, position);
+    glm::quat quaternionRotation = glm::quat(glm::radians(rotation));
+    localTransform *= glm::mat4_cast(quaternionRotation);
+    localTransform = glm::scale(localTransform, scale);
+
+    // Si tiene un padre, combinamos la transformación del padre con la transformación local
+    if (parent) {
+        return parent->getGlobalTransform() * localTransform;  // Propagamos la transformación global del padre
+    }
+    else {
+        return localTransform;  // Si no tiene padre, la transformación es solo la local
+    }
 }
 
-Material& GameObject::getMaterial() {
-    return material;
-}
-
-ModelLoader& GameObject::getModelLoader() {
-    return modelLoader; // Devuelve el ModelLoader asociado al GameObject
-}
 
 // Método para generar un nombre único
 std::string GameObject::generateUniqueName() {
@@ -184,5 +256,41 @@ glm::vec3 GameObject::getGlobalMaxBound() const {
     return globalMax;
 }
 
-void GameObject::update(float deltaTime) {
+void GameObject::update(float deltaTime) {}
+
+void GameObject::setName(const std::string& newName) {
+    // Aseguramos que el nuevo nombre también sea único antes de asignarlo
+    if (generatedNames.find(newName) == generatedNames.end()) {
+        generatedNames.erase(name); // Si el objeto ya tiene un nombre, lo eliminamos del conjunto
+        name = newName;
+        generatedNames.insert(name); // Insertamos el nuevo nombre
+    }
+}
+
+void GameObject::setMaterial(const Material& material) {
+    this->material = material;  // Implementación real
+}
+
+const std::string& GameObject::getName() const {
+    return this->name;
+}
+
+ModelLoader& GameObject::getModelLoader() {
+    return modelLoader;  // Aquí 'modelLoader' debería ser un miembro de la clase
+}
+
+Material& GameObject::getMaterial() {
+    return material;  // Aquí 'material' debería ser un miembro de la clase
+}
+
+bool GameObject::loadModel(const std::string& path) {
+    bool result = modelLoader.loadModel(path);
+    return result;
+}
+
+void GameObject::removeFromParent() {
+    if (parent) {
+        parent->removeChild(this);
+        parent = nullptr;  // Desconectamos al objeto de su padre
+    }
 }

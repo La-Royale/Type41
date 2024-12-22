@@ -10,6 +10,7 @@
 
 class GameObject {
 public:
+    bool isUpdating = false;
     // Constructor con nombre opcional y flag isStatic. Si no se proporciona, genera uno único.
     GameObject(const std::string& name = "", bool isStatic = false);
     ~GameObject();
@@ -55,7 +56,22 @@ public:
 
     void update(float deltaTime);
 
+    // Métodos para relaciones jerárquicas
+    void setParent(GameObject* parent);
+    GameObject* getParent() const;
+
+    void addChild(GameObject* child);
+    void removeChild(GameObject* child);
+
+    const std::vector<GameObject*>& getChildren() const;
+    glm::mat4 getGlobalTransform() const;
+    glm::mat4 globalTransform;
 private:
+    void updateParentTransform();
+    void updateChildrenTransform();
+    void updateTransform();
+    void removeFromParent();
+
     std::string name;     // Nombre del objeto
     ModelLoader modelLoader;
     glm::vec3 position;   // Posición del objeto
@@ -70,6 +86,9 @@ private:
 
     // Método para asegurar que el nombre es único
     static std::string generateUniqueName();
+
+    GameObject* parent;
+    std::vector<GameObject*> children;
 };
 
 #endif // GAMEOBJECT_H
