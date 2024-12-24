@@ -15,8 +15,8 @@ public:
     void RenderInspector(GameObject* selectedGameObject);
 
     GameObject* getSelectedGameObject() const { return selectedGameObject; }
-    bool isRenaming;
 private:
+    bool isRenaming;
     GameObject* draggedObject;
     GameObject* selectedGameObject;  // Puntero al GameObject actualmente seleccionado
 };
