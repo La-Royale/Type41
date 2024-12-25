@@ -6,6 +6,8 @@
 #include <iostream>
 #include <cfloat>
 #include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>    // Para glm::value_ptr
+#include <glm/gtx/string_cast.hpp> // Para glm::to_string
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
@@ -28,29 +30,58 @@ std::unique_ptr<GameObject> GameObject::clone() const {
 }
 
 GameObject::GameObject(const std::string& customName, bool isStatic)
-    : id(++nextId), scale(1.0f, 1.0f, 1.0f), isStatic(isStatic) {
+    : id(++nextId), position(0.0f), rotation(0.0f), scale(1.0f), isStatic(isStatic) {
     name = customName.empty() ? generateUniqueName() : customName;
+    updateTransform(); // Actualizar la transformación global al crearse
 }
+
 
 GameObject::~GameObject() {
     generatedNames.erase(name);
 }
 
 void GameObject::draw() {
-    glPushMatrix();
-    glTranslatef(position.x, position.y, position.z);
-    glRotatef(rotation.x, 1.0f, 0.0f, 0.0f);
-    glRotatef(rotation.y, 0.0f, 1.0f, 0.0f);
-    glRotatef(rotation.z, 0.0f, 0.0f, 1.0f);
-    glScalef(scale.x, scale.y, scale.z);
-    material.use();
+    std::cout << "Drawing GameObject " << name
+        << " with globalTransform: " << glm::to_string(globalTransform) << std::endl;
 
+    glPushMatrix();
+
+    // Aplicar transformación global
+    const float* matrixData = glm::value_ptr(globalTransform);
+    if (!matrixData) {
+        std::cerr << "Error: globalTransform is null for " << name << std::endl;
+        glPopMatrix();
+        return;
+    }
+
+    // Debug: Imprimir la matriz que se pasará a OpenGL
+    for (int i = 0; i < 16; ++i) {
+        std::cout << "Matrix[" << i << "]: " << matrixData[i] << std::endl;
+    }
+
+    glMultMatrixf(matrixData);
+
+    // Verificar si se activa la textura correctamente
+    material.use();
+    std::cout << "Material applied for GameObject " << name << std::endl;
+
+    // Dibujar el modelo
     modelLoader.drawModel();
+    std::cout << "Model drawn for GameObject " << name << std::endl;
+
+    // Dibujar hijos
+    for (GameObject* child : children) {
+        child->draw();
+    }
+
     glPopMatrix();
 
+    // Restaurar estado de OpenGL
     glDisable(GL_TEXTURE_2D);
     glColor3f(1.0f, 1.0f, 1.0f);
 }
+
+
 
 void GameObject::updateParentTransform() {
     if (parent && !parent->isUpdating) {
@@ -65,26 +96,31 @@ void GameObject::updateTransform() {
 
     isUpdating = true;
 
-    // Si el objeto tiene un padre, actualiza su transformación global con respecto al padre
     if (parent) {
         parent->updateTransform();
         globalTransform = parent->getGlobalTransform() * getLocalTransform();
     }
     else {
-        globalTransform = getLocalTransform();
+        globalTransform = getLocalTransform();  // Asegúrate de que esto funcione correctamente
     }
 
-    // Actualiza la transformación de todos los hijos de este objeto
+    std::cout << "GameObject " << name
+        << " globalTransform after update: "
+        << glm::to_string(globalTransform) << std::endl;
+
     updateChildrenTransform();
 
     isUpdating = false;
 }
 
+
+
+
 void GameObject::updateChildrenTransform() {
     for (GameObject* child : children) {
         child->updateTransform();  // Recursión para actualizar a cada hijo
     }
-}
+}   
 
 glm::vec3 GameObject::getPosition() const { return position; }
 void GameObject::setPosition(const glm::vec3& pos) {
@@ -160,15 +196,25 @@ glm::mat4 GameObject::getGlobalTransform() const {
 glm::mat4 GameObject::getLocalTransform() const {
     glm::mat4 transform = glm::mat4(1.0f);
 
+    // Translation
     transform = glm::translate(transform, position);
+    std::cout << "Translation matrix: " << glm::to_string(transform) << std::endl;
 
+    // Rotation
     glm::quat quaternionRotation = glm::quat(glm::radians(rotation));
-    transform *= glm::mat4_cast(quaternionRotation);
+    glm::mat4 rotationMatrix = glm::mat4_cast(quaternionRotation);
+    std::cout << "Rotation matrix: " << glm::to_string(rotationMatrix) << std::endl;
+    transform *= rotationMatrix;
 
-    transform = glm::scale(transform, scale);
+    // Scale
+    glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
+    std::cout << "Scale matrix: " << glm::to_string(scaleMatrix) << std::endl;
+    transform *= scaleMatrix;
 
+    std::cout << "Local transform: " << glm::to_string(transform) << std::endl;
     return transform;
 }
+
 
 std::string GameObject::generateUniqueName() {
     std::string uniqueName = "GameObject_" + std::to_string(nextId);
