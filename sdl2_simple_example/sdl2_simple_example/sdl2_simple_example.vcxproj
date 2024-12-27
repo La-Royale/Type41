@@ -18,6 +18,44 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="ConfigPanel.h" />
+    <ClInclude Include="ConsolePanel.h" />
+    <ClInclude Include="FrameBuffer.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="HierarchyPanel.h" />
+    <ClInclude Include="InspectorPanel.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="ModelLoader.h" />
+    <ClInclude Include="MyWindow.h" />
+    <ClInclude Include="ResourcesPanel.h" />
+    <ClInclude Include="ScenePanel.h" />
+    <ClInclude Include="SimulationPanel.h" />
+    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="WindowEditor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ConfigPanel.cpp" />
+    <ClCompile Include="ConsolePanel.cpp" />
+    <ClCompile Include="FrameBuffer.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HierarchyPanel.cpp" />
+    <ClCompile Include="InspectorPanel.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
+    <ClCompile Include="MyWindow.cpp" />
+    <ClCompile Include="ResourcesPanel.cpp" />
+    <ClCompile Include="ScenePanel.cpp" />
+    <ClCompile Include="SimulationPanel.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="WindowEditor.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -129,44 +167,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="ConfigPanel.cpp" />
-    <ClCompile Include="ConsolePanel.cpp" />
-    <ClCompile Include="FrameBuffer.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="HierarchyPanel.cpp" />
-    <ClCompile Include="InspectorPanel.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainMenu.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="ModelLoader.cpp" />
-    <ClCompile Include="MyWindow.cpp" />
-    <ClCompile Include="ResourcesPanel.cpp" />
-    <ClCompile Include="ScenePanel.cpp" />
-    <ClCompile Include="SimulationPanel.cpp" />
-    <ClCompile Include="TimeManager.cpp" />
-    <ClCompile Include="WindowEditor.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="ConfigPanel.h" />
-    <ClInclude Include="ConsolePanel.h" />
-    <ClInclude Include="FrameBuffer.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="HierarchyPanel.h" />
-    <ClInclude Include="InspectorPanel.h" />
-    <ClInclude Include="Logger.h" />
-    <ClInclude Include="MainMenu.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="ModelLoader.h" />
-    <ClInclude Include="MyWindow.h" />
-    <ClInclude Include="ResourcesPanel.h" />
-    <ClInclude Include="ScenePanel.h" />
-    <ClInclude Include="SimulationPanel.h" />
-    <ClInclude Include="TimeManager.h" />
-    <ClInclude Include="WindowEditor.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

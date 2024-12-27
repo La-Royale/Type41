@@ -41,33 +41,24 @@ GameObject::~GameObject() {
 }
 
 void GameObject::draw() {
-    std::cout << "Drawing GameObject " << name
-        << " with globalTransform: " << glm::to_string(globalTransform) << std::endl;
 
     glPushMatrix();
 
     // Aplicar transformación global
     const float* matrixData = glm::value_ptr(globalTransform);
     if (!matrixData) {
-        std::cerr << "Error: globalTransform is null for " << name << std::endl;
         glPopMatrix();
         return;
     }
 
-    // Debug: Imprimir la matriz que se pasará a OpenGL
-    for (int i = 0; i < 16; ++i) {
-        std::cout << "Matrix[" << i << "]: " << matrixData[i] << std::endl;
-    }
 
     glMultMatrixf(matrixData);
 
     // Verificar si se activa la textura correctamente
     material.use();
-    std::cout << "Material applied for GameObject " << name << std::endl;
 
     // Dibujar el modelo
     modelLoader.drawModel();
-    std::cout << "Model drawn for GameObject " << name << std::endl;
 
     // Dibujar hijos
     for (GameObject* child : children) {
@@ -103,10 +94,6 @@ void GameObject::updateTransform() {
     else {
         globalTransform = getLocalTransform();  // Asegúrate de que esto funcione correctamente
     }
-
-    std::cout << "GameObject " << name
-        << " globalTransform after update: "
-        << glm::to_string(globalTransform) << std::endl;
 
     updateChildrenTransform();
 
@@ -198,20 +185,16 @@ glm::mat4 GameObject::getLocalTransform() const {
 
     // Translation
     transform = glm::translate(transform, position);
-    std::cout << "Translation matrix: " << glm::to_string(transform) << std::endl;
 
     // Rotation
     glm::quat quaternionRotation = glm::quat(glm::radians(rotation));
     glm::mat4 rotationMatrix = glm::mat4_cast(quaternionRotation);
-    std::cout << "Rotation matrix: " << glm::to_string(rotationMatrix) << std::endl;
     transform *= rotationMatrix;
 
     // Scale
     glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
-    std::cout << "Scale matrix: " << glm::to_string(scaleMatrix) << std::endl;
     transform *= scaleMatrix;
 
-    std::cout << "Local transform: " << glm::to_string(transform) << std::endl;
     return transform;
 }
 

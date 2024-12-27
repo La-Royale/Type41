@@ -1,8 +1,11 @@
 #include "HierarchyPanel.h"
 #include <iostream>
+#include "Logger.h"
 
 HierarchyPanel::HierarchyPanel()
-    : selectedGameObject(nullptr), isRenaming(false), draggedObject(nullptr) {}
+    : selectedGameObject(nullptr), isRenaming(false), draggedObject(nullptr) {
+}
+
 
 HierarchyPanel::~HierarchyPanel() {}
 
@@ -10,7 +13,9 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
     ImGui::Begin("Hierarchy");
     draggedObject = nullptr;
     static GameObject* dropTargetObject = nullptr;
+
     std::vector<std::unique_ptr<GameObject>>::iterator objectToDelete = gameObjects.end();
+    std::vector<std::unique_ptr<GameObject>> newObjects;
 
     static bool showRenamePopup = false;
     static char newNameBuffer[128] = "";
@@ -81,16 +86,16 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
         }
 
         if (ImGui::BeginPopupContextItem(name.c_str())) {
-            if (ImGui::MenuItem("Copy")) {}
+            if (ImGui::MenuItem("Copy")) {
+                Logger::GetInstance().Log("Coppy isn't assigned for this task!", INFO);
+            }
 
-            if (ImGui::MenuItem("Paste")) {}
+            if (ImGui::MenuItem("Paste")) {
+                Logger::GetInstance().Log("Paste isn't assigned for this task!", INFO);
+            }
 
             if (ImGui::MenuItem("Duplicate")) {
-                if (selectedGameObject) {
-                    std::unique_ptr<GameObject> duplicatedObject = selectedGameObject->clone();
-                    duplicatedObject->setName(selectedGameObject->getName() + "_Copy");
-                    gameObjects.push_back(std::move(duplicatedObject));
-                }
+                Logger::GetInstance().Log("Duplicate isn't assigned for this task!", INFO);
             }
 
             if (ImGui::MenuItem("Change Name")) {
@@ -109,6 +114,10 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
 
             ImGui::EndPopup();
         }
+    }
+
+    for (auto& newObject : newObjects) {
+        gameObjects.push_back(std::move(newObject));
     }
 
     if (objectToDelete != gameObjects.end()) {
@@ -152,7 +161,6 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
         RenderInspector(selectedGameObject);
     }
 }
-
 
 void HierarchyPanel::RenderGameObject(GameObject* gameObject, std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     const std::string& name = gameObject->getName();

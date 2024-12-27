@@ -1,13 +1,16 @@
 ﻿#include "ResourcesPanel.h"
 #include <iostream>
 #include <filesystem>
+#include <imgui.h>
 
 namespace fs = std::filesystem;
 
 ResourcesPanel::ResourcesPanel() {
-    basePath = fs::current_path().append("Assets").string();
-    currentPath = basePath;
-    pathHistory.push_back(basePath);
+    basePath = fs::current_path().string();
+    assetsPath = fs::path(basePath).append("Assets").string();
+    libraryPath = fs::path(basePath).append("Library").string();
+    currentPath = assetsPath;
+    pathHistory.push_back(currentPath);
 }
 ResourcesPanel::~ResourcesPanel() {}
 
@@ -15,32 +18,76 @@ void ResourcesPanel::Render() {
 
     ImGui::Begin("Resources");
 
-    // Mostrar los botones de navegación de la historia
+    // Botón para navegar a Assets
+    if (ImGui::Button("Assets")) {
+        NavigateTo(assetsPath);
+    }
     ImGui::SameLine();
-    for (size_t i = 0; i < pathHistory.size(); ++i) {
-        // Extraemos solo el nombre de la carpeta de la ruta completa
-        std::string folderName = fs::path(pathHistory[i]).filename().string();
 
-        if (ImGui::Button(folderName.c_str())) {
-            NavigateTo(pathHistory[i]);
-            break; // Salimos del bucle para evitar problemas al modificar la historia
-        }
-        ImGui::SameLine(); // Para que los botones estén en la misma línea
+    // Botón para navegar a Library
+    if (ImGui::Button("Library")) {
+        currentPath = libraryPath; // Cambia la ruta actual a Library
     }
 
     ImGui::Separator();
 
     // Mostrar el contenido de la carpeta actual
-    for (const auto& entry : fs::directory_iterator(currentPath)) {
-        const std::string name = entry.path().filename().string(); // Obtiene solo el nombre
+    if (currentPath == libraryPath) {
+        // Mostrar contenido del directorio base excluyendo la carpeta Assets
+        for (const auto& entry : fs::directory_iterator(basePath)) {
+            if (entry.path() == assetsPath) continue; // Excluir Assets
 
-        if (entry.is_directory()) {
-            if (ImGui::Selectable(("> " + name).c_str(), false)) {
-                NavigateTo(entry.path().string());
+            const std::string name = entry.path().filename().string();
+            if (entry.is_directory()) {
+                if (ImGui::Selectable(("> " + name).c_str(), false)) {
+                    NavigateTo(entry.path().string());
+                }
+            }
+            else {
+                ImGui::Text("   < %s", name.c_str());
+            }
+
+            if (ImGui::BeginPopupContextItem(("ContextMenu_" + name).c_str())) {
+                if (ImGui::MenuItem("Delete")) {
+                    try {
+                        fs::remove(entry.path());
+                        Log(("Deleted: " + name).c_str());
+                    }
+                    catch (const std::exception& e) {
+                        Log(("Failed to delete: " + name + ". Error: " + std::string(e.what())).c_str());
+                    }
+                }
+                ImGui::EndPopup();
             }
         }
-        else {
-            ImGui::Text("   < %s", name.c_str());
+    }
+    else {
+        // Mostrar contenido de la carpeta actual normalmente (Assets)
+        for (const auto& entry : fs::directory_iterator(currentPath)) {
+            const std::string name = entry.path().filename().string();
+            bool isDirectory = entry.is_directory();
+
+            if (isDirectory) {
+                if (ImGui::Selectable(("> " + name).c_str(), false)) {
+                    NavigateTo(entry.path().string());
+                }
+            }
+            else {
+                ImGui::Text("   < %s", name.c_str());
+            }
+
+            if (ImGui::BeginPopupContextItem(("ContextMenu_" + name).c_str())) {
+                if (ImGui::MenuItem("Delete")) {
+                    try {
+                        fs::remove(entry.path());
+                        Log(("Deleted: " + name).c_str());
+                    }
+                    catch (const std::exception& e) {
+                        Log(("Failed to delete: " + name + ". Error: " + std::string(e.what())).c_str());
+                    }
+                }
+                ImGui::EndPopup();
+            }
         }
     }
 
@@ -50,17 +97,15 @@ void ResourcesPanel::Render() {
 void ResourcesPanel::NavigateTo(const std::string& path) {
     currentPath = path;
 
-    // Limpiamos la historia si navegamos hacia atrás
     auto it = std::find(pathHistory.begin(), pathHistory.end(), path);
     if (it != pathHistory.end()) {
         pathHistory.erase(it + 1, pathHistory.end());
     }
     else {
-        // Agregar a la historia si es una nueva carpeta
         pathHistory.push_back(path);
     }
 }
 
 void ResourcesPanel::Log(const char* message) {
-    // Implementación para registrar un mensaje
+    std::cout << message << std::endl;
 }

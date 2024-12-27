@@ -10,10 +10,13 @@ public:
     ~ResourcesPanel();
 
     void Render(); // Renderiza el log de consola
+    void MoveContentToLibrary();
     void Log(const char* message); // Método para registrar mensajes en consola
 
 private:
     std::string basePath;
+    std::string assetsPath;
+    std::string libraryPath;
     std::string currentPath;
 
     std::vector<std::string> pathHistory; // Historia de carpetas para botones de navegación
