@@ -25,6 +25,24 @@ public:
     void updateFrustum();
     bool isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound) const;
 
+    // Nuevas funciones para obtener la posición y dirección del rayo
+    glm::vec3 getPosition() const;
+    glm::vec3 getRayDirection() const;
+
+    // Clase Ray
+    class Ray {
+    public:
+        Ray(const glm::vec3& origin, const glm::vec3& direction)
+            : origin(origin), direction(glm::normalize(direction)) {
+        }
+
+        glm::vec3 origin;
+        glm::vec3 direction;
+    };
+
+    // Generar rayo desde las coordenadas del ratón
+    Ray GenerateRay(int mouseX, int mouseY, int screenWidth, int screenHeight, float aspectRatio) const;
+
 private:
     glm::vec3 position;
     glm::vec3 front;
@@ -42,6 +60,9 @@ private:
     glm::vec4 frustumPlanes[6];
 
     void updateCameraVectors();
+
+    // Convertir de coordenadas de pantalla a NDC
+    glm::vec2 ScreenToNDC(int mouseX, int mouseY, int screenWidth, int screenHeight) const;
 };
 
 #endif

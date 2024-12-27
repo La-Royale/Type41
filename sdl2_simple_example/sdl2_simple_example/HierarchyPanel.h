@@ -13,6 +13,7 @@ public:
     void Render(std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void RenderGameObject(GameObject* gameObject, std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void RenderInspector(GameObject* selectedGameObject);
+    void SetSelectedGameObject(GameObject* gameObject);
 
     GameObject* getSelectedGameObject() const { return selectedGameObject; }
 private:

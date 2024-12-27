@@ -264,3 +264,4 @@ glm::vec3 ModelLoader::getMinBound() const {
 glm::vec3 ModelLoader::getMaxBound() const {
     return maxBound;
 }
+

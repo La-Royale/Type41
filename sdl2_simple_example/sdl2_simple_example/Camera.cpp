@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/matrix_transform.hpp>
 
 glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
     return glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
@@ -40,49 +40,38 @@ void Camera::processMouseMovement(float xoffset, float yoffset) {
 void Camera::processMouseOrbit(float xoffset, float yoffset, const glm::vec3& targetPosition) {
     float orbitSpeed = 1.0f;
 
-    // Modificar el �ngulo de la c�mara seg�n el movimiento del rat�n
     yaw += xoffset * orbitSpeed;
     pitch += yoffset * orbitSpeed;
 
-    // Limitar el �ngulo de elevaci�n (pitch)
     if (pitch > 89.0f) pitch = 89.0f;
     if (pitch < -89.0f) pitch = -89.0f;
 
-    // Calcular la nueva direcci�n de la c�mara basada en la orbita
     updateCameraVectors();
 
-    // Posicionar la c�mara en torno al objeto seleccionado
     position = targetPosition - front * glm::length(targetPosition - position);
 }
 
-
 void Camera::processMouseScroll(float yoffset) {
-    // Aumentamos o disminuimos la distancia de la c�mara, bas�ndonos en el movimiento de la rueda del rat�n
-    float zoomSpeed = 0.1f;  // Controla qu� tan r�pido cambia la distancia
-    position += front * yoffset * zoomSpeed;  // Ajustamos la posici�n de la c�mara a lo largo de la direcci�n 'front'
+    float zoomSpeed = 0.1f;
+    position += front * yoffset * zoomSpeed;
 
-    // Limitar la distancia de la c�mara
-    if (glm::length(position) < 1.0f) position = glm::normalize(position) * 1.0f;  // No dejar que la c�mara se acerque demasiado
-    if (glm::length(position) > 80.0f) position = glm::normalize(position) * 80.0f;  // No dejar que la c�mara se aleje demasiado
+    if (glm::length(position) < 1.0f) position = glm::normalize(position) * 1.0f;
+    if (glm::length(position) > 80.0f) position = glm::normalize(position) * 80.0f;
 }
-
 
 void Camera::processMousePan(float xoffset, float yoffset) {
     float panSpeed = mouseSensitivity * 0.05f;
-    position += right * -xoffset * panSpeed; // Mueve en X
-    position -= up * yoffset * panSpeed;     // Mueve en Y
+    position += right * -xoffset * panSpeed;
+    position -= up * yoffset * panSpeed;
 }
 
 void Camera::update(float deltaTime) {}
 
 void Camera::resetFocus(const glm::vec3& targetPosition, const glm::vec3& meshSize) {
-    // Calcular la distancia de la c�mara en funci�n del tama�o de la malla
-    float distance = glm::length(meshSize) * 0.2f;  // Multiplicamos por un factor para dar espacio
+    float distance = glm::length(meshSize) * 0.2f;
 
-    // Ajustar la posici�n de la c�mara
     position = targetPosition - front * distance;
 
-    // Actualizamos los vectores de la c�mara
     updateCameraVectors();
 }
 
@@ -128,7 +117,8 @@ bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound
         if (frustumPlanes[i].x >= 0) {
             positiveVertex.x = maxBound.x;
             negativeVertex.x = minBound.x;
-        } else {
+        }
+        else {
             positiveVertex.x = minBound.x;
             negativeVertex.x = maxBound.x;
         }
@@ -136,7 +126,8 @@ bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound
         if (frustumPlanes[i].y >= 0) {
             positiveVertex.y = maxBound.y;
             negativeVertex.y = minBound.y;
-        } else {
+        }
+        else {
             positiveVertex.y = minBound.y;
             negativeVertex.y = maxBound.y;
         }
@@ -144,7 +135,8 @@ bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound
         if (frustumPlanes[i].z >= 0) {
             positiveVertex.z = maxBound.z;
             negativeVertex.z = minBound.z;
-        } else {
+        }
+        else {
             positiveVertex.z = minBound.z;
             negativeVertex.z = maxBound.z;
         }
@@ -154,4 +146,32 @@ bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound
         }
     }
     return true;
+}
+
+glm::vec2 Camera::ScreenToNDC(int mouseX, int mouseY, int screenWidth, int screenHeight) const {
+    float ndcX = (2.0f * mouseX) / screenWidth - 1.0f;
+    float ndcY = 1.0f - (2.0f * mouseY) / screenHeight;
+    return glm::vec2(ndcX, ndcY);
+}
+
+Camera::Ray Camera::GenerateRay(int mouseX, int mouseY, int screenWidth, int screenHeight, float aspectRatio) const {
+    glm::vec2 ndc = ScreenToNDC(mouseX, mouseY, screenWidth, screenHeight);
+
+    glm::vec4 rayClip(ndc.x, ndc.y, -1.0f, 1.0f);
+
+    glm::vec4 rayEye = glm::inverse(getProjectionMatrix(aspectRatio)) * rayClip;
+    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f);
+
+    glm::vec3 rayWorld = glm::vec3(glm::inverse(getViewMatrix()) * rayEye);
+    rayWorld = glm::normalize(rayWorld);
+
+    return Ray(position, rayWorld);
+}
+
+glm::vec3 Camera::getPosition() const {
+    return position;
+}
+
+glm::vec3 Camera::getRayDirection() const {
+    return front;
 }

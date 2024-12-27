@@ -51,6 +51,8 @@ std::vector<std::unique_ptr<GameObject>> gameObjects;
 
 Material defaultMaterial;
 
+//std::unique_ptr<GameObject> selectedObject = nullptr;
+
 static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hierarchyPanel, float deltaTime) {
     SDL_Event event;
     bool isAltPressed = false;  // Esta variable controlará el estado de la tecla Alt
@@ -74,7 +76,7 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
                 isAltPressed = true;  // Activamos el estado de Alt
             }
-            // Tambi��n procesamos el movimiento WASD aquí, independientemente de Alt
+            // También procesamos el movimiento WASD aquí, independientemente de Alt
             else {
                 camera.processKeyboard(event.key.keysym.sym, deltaTime);
             }
@@ -165,10 +167,41 @@ void resizeFramebuffer(int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+// Función para detectar la intersección con un rayo y las bounding boxes
+bool checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const GameObject& gameObject) {
+    // Obtenemos las coordenadas de las bounding box globales
+    glm::vec3 minBound = gameObject.getGlobalMinBound();
+    glm::vec3 maxBound = gameObject.getGlobalMaxBound();
+
+    // Aplanamos las coordenadas de la caja a 2D y calculamos la intersección
+    float tmin = (minBound.x - rayOrigin.x) / rayDirection.x;
+    float tmax = (maxBound.x - rayOrigin.x) / rayDirection.x;
+
+    if (tmin > tmax) std::swap(tmin, tmax);
+
+    float tymin = (minBound.y - rayOrigin.y) / rayDirection.y;
+    float tymax = (maxBound.y - rayOrigin.y) / rayDirection.y;
+
+    if (tymin > tymax) std::swap(tymin, tymax);
+
+    if (tmin > tymax || tymin > tmax) return false;
+
+    if (tymin > tmin) tmin = tymin;
+    if (tymax < tmax) tmax = tymax;
+
+    float tzmin = (minBound.z - rayOrigin.z) / rayDirection.z;
+    float tzmax = (maxBound.z - rayOrigin.z) / rayDirection.z;
+
+    if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+    if (tmin > tzmax || tzmin > tmax) return false;
+
+    return true;
+}
+
 std::unordered_map<std::string, glm::vec3> initialPositions;
 std::unordered_map<std::string, glm::vec3> initialRotations;
 std::unordered_map<std::string, glm::vec3> initialScales;
-
 
 int main(int argc, char** argv) {
 
@@ -204,7 +237,7 @@ int main(int argc, char** argv) {
     gameObject1->setMaterial(material);
 
     // Agregar objetos de juego a la lista
-    gameObjects.push_back(std::move(gameObject1));  
+    gameObjects.push_back(std::move(gameObject1));
 
     // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
     editor = new WindowEditor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta
@@ -253,8 +286,28 @@ int main(int argc, char** argv) {
 
         camera.updateFrustum();
 
+        // Detección de raycasting al hacer clic en la escena
+        if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+            // Obtenemos la posición del ratón en la pantalla y transformamos el rayo a coordenadas del mundo
+            int mouseX, mouseY;
+            SDL_GetMouseState(&mouseX, &mouseY);
+            glm::vec3 rayOrigin = camera.getPosition();
+            glm::vec3 rayDirection = camera.getRayDirection();  // Implementa getRayDirection
+
+            for (auto& gameObject : gameObjects) {
+                if (checkRayIntersection(rayOrigin, rayDirection, *gameObject)) {
+                    // Si la intersección es válida, seleccionamos el objeto
+                    hierarchyPanel.SetSelectedGameObject(gameObject.get());
+                    break;
+                }
+            }
+        }
+
         // Dibujar objetos de la escena
         for (auto& gameObject : gameObjects) {
+            if (gameObject == NULL) {
+                break;
+           }
             bool isVisible = camera.isBoxInFrustum(gameObject->getGlobalMinBound(), gameObject->getGlobalMaxBound());
             const std::string& name = gameObject->getName();
 
@@ -264,7 +317,8 @@ int main(int argc, char** argv) {
                     //std::cout << "Object " << name << " is now visible." << std::endl;
                     objectVisibility[name] = true;
                 }
-            } else {
+            }
+            else {
                 if (objectVisibility[name] == true) {
                     //std::cout << "Object " << name << " is now hidden." << std::endl;
                     objectVisibility[name] = false;
@@ -274,7 +328,7 @@ int main(int argc, char** argv) {
 
         if (editor->simulationPanel->GetState() == SimulationState::RUNNING) {
             // Save current state of the scene
-            if(saveObjects){
+            if (saveObjects) {
                 for (const auto& gameObject : gameObjects) {
                     initialPositions[gameObject->getName()] = gameObject->getPosition();
                     initialRotations[gameObject->getName()] = gameObject->getRotation();
@@ -288,17 +342,18 @@ int main(int argc, char** argv) {
                 gameObject->update(deltaTime);
             }
             resetObjects = true;
-        } else if (editor->simulationPanel->GetState() == SimulationState::STOPPED && resetObjects) {
+        }
+        else if (editor->simulationPanel->GetState() == SimulationState::STOPPED && resetObjects) {
             // Reset game objects to initial positions / rotations / scales
             for (auto& gameObject : gameObjects) {
                 gameObject->setPosition(initialPositions[gameObject->getName()]);
                 gameObject->setRotation(initialRotations[gameObject->getName()]);
                 gameObject->setScale(initialScales[gameObject->getName()]);
+                //gameObject->applyForce(deltaTime);
             }
             resetObjects = false;
             saveObjects = true;
         }
-
         framebuffer.Unbind(); // Desvincular framebuffer
 
         // Renderizar la interfaz de usuario (ImGui)
@@ -306,13 +361,14 @@ int main(int argc, char** argv) {
 
         // Intercambiar buffers
         window.swapBuffers();
-
         const auto t1 = hrclock::now();
         const auto dt = t1 - t0;
         if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
     }
 
     delete editor; // Clean up the editor
+
+       
 
     return 0;
 }
