@@ -153,6 +153,7 @@ void HierarchyPanel::Render(std::vector<std::unique_ptr<GameObject>>& gameObject
     }
 }
 
+
 void HierarchyPanel::RenderGameObject(GameObject* gameObject, std::vector<std::unique_ptr<GameObject>>& gameObjects) {
     const std::string& name = gameObject->getName();
 
@@ -244,4 +245,9 @@ void HierarchyPanel::RenderInspector(GameObject* selectedGameObject) {
         }
         ImGui::End();
     }
+}
+
+void HierarchyPanel::SetSelectedGameObject(GameObject* gameObject)
+{
+    selectedGameObject = gameObject;
 }
