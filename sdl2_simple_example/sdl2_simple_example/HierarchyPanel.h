@@ -1,8 +1,11 @@
-#pragma once
+#ifndef HIERARCHYPANEL_H
+#define HIERARCHYPANEL_H
+
 #include <vector>
 #include <memory>
 #include "GameObject.h"
 #include "imgui.h"
+#include "CameraObject.h"
 
 class HierarchyPanel {
 public:
@@ -19,5 +22,7 @@ public:
 private:
     bool isRenaming;
     GameObject* draggedObject;
-    GameObject* selectedGameObject;  // Puntero al GameObject actualmente seleccionado
+    GameObject* selectedGameObject;
 };
+
+#endif // HIERARCHYPANEL_H

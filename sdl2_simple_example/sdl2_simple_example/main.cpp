@@ -23,6 +23,7 @@
 #include "ConsolePanel.h"
 #include "ScenePanel.h"
 #include "Logger.h"
+#include "CameraObject.h" 
 
 using namespace std;
 using hrclock = chrono::high_resolution_clock;
@@ -231,7 +232,17 @@ int main(int argc, char** argv) {
     // Crear algunos objetos de juego y cargarlos
     auto gameObject1 = std::make_unique<GameObject>();
     gameObject1->loadModel("Assets/Models/Street environment_V01.fbx");
+    gameObject1->setName("Street environment_V01");
+    gameObject1->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    gameObject1->setRotation(glm::vec3(-90.0f, 0.0f, 0.0f));
+    gameObject1->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 
+    // Crear el objeto cámara
+    auto cameraObject = std::make_unique<CameraObject>("MainCamera");
+    cameraObject->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+    cameraObject->setRotation(glm::vec3(0.0f, 0.0f, 0.0f));
+    cameraObject->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
+    
     // Establecer materiales
     Material material;
     material.loadTexture("Assets/Textures/Building_V02_C.png");
@@ -239,6 +250,7 @@ int main(int argc, char** argv) {
 
     // Agregar objetos de juego a la lista
     gameObjects.push_back(std::move(gameObject1));
+    gameObjects.push_back(std::move(cameraObject));
 
     // Crear el editor de la ventana y pasarle la referencia de hierarchyPanel y la ventana
     editor = new WindowEditor(hierarchyPanel, &window);  // Asegúrate de que se pase la referencia correcta

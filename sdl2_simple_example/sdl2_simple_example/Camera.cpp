@@ -235,7 +235,7 @@ void Camera::drawFrustumRays() const {
 
     glPushAttrib(GL_CURRENT_BIT | GL_LINE_BIT);
     glLineWidth(2.0f);
-    glColor3f(1.0f, 1.0f, 0.0f); // Color amarillo para los rayos
+    glColor3f(1.0f, 0.0f, 0.0f);
 
     glBegin(GL_LINES);
     // Líneas desde la cámara hasta el near plane

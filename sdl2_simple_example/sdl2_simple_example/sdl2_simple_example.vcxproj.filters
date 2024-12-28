@@ -84,6 +84,9 @@
     <ClCompile Include="SimulationPanel.cpp">
       <Filter>Source Files\Paneles</Filter>
     </ClCompile>
+    <ClCompile Include="CameraObject.cpp">
+      <Filter>Source Files\Basico</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConfigPanel.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="SimulationPanel.h">
       <Filter>Header Files\Paneles</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraObject.h">
+      <Filter>Header Files\Basico</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

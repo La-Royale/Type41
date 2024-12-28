@@ -1,6 +1,7 @@
 #include "HierarchyPanel.h"
 #include <iostream>
 #include "Logger.h"
+#include "CameraObject.h"
 
 HierarchyPanel::HierarchyPanel()
     : selectedGameObject(nullptr), isRenaming(false), draggedObject(nullptr) {
@@ -251,6 +252,32 @@ void HierarchyPanel::RenderInspector(GameObject* selectedGameObject) {
                 selectedGameObject->setStatic(isStatic);
             }
         }
+
+        // Verificar si el objeto es una CameraObject
+        CameraObject* cameraObject = dynamic_cast<CameraObject*>(selectedGameObject);
+        if (cameraObject) {
+            ImGui::Separator();
+            ImGui::Text("Camera Properties");
+            
+            float fov = cameraObject->getFov();
+            float nearPlane = cameraObject->getNearPlane();
+            float farPlane = cameraObject->getFarPlane();
+            float aspectRatio = cameraObject->getAspectRatio();
+
+            if (ImGui::DragFloat("FOV", &fov, 0.1f, 1.0f, 179.0f)) {
+                cameraObject->setFov(fov);
+            }
+            if (ImGui::DragFloat("Near Plane", &nearPlane, 0.01f, 0.01f, farPlane)) {
+                cameraObject->setNearPlane(nearPlane);
+            }
+            if (ImGui::DragFloat("Far Plane", &farPlane, 0.1f, nearPlane, 1000.0f)) {
+                cameraObject->setFarPlane(farPlane);
+            }
+            if (ImGui::DragFloat("Aspect Ratio", &aspectRatio, 0.01f, 0.1f, 10.0f)) {
+                cameraObject->setAspectRatio(aspectRatio);
+            }
+        }
+
         ImGui::End();
     }
 }

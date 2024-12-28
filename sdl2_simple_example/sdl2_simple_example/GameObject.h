@@ -23,7 +23,7 @@ public:
 
     // Métodos para cargar y crear modelos
     bool loadModel(const std::string& path);
-    void draw();
+    virtual void draw();
 
     // Métodos de transformación
     void setPosition(const glm::vec3& position);
