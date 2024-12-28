@@ -22,6 +22,7 @@
 #include "HierarchyPanel.h"
 #include "ConsolePanel.h"
 #include "ScenePanel.h"
+#include "Logger.h"
 
 using namespace std;
 using hrclock = chrono::high_resolution_clock;
@@ -285,6 +286,8 @@ int main(int argc, char** argv) {
         glLoadMatrixf(&view[0][0]);
 
         camera.updateFrustum();
+        
+        camera.drawFrustumRays();
 
         // Detección de raycasting al hacer clic en la escena
         if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
@@ -307,20 +310,20 @@ int main(int argc, char** argv) {
         for (auto& gameObject : gameObjects) {
             if (gameObject == NULL) {
                 break;
-           }
+            }
             bool isVisible = camera.isBoxInFrustum(gameObject->getGlobalMinBound(), gameObject->getGlobalMaxBound());
             const std::string& name = gameObject->getName();
 
             if (isVisible) {
                 gameObject->draw();
                 if (objectVisibility[name] == false) {
-                    //std::cout << "Object " << name << " is now visible." << std::endl;
+                    Logger::GetInstance().Log("Object " + name + " is now visible", INFO);
                     objectVisibility[name] = true;
                 }
             }
             else {
                 if (objectVisibility[name] == true) {
-                    //std::cout << "Object " << name << " is now hidden." << std::endl;
+                    Logger::GetInstance().Log("Object " + name + " is now hidden", INFO);
                     objectVisibility[name] = false;
                 }
             }

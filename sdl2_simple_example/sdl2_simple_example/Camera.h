@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL2/SDL_events.h>
+#include <vector>  // AÃ±adir este include
+#include <GL/glew.h>  // AÃ±adir este include
 
 class Camera {
 public:
@@ -25,7 +27,7 @@ public:
     void updateFrustum();
     bool isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound) const;
 
-    // Nuevas funciones para obtener la posición y dirección del rayo
+    // Nuevas funciones para obtener la posiciï¿½n y direcciï¿½n del rayo
     glm::vec3 getPosition() const;
     glm::vec3 getRayDirection() const;
 
@@ -40,8 +42,12 @@ public:
         glm::vec3 direction;
     };
 
-    // Generar rayo desde las coordenadas del ratón
+    // Generar rayo desde las coordenadas del ratï¿½n
     Ray GenerateRay(int mouseX, int mouseY, int screenWidth, int screenHeight, float aspectRatio) const;
+
+    void drawFrustumRays() const;  // Nueva funciÃ³n para dibujar los rayos
+    float getFarPlane() const { return 100.0f; }  // Distancia del far plane
+    float getNearPlane() const { return 0.1f; }   // Distancia del near plane
 
 private:
     glm::vec3 position;
@@ -63,6 +69,8 @@ private:
 
     // Convertir de coordenadas de pantalla a NDC
     glm::vec2 ScreenToNDC(int mouseX, int mouseY, int screenWidth, int screenHeight) const;
+
+    void calculateFrustumCorners(std::vector<glm::vec3>& corners) const;
 };
 
 #endif

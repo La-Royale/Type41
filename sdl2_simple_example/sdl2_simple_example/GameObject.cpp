@@ -244,26 +244,52 @@ glm::vec3 GameObject::getMaxBound() const {
 
 glm::vec3 GameObject::getGlobalMinBound() const {
     glm::vec3 localMin = modelLoader.getMinBound();
-    glm::vec3 globalMin = position + glm::vec3(scale.x * localMin.x, scale.y * localMin.y, scale.z * localMin.z);
+    glm::vec3 localMax = modelLoader.getMaxBound();
+    
+    // Puntos de la bounding box en espacio local
+    std::vector<glm::vec3> corners = {
+        glm::vec3(localMin.x, localMin.y, localMin.z),
+        glm::vec3(localMax.x, localMin.y, localMin.z),
+        glm::vec3(localMin.x, localMax.y, localMin.z),
+        glm::vec3(localMax.x, localMax.y, localMin.z),
+        glm::vec3(localMin.x, localMin.y, localMax.z),
+        glm::vec3(localMax.x, localMin.y, localMax.z),
+        glm::vec3(localMin.x, localMax.y, localMax.z),
+        glm::vec3(localMax.x, localMax.y, localMax.z)
+    };
 
-    glm::mat4 rotationMatrix = glm::mat4(1.0f);
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    globalMin = glm::vec3(rotationMatrix * glm::vec4(globalMin, 1.0f));
+    // Transformar todos los puntos al espacio global
+    glm::vec3 globalMin(FLT_MAX);
+    for (const auto& corner : corners) {
+        glm::vec4 transformedCorner = globalTransform * glm::vec4(corner, 1.0f);
+        globalMin = glm::min(globalMin, glm::vec3(transformedCorner));
+    }
 
     return globalMin;
 }
 
 glm::vec3 GameObject::getGlobalMaxBound() const {
+    glm::vec3 localMin = modelLoader.getMinBound();
     glm::vec3 localMax = modelLoader.getMaxBound();
-    glm::vec3 globalMax = position + glm::vec3(scale.x * localMax.x, scale.y * localMax.y, scale.z * localMax.z);
+    
+    // Puntos de la bounding box en espacio local
+    std::vector<glm::vec3> corners = {
+        glm::vec3(localMin.x, localMin.y, localMin.z),
+        glm::vec3(localMax.x, localMin.y, localMin.z),
+        glm::vec3(localMin.x, localMax.y, localMin.z),
+        glm::vec3(localMax.x, localMax.y, localMin.z),
+        glm::vec3(localMin.x, localMin.y, localMax.z),
+        glm::vec3(localMax.x, localMin.y, localMax.z),
+        glm::vec3(localMin.x, localMax.y, localMax.z),
+        glm::vec3(localMax.x, localMax.y, localMax.z)
+    };
 
-    glm::mat4 rotationMatrix = glm::mat4(1.0f);
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-    rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-    globalMax = glm::vec3(rotationMatrix * glm::vec4(globalMax, 1.0f));
+    // Transformar todos los puntos al espacio global
+    glm::vec3 globalMax(-FLT_MAX);
+    for (const auto& corner : corners) {
+        glm::vec4 transformedCorner = globalTransform * glm::vec4(corner, 1.0f);
+        globalMax = glm::max(globalMax, glm::vec3(transformedCorner));
+    }
 
     return globalMax;
 }

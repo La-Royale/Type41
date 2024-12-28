@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <GL/glew.h>  // Añadir este include si no está ya incluido a través de Camera.h
 
 glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
     return glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
@@ -95,56 +96,85 @@ void Camera::updateCameraVectors() {
 }
 
 void Camera::updateFrustum() {
-    glm::mat4 projView = getProjectionMatrix(1.0f) * getViewMatrix();
-    frustumPlanes[0] = glm::vec4(projView[0][3] + projView[0][0], projView[1][3] + projView[1][0], projView[2][3] + projView[2][0], projView[3][3] + projView[3][0]); // Left
-    frustumPlanes[1] = glm::vec4(projView[0][3] - projView[0][0], projView[1][3] - projView[1][0], projView[2][3] - projView[2][0], projView[3][3] - projView[3][0]); // Right
-    frustumPlanes[2] = glm::vec4(projView[0][3] + projView[0][1], projView[1][3] + projView[1][1], projView[2][3] + projView[2][1], projView[3][3] + projView[3][1]); // Bottom
-    frustumPlanes[3] = glm::vec4(projView[0][3] - projView[0][1], projView[1][3] - projView[1][1], projView[2][3] - projView[2][1], projView[3][3] - projView[3][1]); // Top
-    frustumPlanes[4] = glm::vec4(projView[0][3] + projView[0][2], projView[1][3] + projView[1][2], projView[2][3] + projView[2][2], projView[3][3] + projView[3][2]); // Near
-    frustumPlanes[5] = glm::vec4(projView[0][3] - projView[0][2], projView[1][3] - projView[1][2], projView[2][3] - projView[2][2], projView[3][3] - projView[3][2]); // Far
+    glm::mat4 proj = getProjectionMatrix(1920.0f/1080.0f); // Usa tu aspect ratio real
+    glm::mat4 view = getViewMatrix();
+    glm::mat4 vp = proj * view;
 
+    // Extraer planos del frustum de la matriz de vista-proyección
+    // Left plane
+    frustumPlanes[0].x = vp[0][3] + vp[0][0];
+    frustumPlanes[0].y = vp[1][3] + vp[1][0];
+    frustumPlanes[0].z = vp[2][3] + vp[2][0];
+    frustumPlanes[0].w = vp[3][3] + vp[3][0];
+
+    // Right plane
+    frustumPlanes[1].x = vp[0][3] - vp[0][0];
+    frustumPlanes[1].y = vp[1][3] - vp[1][0];
+    frustumPlanes[1].z = vp[2][3] - vp[2][0];
+    frustumPlanes[1].w = vp[3][3] - vp[3][0];
+
+    // Bottom plane
+    frustumPlanes[2].x = vp[0][3] + vp[0][1];
+    frustumPlanes[2].y = vp[1][3] + vp[1][1];
+    frustumPlanes[2].z = vp[2][3] + vp[2][1];
+    frustumPlanes[2].w = vp[3][3] + vp[3][1];
+
+    // Top plane
+    frustumPlanes[3].x = vp[0][3] - vp[0][1];
+    frustumPlanes[3].y = vp[1][3] - vp[1][1];
+    frustumPlanes[3].z = vp[2][3] - vp[2][1];
+    frustumPlanes[3].w = vp[3][3] - vp[3][1];
+
+    // Near plane
+    frustumPlanes[4].x = vp[0][2];
+    frustumPlanes[4].y = vp[1][2];
+    frustumPlanes[4].z = vp[2][2];
+    frustumPlanes[4].w = vp[3][2];
+
+    // Far plane
+    frustumPlanes[5].x = vp[0][3] - vp[0][2];
+    frustumPlanes[5].y = vp[1][3] - vp[1][2];
+    frustumPlanes[5].z = vp[2][3] - vp[2][2];
+    frustumPlanes[5].w = vp[3][3] - vp[3][2];
+
+    // Normalizar los planos
     for (int i = 0; i < 6; ++i) {
-        float length = glm::length(glm::vec3(frustumPlanes[i]));
+        float length = sqrtf(frustumPlanes[i].x * frustumPlanes[i].x +
+                           frustumPlanes[i].y * frustumPlanes[i].y +
+                           frustumPlanes[i].z * frustumPlanes[i].z);
         frustumPlanes[i] /= length;
     }
 }
 
 bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound) const {
-    for (int i = 0; i < 6; ++i) {
-        glm::vec3 positiveVertex = minBound;
-        glm::vec3 negativeVertex = maxBound;
+    // Para cada plano del frustum
+    for (int i = 0; i < 6; i++) {
+        glm::vec3 p(minBound);
+        glm::vec3 n(maxBound);
 
+        // Encontrar el punto p-vertex
         if (frustumPlanes[i].x >= 0) {
-            positiveVertex.x = maxBound.x;
-            negativeVertex.x = minBound.x;
+            p.x = maxBound.x;
+            n.x = minBound.x;
         }
-        else {
-            positiveVertex.x = minBound.x;
-            negativeVertex.x = maxBound.x;
-        }
-
         if (frustumPlanes[i].y >= 0) {
-            positiveVertex.y = maxBound.y;
-            negativeVertex.y = minBound.y;
+            p.y = maxBound.y;
+            n.y = minBound.y;
         }
-        else {
-            positiveVertex.y = minBound.y;
-            negativeVertex.y = maxBound.y;
-        }
-
         if (frustumPlanes[i].z >= 0) {
-            positiveVertex.z = maxBound.z;
-            negativeVertex.z = minBound.z;
-        }
-        else {
-            positiveVertex.z = minBound.z;
-            negativeVertex.z = maxBound.z;
+            p.z = maxBound.z;
+            n.z = minBound.z;
         }
 
-        if (glm::dot(glm::vec3(frustumPlanes[i]), positiveVertex) + frustumPlanes[i].w < 0) {
+        // Si el punto p-vertex está fuera, el objeto está completamente fuera
+        if (frustumPlanes[i].x * p.x + 
+            frustumPlanes[i].y * p.y + 
+            frustumPlanes[i].z * p.z + 
+            frustumPlanes[i].w <= 0) {
             return false;
         }
     }
+    
     return true;
 }
 
@@ -174,4 +204,64 @@ glm::vec3 Camera::getPosition() const {
 
 glm::vec3 Camera::getRayDirection() const {
     return front;
+}
+
+void Camera::calculateFrustumCorners(std::vector<glm::vec3>& corners) const {
+    float aspectRatio = 1920.0f/1080.0f; // Ajusta esto según tu viewport
+    float tanHalfFov = tan(glm::radians(zoom) / 2.0f);
+    float nearH = getNearPlane() * tanHalfFov;
+    float nearW = nearH * aspectRatio;
+    float farH = getFarPlane() * tanHalfFov;
+    float farW = farH * aspectRatio;
+
+    // Near plane corners
+    glm::vec3 fc = position + front * getNearPlane();
+    corners.push_back(fc + (up * nearH) - (right * nearW));    // Near top left
+    corners.push_back(fc + (up * nearH) + (right * nearW));    // Near top right
+    corners.push_back(fc - (up * nearH) - (right * nearW));    // Near bottom left
+    corners.push_back(fc - (up * nearH) + (right * nearW));    // Near bottom right
+
+    // Far plane corners
+    fc = position + front * getFarPlane();
+    corners.push_back(fc + (up * farH) - (right * farW));      // Far top left
+    corners.push_back(fc + (up * farH) + (right * farW));      // Far top right
+    corners.push_back(fc - (up * farH) - (right * farW));      // Far bottom left
+    corners.push_back(fc - (up * farH) + (right * farW));      // Far bottom right
+}
+
+void Camera::drawFrustumRays() const {
+    std::vector<glm::vec3> corners;
+    calculateFrustumCorners(corners);
+
+    glPushAttrib(GL_CURRENT_BIT | GL_LINE_BIT);
+    glLineWidth(2.0f);
+    glColor3f(1.0f, 1.0f, 0.0f); // Color amarillo para los rayos
+
+    glBegin(GL_LINES);
+    // Líneas desde la cámara hasta el near plane
+    for (int i = 0; i < 4; ++i) {
+        glVertex3fv(&position[0]);
+        glVertex3fv(&corners[i][0]);
+    }
+
+    // Líneas desde la cámara hasta el far plane
+    for (int i = 4; i < 8; ++i) {
+        glVertex3fv(&position[0]);
+        glVertex3fv(&corners[i][0]);
+    }
+
+    // Conectar near plane corners
+    for (int i = 0; i < 4; ++i) {
+        glVertex3fv(&corners[i][0]);
+        glVertex3fv(&corners[(i + 1) % 4][0]);
+    }
+
+    // Conectar far plane corners
+    for (int i = 4; i < 8; ++i) {
+        glVertex3fv(&corners[i][0]);
+        glVertex3fv(&corners[4 + ((i - 4 + 1) % 4)][0]);
+    }
+    glEnd();
+
+    glPopAttrib();
 }
