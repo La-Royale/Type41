@@ -188,7 +188,7 @@ void HierarchyPanel::RenderInspector(GameObject* selectedGameObject) {
     if (selectedGameObject) {
         ImGui::Begin("Inspector");
         glm::vec3 position = selectedGameObject->getPosition();
-        if (ImGui::DragFloat3("Position", &position.x, -0.1f, 0.1f)) {
+        if (ImGui::DragFloat3("Position", &position.x, 0.1f, 0.1f)) {
             selectedGameObject->setPosition(position);
         }
 

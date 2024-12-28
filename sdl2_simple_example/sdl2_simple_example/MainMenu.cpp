@@ -63,6 +63,15 @@ void MainMenu::Render(bool& showConsole, bool& showConfig, bool& showHierarchy, 
                         gameObjects.push_back(std::move(gameObject));
                     }
                 }
+
+                ImGui::Separator();
+
+                if (ImGui::MenuItem("Empty Object")) {
+                    // Crear un GameObject vacío (sin mesh ni material)
+                    auto gameObject = std::make_unique<GameObject>();
+                    gameObjects.push_back(std::move(gameObject));
+                }
+
                 ImGui::EndMenu();
             }
 
