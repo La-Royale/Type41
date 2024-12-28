@@ -296,8 +296,8 @@ int main(int argc, char** argv) {
 
             for (auto& gameObject : gameObjects) {
                 if (checkRayIntersection(rayOrigin, rayDirection, *gameObject)) {
-                    // Si la intersección es válida, seleccionamos el objeto
-                    hierarchyPanel.SetSelectedGameObject(gameObject.get());
+                    // Selecionar objetos haciendo clic
+                    //hierarchyPanel.SetSelectedGameObject(gameObject.get());
                     break;
                 }
             }
