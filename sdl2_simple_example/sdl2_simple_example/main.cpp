@@ -170,36 +170,41 @@ void resizeFramebuffer(int width, int height) {
 }
 
 // Función para detectar la intersección con un rayo y las bounding boxes
-bool checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const GameObject& gameObject) {
-    // Obtenemos las coordenadas de las bounding box globales
-    glm::vec3 minBound = gameObject.getGlobalMinBound();
-    glm::vec3 maxBound = gameObject.getGlobalMaxBound();
+bool checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDir, const GameObject& obj) {
+    // Suponiendo que tienes un AABB (Axis-Aligned Bounding Box)
+    glm::vec3 minBound = obj.getMinBound();  // Obtén los límites mínimos de la bounding box
+    glm::vec3 maxBound = obj.getMaxBound();  // Obtén los límites máximos de la bounding box
 
-    // Aplanamos las coordenadas de la caja a 2D y calculamos la intersección
-    float tmin = (minBound.x - rayOrigin.x) / rayDirection.x;
-    float tmax = (maxBound.x - rayOrigin.x) / rayDirection.x;
+    float tmin = (minBound.x - rayOrigin.x) / rayDir.x;
+    float tmax = (maxBound.x - rayOrigin.x) / rayDir.x;
 
     if (tmin > tmax) std::swap(tmin, tmax);
 
-    float tymin = (minBound.y - rayOrigin.y) / rayDirection.y;
-    float tymax = (maxBound.y - rayOrigin.y) / rayDirection.y;
+    float tymin = (minBound.y - rayOrigin.y) / rayDir.y;
+    float tymax = (maxBound.y - rayOrigin.y) / rayDir.y;
 
     if (tymin > tymax) std::swap(tymin, tymax);
 
-    if (tmin > tymax || tymin > tmax) return false;
+    if ((tmin > tymax) || (tymin > tmax))
+        return false;
 
-    if (tymin > tmin) tmin = tymin;
-    if (tymax < tmax) tmax = tymax;
+    if (tymin > tmin)
+        tmin = tymin;
 
-    float tzmin = (minBound.z - rayOrigin.z) / rayDirection.z;
-    float tzmax = (maxBound.z - rayOrigin.z) / rayDirection.z;
+    if (tymax < tmax)
+        tmax = tymax;
+
+    float tzmin = (minBound.z - rayOrigin.z) / rayDir.z;
+    float tzmax = (maxBound.z - rayOrigin.z) / rayDir.z;
 
     if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
-    if (tmin > tzmax || tzmin > tmax) return false;
+    if ((tmin > tzmax) || (tzmin > tmax))
+        return false;
 
-    return true;
+    return true;  // Si pasa todas las comprobaciones, el rayo intersecta la bounding box
 }
+
 
 std::unordered_map<std::string, glm::vec3> initialPositions;
 std::unordered_map<std::string, glm::vec3> initialRotations;
@@ -303,20 +308,31 @@ int main(int argc, char** argv) {
 
         // Detección de raycasting al hacer clic en la escena
         if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-            // Obtenemos la posición del ratón en la pantalla y transformamos el rayo a coordenadas del mundo
+            // Obtenemos la posición del ratón en la pantalla
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
-            glm::vec3 rayOrigin = camera.getPosition();
-            glm::vec3 rayDirection = camera.getRayDirection();  // Implementa getRayDirection
 
+            // Generamos el rayo usando la función GenerateRay
+            float aspectRatio = 1920.0f / 1080.0f;  // Ajusta el aspectRatio según tu viewport
+            Camera::Ray ray = camera.GenerateRay(mouseX, mouseY, 1920, 1080, aspectRatio);
+
+            // Usamos el origen y la dirección del rayo para la comprobación de intersección
+            glm::vec3 rayOrigin = ray.origin;
+            glm::vec3 rayDirection = ray.direction;
+
+            // Comprobamos las intersecciones con los objetos
             for (auto& gameObject : gameObjects) {
                 if (checkRayIntersection(rayOrigin, rayDirection, *gameObject)) {
-                    // Selecionar objetos haciendo clic
+                    // Seleccionar objetos haciendo clic
                     //hierarchyPanel.SetSelectedGameObject(gameObject.get());
+
+                    std::cout << "Ray intersects with bounding box of GameObject: "
+                        << gameObject->getName() << std::endl;
                     break;
                 }
             }
         }
+
 
         // Dibujar objetos de la escena
         for (auto& gameObject : gameObjects) {
