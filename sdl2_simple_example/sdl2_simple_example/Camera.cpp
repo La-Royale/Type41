@@ -178,50 +178,6 @@ bool Camera::isBoxInFrustum(const glm::vec3& minBound, const glm::vec3& maxBound
     return true;
 }
 
-glm::vec2 Camera::ScreenToNDC(int mouseX, int mouseY, int screenWidth, int screenHeight) const {
-    float ndcX = (2.0f * mouseX) / screenWidth - 1.0f;
-    float ndcY = 1.0f - (2.0f * mouseY) / screenHeight;
-    return glm::vec2(ndcX, ndcY);
-}
-
-//ESTO NO ESTA FUNCIONANDO
-#include <iostream>  // Para usar std::cout
-
-Camera::Ray Camera::GenerateRay(int mouseX, int mouseY, int screenWidth, int screenHeight, float aspectRatio) const {
-    // Convertir las coordenadas del ratón a Normalized Device Coordinates (NDC)
-    glm::vec2 ndc = ScreenToNDC(mouseX, mouseY, screenWidth, screenHeight);
-
-    // Crear el rayo en el espacio de clip
-    glm::vec4 rayClip(ndc.x, ndc.y, -1.0f, 1.0f);
-
-    // Convertir el rayo a espacio de la cámara (Eye space)
-    glm::vec4 rayEye = glm::inverse(getProjectionMatrix(aspectRatio)) * rayClip;
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0f, 0.0f); // Z = -1.0f y W = 0.0f para obtener un rayo
-
-    // Convertir el rayo a espacio mundial
-    glm::vec3 rayWorld = glm::vec3(glm::inverse(getViewMatrix()) * rayEye);
-    rayWorld = glm::normalize(rayWorld);
-
-    // Log de la dirección del rayo
-    std::cout << "Ray Origin: (" << position.x << ", " << position.y << ", " << position.z << ")\n";
-    std::cout << "Ray Direction: (" << rayWorld.x << ", " << rayWorld.y << ", " << rayWorld.z << ")\n";
-
-    // Calcular el punto final del rayo (distancia arbitraria de 100.0f)
-    glm::vec3 rayEnd = position + rayWorld * 100.0f; // Factor 100.0f para longitud del rayo
-    std::cout << "Ray End Point: (" << rayEnd.x << ", " << rayEnd.y << ", " << rayEnd.z << ")\n";
-
-    // Ahora, dibujamos el rayo directamente dentro de esta función
-    glBegin(GL_LINES); // Inicia el dibujo de una línea
-    glColor3f(1.0f, 0.0f, 0.0f); // Color rojo para el rayo
-    glVertex3f(position.x, position.y, position.z); // Origen del rayo
-    glVertex3f(rayEnd.x, rayEnd.y, rayEnd.z); // Punto final del rayo
-    glEnd(); // Termina el dibujo
-
-    return Ray(position, rayWorld); // Retorna el objeto Ray con el origen y dirección calculados
-}
-
-
-
 glm::vec3 Camera::getPosition() const {
     return position;
 }

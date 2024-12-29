@@ -53,7 +53,6 @@ public:
     glm::vec3 getMaxBound() const;
     glm::vec3 getGlobalMinBound() const;
     glm::vec3 getGlobalMaxBound() const;
-    bool intersectRay(const glm::vec3& rayOrigin, const glm::vec3& rayDir) const;
 
     void update(float deltaTime);
 

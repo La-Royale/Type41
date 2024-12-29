@@ -308,29 +308,7 @@ int main(int argc, char** argv) {
 
         // Detección de raycasting al hacer clic en la escena
         if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-            // Obtenemos la posición del ratón en la pantalla
-            int mouseX, mouseY;
-            SDL_GetMouseState(&mouseX, &mouseY);
-
-            // Generamos el rayo usando la función GenerateRay
-            float aspectRatio = 1920.0f / 1080.0f;  // Ajusta el aspectRatio según tu viewport
-            Camera::Ray ray = camera.GenerateRay(mouseX, mouseY, 1920, 1080, aspectRatio);
-
-            // Usamos el origen y la dirección del rayo para la comprobación de intersección
-            glm::vec3 rayOrigin = ray.origin;
-            glm::vec3 rayDirection = ray.direction;
-
-            // Comprobamos las intersecciones con los objetos
-            for (auto& gameObject : gameObjects) {
-                if (checkRayIntersection(rayOrigin, rayDirection, *gameObject)) {
-                    // Seleccionar objetos haciendo clic
-                    //hierarchyPanel.SetSelectedGameObject(gameObject.get());
-
-                    std::cout << "Ray intersects with bounding box of GameObject: "
-                        << gameObject->getName() << std::endl;
-                    break;
-                }
-            }
+            
         }
 
 

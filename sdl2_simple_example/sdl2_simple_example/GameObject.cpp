@@ -332,36 +332,3 @@ void GameObject::removeFromParent() {
     }
 }
 
-bool GameObject::intersectRay(const glm::vec3& rayOrigin, const glm::vec3& rayDir) const {
-    glm::vec3 minBound = getGlobalMinBound();
-    glm::vec3 maxBound = getGlobalMaxBound();
-
-    // Algoritmo de intersección de rayos con AABB (Axis-Aligned Bounding Box)
-    float tMin = (minBound.x - rayOrigin.x) / rayDir.x;
-    float tMax = (maxBound.x - rayOrigin.x) / rayDir.x;
-
-    if (tMin > tMax) std::swap(tMin, tMax);
-
-    float tyMin = (minBound.y - rayOrigin.y) / rayDir.y;
-    float tyMax = (maxBound.y - rayOrigin.y) / rayDir.y;
-
-    if (tyMin > tyMax) std::swap(tyMin, tyMax);
-
-    if (tMin > tyMax || tyMin > tMax)
-        return false;
-
-    if (tyMin > tMin)
-        tMin = tyMin;
-    if (tyMax < tMax)
-        tMax = tyMax;
-
-    float tzMin = (minBound.z - rayOrigin.z) / rayDir.z;
-    float tzMax = (maxBound.z - rayOrigin.z) / rayDir.z;
-
-    if (tzMin > tzMax) std::swap(tzMin, tzMax);
-
-    if (tMin > tzMax || tzMin > tMax)
-        return false;
-
-    return true; // El rayo intersecta el bounding box
-}
