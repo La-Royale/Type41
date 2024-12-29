@@ -332,3 +332,47 @@ void GameObject::removeFromParent() {
     }
 }
 
+bool GameObject::checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, float& distance) {
+    std::cout << "Checking ray intersection for object: " << name << std::endl;
+    
+    // First check AABB intersection
+    glm::vec3 minBound = getGlobalMinBound();
+    glm::vec3 maxBound = getGlobalMaxBound();
+    
+    std::cout << "AABB bounds: " << std::endl;
+    std::cout << "Min: (" << minBound.x << ", " << minBound.y << ", " << minBound.z << ")" << std::endl;
+    std::cout << "Max: (" << maxBound.x << ", " << maxBound.y << ", " << maxBound.z << ")" << std::endl;
+
+    // Check AABB intersection first
+    float tmin = (minBound.x - rayOrigin.x) / rayDirection.x;
+    float tmax = (maxBound.x - rayOrigin.x) / rayDirection.x;
+
+    if (tmin > tmax) std::swap(tmin, tmax);
+
+    float tymin = (minBound.y - rayOrigin.y) / rayDirection.y;
+    float tymax = (maxBound.y - rayOrigin.y) / rayDirection.y;
+
+    if (tymin > tymax) std::swap(tymin, tymax);
+
+    if ((tmin > tymax) || (tymin > tmax)) {
+        std::cout << "No AABB intersection for object: " << name << std::endl;
+        return false;
+    }
+
+    if (tymin > tmin) tmin = tymin;
+    if (tymax < tmax) tmax = tymax;
+
+    float tzmin = (minBound.z - rayOrigin.z) / rayDirection.z;
+    float tzmax = (maxBound.z - rayOrigin.z) / rayDirection.z;
+
+    if (tzmin > tzmax) std::swap(tzmin, tzmax);
+
+    if ((tmin > tzmax) || (tzmin > tmax)) {
+        std::cout << "No AABB intersection for object: " << name << std::endl;
+        return false;
+    }
+
+    std::cout << "AABB intersection found, checking triangles..." << std::endl;
+    return modelLoader.checkRayIntersection(rayOrigin, rayDirection, globalTransform, distance);
+}
+

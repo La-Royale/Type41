@@ -67,6 +67,10 @@ public:
     glm::mat4 getGlobalTransform() const;
     glm::mat4 getLocalTransform() const;
     glm::mat4 globalTransform;
+
+    bool checkRayIntersection(const glm::vec3& rayOrigin, 
+                             const glm::vec3& rayDirection,
+                             float& distance);
 private:
     void updateParentTransform();
     void updateChildrenTransform();

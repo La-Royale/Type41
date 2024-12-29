@@ -35,6 +35,9 @@ public:
     float getFarPlane() const { return 100.0f; }  // Distancia del far plane
     float getNearPlane() const { return 0.1f; }   // Distancia del near plane
 
+    glm::vec3 screenToWorldRay(float screenX, float screenY, float screenWidth, float screenHeight);
+    glm::mat4 getInverseViewProjection(float screenWidth, float screenHeight) const;
+
 private:
     glm::vec3 position;
     glm::vec3 front;

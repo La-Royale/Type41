@@ -245,3 +245,27 @@ void Camera::drawFrustumRays() const {
 
     glPopAttrib();
 }
+
+glm::vec3 Camera::screenToWorldRay(float screenX, float screenY, float screenWidth, float screenHeight) {
+    // Convert screen coordinates to normalized device coordinates (-1 to 1)
+    float x = (2.0f * screenX) / screenWidth - 1.0f;
+    float y = 1.0f - (2.0f * screenY) / screenHeight;
+    
+    // Get inverse view-projection matrix
+    glm::mat4 invVP = getInverseViewProjection(screenWidth, screenHeight);
+    
+    // Calculate ray direction in world space
+    glm::vec4 rayStart = invVP * glm::vec4(x, y, -1.0f, 1.0f);
+    glm::vec4 rayEnd = invVP * glm::vec4(x, y, 1.0f, 1.0f);
+    
+    rayStart /= rayStart.w;
+    rayEnd /= rayEnd.w;
+    
+    return glm::normalize(glm::vec3(rayEnd - rayStart));
+}
+
+glm::mat4 Camera::getInverseViewProjection(float screenWidth, float screenHeight) const {
+    glm::mat4 projection = getProjectionMatrix(screenWidth / screenHeight);
+    glm::mat4 view = getViewMatrix();
+    return glm::inverse(projection * view);
+}

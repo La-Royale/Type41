@@ -265,3 +265,98 @@ glm::vec3 ModelLoader::getMaxBound() const {
     return maxBound;
 }
 
+bool ModelLoader::rayIntersectsTriangle(const glm::vec3& rayOrigin, 
+                                      const glm::vec3& rayDirection,
+                                      const glm::vec3& v0, 
+                                      const glm::vec3& v1, 
+                                      const glm::vec3& v2,
+                                      float& intersectionDistance) const {
+    const float EPSILON = 0.0000001f;
+    glm::vec3 edge1 = v1 - v0;
+    glm::vec3 edge2 = v2 - v0;
+    glm::vec3 h = glm::cross(rayDirection, edge2);
+    float a = glm::dot(edge1, h);
+
+    if (a > -EPSILON && a < EPSILON) return false;
+
+    float f = 1.0f / a;
+    glm::vec3 s = rayOrigin - v0;
+    float u = f * glm::dot(s, h);
+
+    if (u < 0.0f || u > 1.0f) return false;
+
+    glm::vec3 q = glm::cross(s, edge1);
+    float v = f * glm::dot(rayDirection, q);
+
+    if (v < 0.0f || u + v > 1.0f) return false;
+
+    float t = f * glm::dot(edge2, q);
+    if (t > EPSILON) {
+        intersectionDistance = t;
+        return true;
+    }
+
+    return false;
+}
+
+bool ModelLoader::checkRayIntersection(const glm::vec3& rayOrigin, 
+                                     const glm::vec3& rayDirection,
+                                     const glm::mat4& transform,
+                                     float& closestDistance) {
+    if (!scene) {
+        std::cout << "No scene loaded for ray intersection test" << std::endl;
+        return false;
+    }
+
+    // Convert ray to local space
+    glm::mat4 invTransform = glm::inverse(transform);
+    glm::vec4 localRayOrigin = invTransform * glm::vec4(rayOrigin, 1.0f);
+    glm::vec4 localRayDir = invTransform * glm::vec4(rayDirection, 0.0f);
+
+    std::cout << "Testing ray intersection in local space:" << std::endl;
+    std::cout << "Origin: (" << localRayOrigin.x << ", " << localRayOrigin.y << ", " << localRayOrigin.z << ")" << std::endl;
+    std::cout << "Direction: (" << localRayDir.x << ", " << localRayDir.y << ", " << localRayDir.z << ")" << std::endl;
+
+    bool hit = false;
+    closestDistance = std::numeric_limits<float>::max();
+
+    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
+        aiMesh* mesh = scene->mMeshes[i];
+        std::cout << "Testing mesh " << i << " with " << mesh->mNumFaces << " faces" << std::endl;
+
+        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
+            aiFace& face = mesh->mFaces[j];
+            if (face.mNumIndices == 3) {
+                glm::vec3 v0(mesh->mVertices[face.mIndices[0]].x,
+                            mesh->mVertices[face.mIndices[0]].y,
+                            mesh->mVertices[face.mIndices[0]].z);
+                glm::vec3 v1(mesh->mVertices[face.mIndices[1]].x,
+                            mesh->mVertices[face.mIndices[1]].y,
+                            mesh->mVertices[face.mIndices[1]].z);
+                glm::vec3 v2(mesh->mVertices[face.mIndices[2]].x,
+                            mesh->mVertices[face.mIndices[2]].y,
+                            mesh->mVertices[face.mIndices[2]].z);
+
+                float distance;
+                if (rayIntersectsTriangle(glm::vec3(localRayOrigin), 
+                                        glm::vec3(localRayDir),
+                                        v0, v1, v2, distance)) {
+                    hit = true;
+                    std::cout << "Hit triangle in face " << j << " at distance " << distance << std::endl;
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                    }
+                }
+            }
+        }
+    }
+
+    if (hit) {
+        std::cout << "Found intersection at distance " << closestDistance << std::endl;
+    } else {
+        std::cout << "No intersection found" << std::endl;
+    }
+
+    return hit;
+}
+
