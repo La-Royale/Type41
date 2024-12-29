@@ -33,6 +33,17 @@ public:
     glm::vec3 getMinBound() const;
     glm::vec3 getMaxBound() const;
 
+    bool rayIntersectsTriangle(const glm::vec3& rayOrigin, 
+                              const glm::vec3& rayDirection,
+                              const glm::vec3& v0, 
+                              const glm::vec3& v1, 
+                              const glm::vec3& v2,
+                              float& intersectionDistance) const;
+    bool checkRayIntersection(const glm::vec3& rayOrigin, 
+                             const glm::vec3& rayDirection,
+                             const glm::mat4& transform,
+                             float& closestDistance);
+
 private:
     void drawNode(aiNode* node, const aiScene* scene);
     void drawPrimitive();

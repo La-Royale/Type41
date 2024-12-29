@@ -332,36 +332,47 @@ void GameObject::removeFromParent() {
     }
 }
 
-bool GameObject::intersectRay(const glm::vec3& rayOrigin, const glm::vec3& rayDir) const {
+bool GameObject::checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, float& distance) {
+    std::cout << "Checking ray intersection for object: " << name << std::endl;
+    
+    // First check AABB intersection
     glm::vec3 minBound = getGlobalMinBound();
     glm::vec3 maxBound = getGlobalMaxBound();
+    
+    std::cout << "AABB bounds: " << std::endl;
+    std::cout << "Min: (" << minBound.x << ", " << minBound.y << ", " << minBound.z << ")" << std::endl;
+    std::cout << "Max: (" << maxBound.x << ", " << maxBound.y << ", " << maxBound.z << ")" << std::endl;
 
-    // Algoritmo de intersección de rayos con AABB (Axis-Aligned Bounding Box)
-    float tMin = (minBound.x - rayOrigin.x) / rayDir.x;
-    float tMax = (maxBound.x - rayOrigin.x) / rayDir.x;
+    // Check AABB intersection first
+    float tmin = (minBound.x - rayOrigin.x) / rayDirection.x;
+    float tmax = (maxBound.x - rayOrigin.x) / rayDirection.x;
 
-    if (tMin > tMax) std::swap(tMin, tMax);
+    if (tmin > tmax) std::swap(tmin, tmax);
 
-    float tyMin = (minBound.y - rayOrigin.y) / rayDir.y;
-    float tyMax = (maxBound.y - rayOrigin.y) / rayDir.y;
+    float tymin = (minBound.y - rayOrigin.y) / rayDirection.y;
+    float tymax = (maxBound.y - rayOrigin.y) / rayDirection.y;
 
-    if (tyMin > tyMax) std::swap(tyMin, tyMax);
+    if (tymin > tymax) std::swap(tymin, tymax);
 
-    if (tMin > tyMax || tyMin > tMax)
+    if ((tmin > tymax) || (tymin > tmax)) {
+        std::cout << "No AABB intersection for object: " << name << std::endl;
         return false;
+    }
 
-    if (tyMin > tMin)
-        tMin = tyMin;
-    if (tyMax < tMax)
-        tMax = tyMax;
+    if (tymin > tmin) tmin = tymin;
+    if (tymax < tmax) tmax = tymax;
 
-    float tzMin = (minBound.z - rayOrigin.z) / rayDir.z;
-    float tzMax = (maxBound.z - rayOrigin.z) / rayDir.z;
+    float tzmin = (minBound.z - rayOrigin.z) / rayDirection.z;
+    float tzmax = (maxBound.z - rayOrigin.z) / rayDirection.z;
 
-    if (tzMin > tzMax) std::swap(tzMin, tzMax);
+    if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
-    if (tMin > tzMax || tzMin > tMax)
+    if ((tmin > tzmax) || (tzmin > tmax)) {
+        std::cout << "No AABB intersection for object: " << name << std::endl;
         return false;
+    }
 
-    return true; // El rayo intersecta el bounding box
+    std::cout << "AABB intersection found, checking triangles..." << std::endl;
+    return modelLoader.checkRayIntersection(rayOrigin, rayDirection, globalTransform, distance);
 }
+

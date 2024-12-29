@@ -53,7 +53,6 @@ public:
     glm::vec3 getMaxBound() const;
     glm::vec3 getGlobalMinBound() const;
     glm::vec3 getGlobalMaxBound() const;
-    bool intersectRay(const glm::vec3& rayOrigin, const glm::vec3& rayDir) const;
 
     void update(float deltaTime);
 
@@ -68,6 +67,10 @@ public:
     glm::mat4 getGlobalTransform() const;
     glm::mat4 getLocalTransform() const;
     glm::mat4 globalTransform;
+
+    bool checkRayIntersection(const glm::vec3& rayOrigin, 
+                             const glm::vec3& rayDirection,
+                             float& distance);
 private:
     void updateParentTransform();
     void updateChildrenTransform();

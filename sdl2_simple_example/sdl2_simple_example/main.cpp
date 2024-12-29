@@ -169,38 +169,6 @@ void resizeFramebuffer(int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-// Función para detectar la intersección con un rayo y las bounding boxes
-bool checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const GameObject& gameObject) {
-    // Obtenemos las coordenadas de las bounding box globales
-    glm::vec3 minBound = gameObject.getGlobalMinBound();
-    glm::vec3 maxBound = gameObject.getGlobalMaxBound();
-
-    // Aplanamos las coordenadas de la caja a 2D y calculamos la intersección
-    float tmin = (minBound.x - rayOrigin.x) / rayDirection.x;
-    float tmax = (maxBound.x - rayOrigin.x) / rayDirection.x;
-
-    if (tmin > tmax) std::swap(tmin, tmax);
-
-    float tymin = (minBound.y - rayOrigin.y) / rayDirection.y;
-    float tymax = (maxBound.y - rayOrigin.y) / rayDirection.y;
-
-    if (tymin > tymax) std::swap(tymin, tymax);
-
-    if (tmin > tymax || tymin > tmax) return false;
-
-    if (tymin > tmin) tmin = tymin;
-    if (tymax < tmax) tmax = tymax;
-
-    float tzmin = (minBound.z - rayOrigin.z) / rayDirection.z;
-    float tzmax = (maxBound.z - rayOrigin.z) / rayDirection.z;
-
-    if (tzmin > tzmax) std::swap(tzmin, tzmax);
-
-    if (tmin > tzmax || tzmin > tmax) return false;
-
-    return true;
-}
-
 std::unordered_map<std::string, glm::vec3> initialPositions;
 std::unordered_map<std::string, glm::vec3> initialRotations;
 std::unordered_map<std::string, glm::vec3> initialScales;
@@ -303,18 +271,33 @@ int main(int argc, char** argv) {
 
         // Detección de raycasting al hacer clic en la escena
         if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-            // Obtenemos la posición del ratón en la pantalla y transformamos el rayo a coordenadas del mundo
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
-            glm::vec3 rayOrigin = camera.getPosition();
-            glm::vec3 rayDirection = camera.getRayDirection();  // Implementa getRayDirection
+            std::cout << "Mouse clicked at: (" << mouseX << ", " << mouseY << ")" << std::endl;
 
-            for (auto& gameObject : gameObjects) {
-                if (checkRayIntersection(rayOrigin, rayDirection, *gameObject)) {
-                    // Selecionar objetos haciendo clic
-                    //hierarchyPanel.SetSelectedGameObject(gameObject.get());
-                    break;
+            glm::vec3 rayDir = camera.screenToWorldRay(mouseX, mouseY, framebuffer.width(), framebuffer.height());
+            glm::vec3 rayOrigin = camera.getPosition();
+
+            std::cout << "Ray Origin: (" << rayOrigin.x << ", " << rayOrigin.y << ", " << rayOrigin.z << ")" << std::endl;
+            std::cout << "Ray Direction: (" << rayDir.x << ", " << rayDir.y << ", " << rayDir.z << ")" << std::endl;
+
+            float closestDist = std::numeric_limits<float>::max();
+            GameObject* closestObject = nullptr;
+
+            for (const auto& obj : gameObjects) {
+                float dist;
+                if (obj->checkRayIntersection(rayOrigin, rayDir, dist)) {
+                    std::cout << "Hit object: " << obj->getName() << " at distance: " << dist << std::endl;
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestObject = obj.get();
+                    }
                 }
+            }
+
+            if (closestObject) {
+                std::cout << "Selected object: " << closestObject->getName() << std::endl;
+                hierarchyPanel.SetSelectedGameObject(closestObject);
             }
         }
 

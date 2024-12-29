@@ -31,23 +31,12 @@ public:
     glm::vec3 getPosition() const;
     glm::vec3 getRayDirection() const;
 
-    // Clase Ray
-    class Ray {
-    public:
-        Ray(const glm::vec3& origin, const glm::vec3& direction)
-            : origin(origin), direction(glm::normalize(direction)) {
-        }
-
-        glm::vec3 origin;
-        glm::vec3 direction;
-    };
-
-    // Generar rayo desde las coordenadas del rat�n
-    Ray GenerateRay(int mouseX, int mouseY, int screenWidth, int screenHeight, float aspectRatio) const;
-
     void drawFrustumRays() const;  // Nueva función para dibujar los rayos
     float getFarPlane() const { return 100.0f; }  // Distancia del far plane
     float getNearPlane() const { return 0.1f; }   // Distancia del near plane
+
+    glm::vec3 screenToWorldRay(float screenX, float screenY, float screenWidth, float screenHeight);
+    glm::mat4 getInverseViewProjection(float screenWidth, float screenHeight) const;
 
 private:
     glm::vec3 position;
@@ -66,9 +55,6 @@ private:
     glm::vec4 frustumPlanes[6];
 
     void updateCameraVectors();
-
-    // Convertir de coordenadas de pantalla a NDC
-    glm::vec2 ScreenToNDC(int mouseX, int mouseY, int screenWidth, int screenHeight) const;
 
     void calculateFrustumCorners(std::vector<glm::vec3>& corners) const;
 };
