@@ -169,10 +169,6 @@ void resizeFramebuffer(int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-// Función para detectar la intersección con un rayo y las bounding boxes
-// Remove this function as it's no longer needed
-// bool checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDir, const GameObject& obj) { ... }
-
 std::unordered_map<std::string, glm::vec3> initialPositions;
 std::unordered_map<std::string, glm::vec3> initialRotations;
 std::unordered_map<std::string, glm::vec3> initialScales;
