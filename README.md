@@ -25,15 +25,15 @@ Type41 es un motor en 3D realizado con SDL2, OpenGL, glew, DevIL, GLM, Assimp e 
 ### Nuevas Implementaciones
 - La escena Street Environment se carga automáticamente al inicio.  
 - Inspector:  
-   - Jerarquía: eliminar, reasignar como hijo, crear objetos vacíos y crear hijos.  
+   - Jerarquía: eliminar, reasignar como hijo, crear objetos vacíos y crear hijos, además Se puede renombrar y eliminar los GameObjects. 
    - Transformación: trasladar, rotar y escalar objetos.  
    - Malla: seleccionar o arrastrar cualquier malla importada.  
    - Textura: seleccionar o arrastrar cualquier textura importada.  
    - Cámara: es un componente con configuraciones que se pueden modificar.  
 
-- Los GameObjects pueden seleccionarse en el mundo utilizando el ratón.  
+- Los GameObjects pueden seleccionarse en el mundo utilizando el ratón. El raycasting esta configurado para selecionar el GameObject mas cercano.
 - Todas las mallas utilizan un volumen delimitador (AABB) y se pueden descartar mediante Frustum Culling. Este proceso debe visualizarse en el editor (debug de raycasting y cajas).  
-- El usuario puede Iniciar / Pausar / Detener la simulación y recuperar su estado original.  
+- El usuario puede Iniciar / Pausar / Detener la simulación y recuperar su estado original, además los GameObjects pueden ser estáticos o dinámicos. 
 
 - Gestión de Recursos 
    - Hay una ventana de “Assets” que muestra todos los recursos del usuario (puede ser una visualización sencilla con un treeview).  
