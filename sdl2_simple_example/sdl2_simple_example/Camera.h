@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <SDL2/SDL_events.h>
-#include <vector>  // Añadir este include
-#include <GL/glew.h>  // Añadir este include
+#include <vector>
+#include <GL/glew.h>
 
 class Camera {
 public:

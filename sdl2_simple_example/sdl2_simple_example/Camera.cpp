@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
-#include <GL/glew.h>  // Añadir este include si no está ya incluido a través de Camera.h
+#include <GL/glew.h>
 
 glm::mat4 Camera::getProjectionMatrix(float aspectRatio) const {
     return glm::perspective(glm::radians(zoom), aspectRatio, 0.1f, 100.0f);
@@ -96,11 +96,10 @@ void Camera::updateCameraVectors() {
 }
 
 void Camera::updateFrustum() {
-    glm::mat4 proj = getProjectionMatrix(1920.0f/1080.0f); // Usa tu aspect ratio real
+    glm::mat4 proj = getProjectionMatrix(1920.0f/1080.0f);
     glm::mat4 view = getViewMatrix();
     glm::mat4 vp = proj * view;
 
-    // Extraer planos del frustum de la matriz de vista-proyección
     // Left plane
     frustumPlanes[0].x = vp[0][3] + vp[0][0];
     frustumPlanes[0].y = vp[1][3] + vp[1][0];
@@ -187,7 +186,7 @@ glm::vec3 Camera::getRayDirection() const {
 }
 
 void Camera::calculateFrustumCorners(std::vector<glm::vec3>& corners) const {
-    float aspectRatio = 1920.0f/1080.0f; // Ajusta esto según tu viewport
+    float aspectRatio = 1920.0f/1080.0f; 
     float tanHalfFov = tan(glm::radians(zoom) / 2.0f);
     float nearH = getNearPlane() * tanHalfFov;
     float nearW = nearH * aspectRatio;

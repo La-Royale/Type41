@@ -6,8 +6,8 @@
 #include <iostream>
 #include <cfloat>
 #include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>    // Para glm::value_ptr
-#include <glm/gtx/string_cast.hpp> // Para glm::to_string
+#include <glm/gtc/type_ptr.hpp>   
+#include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
@@ -32,7 +32,7 @@ std::unique_ptr<GameObject> GameObject::clone() const {
 GameObject::GameObject(const std::string& customName, bool isStatic)
     : id(++nextId), position(0.0f), rotation(0.0f), scale(1.0f), isStatic(isStatic) {
     name = customName.empty() ? generateUniqueName() : customName;
-    updateTransform(); // Actualizar la transformación global al crearse
+    updateTransform();
 }
 
 
@@ -44,7 +44,6 @@ void GameObject::draw() {
 
     glPushMatrix();
 
-    // Aplicar transformación global
     const float* matrixData = glm::value_ptr(globalTransform);
     if (!matrixData) {
         glPopMatrix();
@@ -54,20 +53,16 @@ void GameObject::draw() {
 
     glMultMatrixf(matrixData);
 
-    // Verificar si se activa la textura correctamente
     material.use();
 
-    // Dibujar el modelo
     modelLoader.drawModel();
 
-    // Dibujar hijos
     for (GameObject* child : children) {
         child->draw();
     }
 
     glPopMatrix();
 
-    // Restaurar estado de OpenGL
     glDisable(GL_TEXTURE_2D);
     glColor3f(1.0f, 1.0f, 1.0f);
 }
@@ -92,7 +87,7 @@ void GameObject::updateTransform() {
         globalTransform = parent->getGlobalTransform() * getLocalTransform();
     }
     else {
-        globalTransform = getLocalTransform();  // Asegúrate de que esto funcione correctamente
+        globalTransform = getLocalTransform(); 
     }
 
     updateChildrenTransform();
@@ -105,7 +100,7 @@ void GameObject::updateTransform() {
 
 void GameObject::updateChildrenTransform() {
     for (GameObject* child : children) {
-        child->updateTransform();  // Recursión para actualizar a cada hijo
+        child->updateTransform(); 
     }
 }   
 
@@ -333,15 +328,15 @@ void GameObject::removeFromParent() {
 }
 
 bool GameObject::checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, float& distance) {
-    std::cout << "Checking ray intersection for object: " << name << std::endl;
+    //std::cout << "Checking ray intersection for object: " << name << std::endl;
     
     // First check AABB intersection
     glm::vec3 minBound = getGlobalMinBound();
     glm::vec3 maxBound = getGlobalMaxBound();
     
-    std::cout << "AABB bounds: " << std::endl;
-    std::cout << "Min: (" << minBound.x << ", " << minBound.y << ", " << minBound.z << ")" << std::endl;
-    std::cout << "Max: (" << maxBound.x << ", " << maxBound.y << ", " << maxBound.z << ")" << std::endl;
+    //std::cout << "AABB bounds: " << std::endl;
+    //std::cout << "Min: (" << minBound.x << ", " << minBound.y << ", " << minBound.z << ")" << std::endl;
+    //std::cout << "Max: (" << maxBound.x << ", " << maxBound.y << ", " << maxBound.z << ")" << std::endl;
 
     // Check AABB intersection first
     float tmin = (minBound.x - rayOrigin.x) / rayDirection.x;
@@ -355,7 +350,7 @@ bool GameObject::checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec
     if (tymin > tymax) std::swap(tymin, tymax);
 
     if ((tmin > tymax) || (tymin > tmax)) {
-        std::cout << "No AABB intersection for object: " << name << std::endl;
+        //std::cout << "No AABB intersection for object: " << name << std::endl;
         return false;
     }
 
@@ -368,11 +363,11 @@ bool GameObject::checkRayIntersection(const glm::vec3& rayOrigin, const glm::vec
     if (tzmin > tzmax) std::swap(tzmin, tzmax);
 
     if ((tmin > tzmax) || (tzmin > tmax)) {
-        std::cout << "No AABB intersection for object: " << name << std::endl;
+        //std::cout << "No AABB intersection for object: " << name << std::endl;
         return false;
     }
 
-    std::cout << "AABB intersection found, checking triangles..." << std::endl;
+    //std::cout << "AABB intersection found, checking triangles..." << std::endl;
     return modelLoader.checkRayIntersection(rayOrigin, rayDirection, globalTransform, distance);
 }
 

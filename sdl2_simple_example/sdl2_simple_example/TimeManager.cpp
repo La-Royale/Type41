@@ -5,11 +5,10 @@ TimeManager::TimeManager()
 }
 
 void TimeManager::Update() {
-    // Calcula el deltaTime como la diferencia entre el tiempo actual y el último frame
     auto currentFrameTime = std::chrono::high_resolution_clock::now();
     std::chrono::duration<float> elapsed = currentFrameTime - lastFrameTime;
     deltaTime = elapsed.count();
-    lastFrameTime = currentFrameTime; // Actualiza el tiempo del último frame
+    lastFrameTime = currentFrameTime; 
 }
 
 float TimeManager::GetDeltaTime() const {

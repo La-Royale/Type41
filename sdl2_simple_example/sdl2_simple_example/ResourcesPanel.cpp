@@ -18,22 +18,18 @@ void ResourcesPanel::Render() {
 
     ImGui::Begin("Resources");
 
-    // Botón para navegar a Assets
     if (ImGui::Button("Assets")) {
         NavigateTo(assetsPath);
     }
     ImGui::SameLine();
 
-    // Botón para navegar a Library
     if (ImGui::Button("Library")) {
-        currentPath = libraryPath; // Cambia la ruta actual a Library
+        currentPath = libraryPath; 
     }
 
     ImGui::Separator();
 
-    // Mostrar el contenido de la carpeta actual
     if (currentPath == libraryPath) {
-        // Mostrar contenido del directorio base excluyendo la carpeta Assets
         for (const auto& entry : fs::directory_iterator(basePath)) {
             if (entry.path() == assetsPath) continue; // Excluir Assets
 
@@ -62,7 +58,6 @@ void ResourcesPanel::Render() {
         }
     }
     else {
-        // Mostrar contenido de la carpeta actual normalmente (Assets)
         for (const auto& entry : fs::directory_iterator(currentPath)) {
             const std::string name = entry.path().filename().string();
             bool isDirectory = entry.is_directory();
@@ -107,5 +102,5 @@ void ResourcesPanel::NavigateTo(const std::string& path) {
 }
 
 void ResourcesPanel::Log(const char* message) {
-    std::cout << message << std::endl;
+    //std::cout << message << std::endl;
 }

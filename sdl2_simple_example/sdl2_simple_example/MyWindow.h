@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include "Material.h"
-#include "HierarchyPanel.h"  // Incluimos el header de HierarchyPanel
+#include "HierarchyPanel.h"
 
 struct SDL_Window;
 
@@ -21,17 +21,17 @@ public:
     MyWindow(const std::string& title, int w, int h);
     ~MyWindow();
 
-    // Métodos para manejar el buffer de la ventana
+    // Mï¿½todos para manejar el buffer de la ventana
 
     void swapBuffers() const;
 
-    // Método para manejar el archivo que se arrastra
+    // Mï¿½todo para manejar el archivo que se arrastra
     void handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPanel);
 
-    // Método para establecer el material por defecto
+    // Mï¿½todo para establecer el material por defecto
     void setDefaultMaterial(const Material& material);
 
-    // Nuevo método para obtener la ventana SDL
+    // Nuevo mï¿½todo para obtener la ventana SDL
     SDL_Window* getWindow() const { return _window; }
     ImGuiIO* g_io= nullptr;
 

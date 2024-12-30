@@ -21,6 +21,7 @@ public:
     void Render(std::vector<std::unique_ptr<GameObject>>& gameObjects);
     void HandleEvents();
     void SetFramebuffer(GLuint framebufferTexture);
+    ScenePanel* GetScenePanel() const { return scenePanel; }
 
     SimulationPanel* simulationPanel;
 

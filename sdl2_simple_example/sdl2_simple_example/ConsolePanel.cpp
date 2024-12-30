@@ -1,9 +1,7 @@
-// ConsolePanel.cpp
 #include "ConsolePanel.h"
 #include <iostream>
 
 ConsolePanel::ConsolePanel() {
-    // Reserva de espacio en el vector para 1000 mensajes
     messages.reserve(1000);
 }
 
@@ -17,7 +15,6 @@ void ConsolePanel::Render() {
 
     ImGui::Begin("Console"/*, nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar*/);
 
-    // Mostrar los mensajes en la consola con colores según el tipo de mensaje
     for (const auto& message : messages) {
         if (message.find("[INFO]") != std::string::npos) {
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.8f, 1.0f, 1.0f));  // Azul para INFO
@@ -38,7 +35,7 @@ void ConsolePanel::Render() {
 
 
 void ConsolePanel::Log(const char* message, LogType type) {
-    std::cout << "ConsolePanel: Agregando mensaje: " << message << std::endl;  // Debug
+    //std::cout << "ConsolePanel: Agregando mensaje: " << message << std::endl;  // Debug
     std::string formattedMessage;
     switch (type) {
         case INFO:
@@ -52,9 +49,8 @@ void ConsolePanel::Log(const char* message, LogType type) {
             break;
     }
 
-    messages.push_back(formattedMessage);  // Agregar al vector
+    messages.push_back(formattedMessage);
 
-    // Limitar el número de mensajes a 1000
     if (messages.size() > 1000) {
         messages.erase(messages.begin());
     }

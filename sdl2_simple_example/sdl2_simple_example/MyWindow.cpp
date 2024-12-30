@@ -73,7 +73,7 @@ void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPan
     std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower); // Convert to lowercase
 
     if (extension == "fbx") {
-        std::cout << "File dropped: " << filePath << std::endl;
+        //std::cout << "File dropped: " << filePath << std::endl;
         auto gameObject = std::make_unique<GameObject>();
         if (gameObject->loadModel(filePath)) {
             gameObjects.push_back(std::move(gameObject));
@@ -83,9 +83,9 @@ void MyWindow::handleFileDrop(const char* filePath, HierarchyPanel& hierarchyPan
         if (selectedGameObject) {
             Material& material = selectedGameObject->getMaterial();
             if (material.loadTexture(filePath)) {
-                std::cout << "Texture loaded and set successfully: " << filePath << std::endl;
+                //std::cout << "Texture loaded and set successfully: " << filePath << std::endl;
             } else {
-                std::cout << "Failed to load texture: " << filePath << std::endl;
+                //std::cout << "Failed to load texture: " << filePath << std::endl;
             }
         } else {
             Logger::GetInstance().Log("SELECT AN OBJECT TO ADD A TEXTURE", WARNING);

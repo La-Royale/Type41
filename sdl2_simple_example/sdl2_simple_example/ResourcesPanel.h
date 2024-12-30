@@ -9,9 +9,9 @@ public:
     ResourcesPanel();
     ~ResourcesPanel();
 
-    void Render(); // Renderiza el log de consola
+    void Render(); 
     void MoveContentToLibrary();
-    void Log(const char* message); // Método para registrar mensajes en consola
+    void Log(const char* message); 
 
 private:
     std::string basePath;
@@ -19,8 +19,7 @@ private:
     std::string libraryPath;
     std::string currentPath;
 
-    std::vector<std::string> pathHistory; // Historia de carpetas para botones de navegación
+    std::vector<std::string> pathHistory;
 
-    void NavigateTo(const std::string& path); // Método para cambiar de carpeta
-    // Estructuras necesarias para el log
+    void NavigateTo(const std::string& path); 
 };

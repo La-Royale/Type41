@@ -304,7 +304,7 @@ bool ModelLoader::checkRayIntersection(const glm::vec3& rayOrigin,
                                      const glm::mat4& transform,
                                      float& closestDistance) {
     if (!scene) {
-        std::cout << "No scene loaded for ray intersection test" << std::endl;
+        //std::cout << "No scene loaded for ray intersection test" << std::endl;
         return false;
     }
 
@@ -313,16 +313,16 @@ bool ModelLoader::checkRayIntersection(const glm::vec3& rayOrigin,
     glm::vec4 localRayOrigin = invTransform * glm::vec4(rayOrigin, 1.0f);
     glm::vec4 localRayDir = invTransform * glm::vec4(rayDirection, 0.0f);
 
-    std::cout << "Testing ray intersection in local space:" << std::endl;
-    std::cout << "Origin: (" << localRayOrigin.x << ", " << localRayOrigin.y << ", " << localRayOrigin.z << ")" << std::endl;
-    std::cout << "Direction: (" << localRayDir.x << ", " << localRayDir.y << ", " << localRayDir.z << ")" << std::endl;
+    //std::cout << "Testing ray intersection in local space:" << std::endl;
+    //std::cout << "Origin: (" << localRayOrigin.x << ", " << localRayOrigin.y << ", " << localRayOrigin.z << ")" << std::endl;
+    //std::cout << "Direction: (" << localRayDir.x << ", " << localRayDir.y << ", " << localRayDir.z << ")" << std::endl;
 
     bool hit = false;
     closestDistance = std::numeric_limits<float>::max();
 
     for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
         aiMesh* mesh = scene->mMeshes[i];
-        std::cout << "Testing mesh " << i << " with " << mesh->mNumFaces << " faces" << std::endl;
+        //std::cout << "Testing mesh " << i << " with " << mesh->mNumFaces << " faces" << std::endl;
 
         for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
             aiFace& face = mesh->mFaces[j];
@@ -342,7 +342,7 @@ bool ModelLoader::checkRayIntersection(const glm::vec3& rayOrigin,
                                         glm::vec3(localRayDir),
                                         v0, v1, v2, distance)) {
                     hit = true;
-                    std::cout << "Hit triangle in face " << j << " at distance " << distance << std::endl;
+                    //std::cout << "Hit triangle in face " << j << " at distance " << distance << std::endl;
                     if (distance < closestDistance) {
                         closestDistance = distance;
                     }
@@ -352,9 +352,9 @@ bool ModelLoader::checkRayIntersection(const glm::vec3& rayOrigin,
     }
 
     if (hit) {
-        std::cout << "Found intersection at distance " << closestDistance << std::endl;
+        //std::cout << "Found intersection at distance " << closestDistance << std::endl;
     } else {
-        std::cout << "No intersection found" << std::endl;
+        //std::cout << "No intersection found" << std::endl;
     }
 
     return hit;

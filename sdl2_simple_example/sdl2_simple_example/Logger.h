@@ -2,13 +2,12 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "ConsolePanel.h"  // Incluye la clase ConsolePanel
+#include "ConsolePanel.h"
 
 class Logger {
 public:
-    // Método para obtener la instancia del logger
     static Logger& GetInstance() {
-        static Logger instance;  // Instancia única del logger
+        static Logger instance;
         return instance;
     }
 
@@ -16,18 +15,18 @@ public:
     void Log(const std::string& message, LogType type) {
 
         if (consolePanel) {
-            //std::cout << "ConsolePanel está asignado. Enviando log..." << std::endl;  // Debug
-            consolePanel->Log(message.c_str(), type);  // Pasa el mensaje a ConsolePanel
+            //std::cout << "ConsolePanel estï¿½ asignado. Enviando log..." << std::endl;  // Debug
+            consolePanel->Log(message.c_str(), type);  
         }
         else {
-            //std::cout << "ConsolePanel no está asignado" << std::endl;  // Debug
+            //std::cout << "ConsolePanel no estï¿½ asignado" << std::endl;  // Debug
         }
     }
 
 
-    // Establecer la instancia del ConsolePanel (se pasa en el WindowEditor)
+
     void SetConsolePanel(ConsolePanel* panel) {
-        if (panel) {  // Verifica que no sea nullptr
+        if (panel) { 
             consolePanel = panel;
         }
         else {
@@ -36,12 +35,11 @@ public:
     }
 
 private:
-    ConsolePanel* consolePanel = nullptr;  // ConsolePanel donde se mostrarán los mensajes
+    ConsolePanel* consolePanel = nullptr; 
 
-    // Constructor privado para implementar el patrón Singleton
+
     Logger() = default;
 
-    // Desactivar la copia y asignación
     Logger(const Logger&) = delete;
     Logger& operator=(const Logger&) = delete;
 };

@@ -35,7 +35,7 @@ static const auto FRAME_DT = 1.0s / FPS;
 
 GLuint sceneFramebuffer, sceneTexture, depthRenderbuffer;
 Framebuffer framebuffer;
-WindowEditor* editor; // Declare editor as a global pointer
+WindowEditor* editor;
 
 static void init_openGL() {
     glewInit();
@@ -53,18 +53,16 @@ std::vector<std::unique_ptr<GameObject>> gameObjects;
 
 Material defaultMaterial;
 
-//std::unique_ptr<GameObject> selectedObject = nullptr;
 
 static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hierarchyPanel, float deltaTime) {
     SDL_Event event;
-    bool isAltPressed = false;  // Esta variable controlará el estado de la tecla Alt
+    bool isAltPressed = false; 
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT:
             return false;
         case SDL_KEYDOWN:
             if (event.key.keysym.sym == SDLK_f) {
-                // Centrar la cámara en el objeto seleccionado
                 GameObject* selectedGameObject = hierarchyPanel.getSelectedGameObject();
                 if (selectedGameObject) {
                     glm::vec3 meshSize = selectedGameObject->getMeshSize();
@@ -74,11 +72,9 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             else if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(true);
             }
-            // Detectamos cuando se presiona la tecla Alt
             else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
-                isAltPressed = true;  // Activamos el estado de Alt
+                isAltPressed = true; 
             }
-            // También procesamos el movimiento WASD aquí, independientemente de Alt
             else {
                 camera.processKeyboard(event.key.keysym.sym, deltaTime);
             }
@@ -87,9 +83,8 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             if (event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
                 camera.enableFPSMode(false);
             }
-            // Detectamos cuando se suelta la tecla Alt
             else if (event.key.keysym.sym == SDLK_LALT || event.key.keysym.sym == SDLK_RALT) {
-                isAltPressed = false;  // Desactivamos el estado de Alt
+                isAltPressed = false; 
             }
             break;
         case SDL_MOUSEMOTION:
@@ -97,7 +92,7 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
                 camera.processMouseMovement(event.motion.xrel, -event.motion.yrel);
             }
             else if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_MIDDLE)) {
-                camera.processMousePan(event.motion.xrel, -event.motion.yrel); // Pan con el botón central
+                camera.processMousePan(event.motion.xrel, -event.motion.yrel);
             }
             else if (isAltPressed && SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
                 // Orbitación con el botón izquierdo y ALT
@@ -112,7 +107,7 @@ static bool processEvents(MyWindow& window, Camera& camera, HierarchyPanel& hier
             camera.processMouseScroll(event.wheel.y);
             break;
         case SDL_DROPFILE:
-            std::cout << "File drop event detected" << std::endl;
+            //std::cout << "File drop event detected" << std::endl;
             window.handleFileDrop(event.drop.file, hierarchyPanel);
             SDL_free(event.drop.file);
             break;
@@ -225,8 +220,8 @@ int main(int argc, char** argv) {
     editor->SetFramebuffer(framebuffer.GetTexture());
 
     // Crear el panel de escena
-    ScenePanel scenePanel;
-    scenePanel.SetFramebufferTexture(framebuffer.GetTexture());
+    //ScenePanel scenePanel;
+    //scenePanel.SetFramebufferTexture(framebuffer.GetTexture());
 
     // Guardar posición inicial de los objetos
     for (const auto& gameObject : gameObjects) {
@@ -250,11 +245,9 @@ int main(int argc, char** argv) {
         deltaTime = chrono::duration<float>(t0 - lastFrame).count();
         lastFrame = t0;
 
-        // **1. Renderizar al framebuffer**
-        framebuffer.Bind();  // Vincular framebuffer
-        glViewport(0, 0, framebuffer.width(), framebuffer.height()); // Ajustar el viewport al tamaño del framebuffer
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);        // Ajustar el viewport
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    // Limpiar buffers
+        framebuffer.Bind(); 
+        glViewport(0, 0, framebuffer.width(), framebuffer.height());
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    
 
         // Actualizar la proyección y vista de la cámara
         glm::mat4 projection = camera.getProjectionMatrix(float(framebuffer.width()) / framebuffer.height());
@@ -269,17 +262,18 @@ int main(int argc, char** argv) {
         
         camera.drawFrustumRays();
 
-        // Detección de raycasting al hacer clic en la escena
-        if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+        // Actualizar la detección de raycasting
+        if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT) && editor->GetScenePanel()->IsFocused()) {
             int mouseX, mouseY;
             SDL_GetMouseState(&mouseX, &mouseY);
-            std::cout << "Mouse clicked at: (" << mouseX << ", " << mouseY << ")" << std::endl;
+            //std::cout << "Mouse clicked at: (" << mouseX << ", " << mouseY << ")" << std::endl;
+            //std::cout << "Scene Panel is focused, processing click" << std::endl;
 
             glm::vec3 rayDir = camera.screenToWorldRay(mouseX, mouseY, framebuffer.width(), framebuffer.height());
             glm::vec3 rayOrigin = camera.getPosition();
 
-            std::cout << "Ray Origin: (" << rayOrigin.x << ", " << rayOrigin.y << ", " << rayOrigin.z << ")" << std::endl;
-            std::cout << "Ray Direction: (" << rayDir.x << ", " << rayDir.y << ", " << rayDir.z << ")" << std::endl;
+            //std::cout << "Ray Origin: (" << rayOrigin.x << ", " << rayOrigin.y << ", " << rayOrigin.z << ")" << std::endl;
+            //std::cout << "Ray Direction: (" << rayDir.x << ", " << rayDir.y << ", " << rayDir.z << ")" << std::endl;
 
             float closestDist = std::numeric_limits<float>::max();
             GameObject* closestObject = nullptr;
@@ -287,7 +281,7 @@ int main(int argc, char** argv) {
             for (const auto& obj : gameObjects) {
                 float dist;
                 if (obj->checkRayIntersection(rayOrigin, rayDir, dist)) {
-                    std::cout << "Hit object: " << obj->getName() << " at distance: " << dist << std::endl;
+                    //std::cout << "Hit object: " << obj->getName() << " at distance: " << dist << std::endl;
                     if (dist < closestDist) {
                         closestDist = dist;
                         closestObject = obj.get();
@@ -296,8 +290,9 @@ int main(int argc, char** argv) {
             }
 
             if (closestObject) {
-                std::cout << "Selected object: " << closestObject->getName() << std::endl;
+                //std::cout << "Selected object: " << closestObject->getName() << std::endl;
                 hierarchyPanel.SetSelectedGameObject(closestObject);
+                Logger::GetInstance().Log("Selected object: " + closestObject->getName() + " with mouse picking", INFO);
             }
         }
 
@@ -352,10 +347,10 @@ int main(int argc, char** argv) {
             resetObjects = false;
             saveObjects = true;
         }
-        framebuffer.Unbind(); // Desvincular framebuffer
+        framebuffer.Unbind(); 
 
         // Renderizar la interfaz de usuario (ImGui)
-        editor->Render(gameObjects);  // Aquí se incluye el panel con la textura del framebuffer
+        editor->Render(gameObjects); 
 
         // Intercambiar buffers
         window.swapBuffers();
@@ -364,8 +359,7 @@ int main(int argc, char** argv) {
         if (dt < FRAME_DT) this_thread::sleep_for(FRAME_DT - dt);
     }
 
-    delete editor; // Clean up the editor
-
+    delete editor;
        
 
     return 0;

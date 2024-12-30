@@ -1,11 +1,11 @@
 #pragma once
 #include <vector>
-#include "MyWindow.h"  // Incluimos el header de MyWindow
+#include "MyWindow.h"
 
 class ConfigPanel {
 
 public:
-    ConfigPanel(MyWindow* window);  // Constructor que recibe el puntero a MyWindow
+    ConfigPanel(MyWindow* window);
     ~ConfigPanel();
 
     void UpdateFPS(float fps);
@@ -13,7 +13,7 @@ public:
     void Log(const char* message);
 
 private:
-    MyWindow* _window;  // Puntero a la ventana MyWindow
+    MyWindow* _window;
 
     std::vector<float> fpsHistory;
     int frameCount = 0;

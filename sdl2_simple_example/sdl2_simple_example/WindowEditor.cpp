@@ -14,13 +14,13 @@ TimeManager timeManager;
 
 WindowEditor::WindowEditor(HierarchyPanel& hierarchyPanel, MyWindow* window)
     : consolePanel(new ConsolePanel()),
-    configPanel(new ConfigPanel(window)),  // Pasamos 'window' a ConfigPanel
+    configPanel(new ConfigPanel(window)),
     hierarchyPanel(hierarchyPanel),
     inspectorPanel(new InspectorPanel()),
     scenePanel(new ScenePanel()),
     mainMenu(new MainMenu()),
     resourcesPanel(new ResourcesPanel),
-    simulationPanel(new SimulationPanel()), // Initialize SimulationPanel
+    simulationPanel(new SimulationPanel()),
     showConsole(true),
     showConfig(true),
     showHierarchy(true),
@@ -42,12 +42,12 @@ WindowEditor::~WindowEditor() {
     delete scenePanel;
     delete resourcesPanel;
     delete mainMenu;
-    delete simulationPanel; // Clean up SimulationPanel
+    delete simulationPanel; 
 }
 
 void WindowEditor::SetFramebuffer(GLuint framebufferTexture) {
     this->framebufferTexture = framebufferTexture;
-    scenePanel->SetFramebufferTexture(framebufferTexture); // Ensure the ScenePanel gets the framebuffer texture
+    scenePanel->SetFramebufferTexture(framebufferTexture); 
 }
 
 void WindowEditor::Render(std::vector<std::unique_ptr<GameObject>>& gameObjects) {
