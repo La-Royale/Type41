@@ -22,6 +22,38 @@ Type41 es un motor en 3D realizado con SDL2, OpenGL, glew, DevIL, GLM, Assimp e 
     - Hierarchy: Muestra los objetos que tenemos en la escena, pudiendo seleccionar uno para ver sus componentes en el Inspector
     - Inspector: Da información sobre los diferentes componentes del objeto seleccionado, pudiendo cambiar los valores del transform, ver información de la textura y aplicar una textura de cuadros a modo de checker, ver información de la mesh pudiendo enseñar tanto los triángulos como las caras del modelo.
 
+### Nuevas Implementaciones
+- La escena Street Environment se carga automáticamente al inicio.  
+- Inspector:  
+   - Jerarquía: eliminar, reasignar como hijo, crear objetos vacíos y crear hijos.  
+   - Transformación: trasladar, rotar y escalar objetos.  
+   - Malla: seleccionar o arrastrar cualquier malla importada.  
+   - Textura: seleccionar o arrastrar cualquier textura importada.  
+   - Cámara: es un componente con configuraciones que se pueden modificar.  
+
+- Los GameObjects pueden seleccionarse en el mundo utilizando el ratón.  
+- Todas las mallas utilizan un volumen delimitador (AABB) y se pueden descartar mediante Frustum Culling. Este proceso debe visualizarse en el editor (debug de raycasting y cajas).  
+- El usuario puede Iniciar / Pausar / Detener la simulación y recuperar su estado original.  
+
+- Gestión de Recursos 
+   - Hay una ventana de “Assets” que muestra todos los recursos del usuario (puede ser una visualización sencilla con un treeview).  
+   - El usuario puede arrastrar/importar nuevos archivos, y la ventana reacciona adecuadamente.  
+   - Los archivos pueden eliminarse a través de la ventana, y las entradas en /Library se eliminan.  
+   - Al iniciar, todos los recursos no gestionados dentro de “Assets” se generan en Library.  
+   - La carpeta /Library debe regenerarse a partir de /Assets + contenido meta.  
+   - Todos los recursos utilizan conteo de referencias (por ejemplo, una textura o malla solo está en memoria una vez, independientemente de cuántos GameObjects la utilicen). Este proceso debe ser visible en el editor (mostrando el contador de referencias, etc.).  
+
+#### Opcionalmente:  
+
+- Ventana de exploración de assets:  
+   - El usuario debe poder navegar por carpetas y ver una representación de los archivos.  
+   - El usuario debe poder eliminar archivos a través de la ventana (y la carpeta Library se actualiza en consecuencia).  
+
+- Implementación básica de opciones de importación:  
+   - Texturas: filtrado, wrapping, invertir (X/Y).  
+   - Modelos: escala global, ejes, ignorar cámaras/luces.  
+   - Las opciones de importación deben guardarse como información .meta para que /Library se genere correctamente.  
+
 ### Controles: 
 - Cámara:
     - RMB: Rotar cámara
